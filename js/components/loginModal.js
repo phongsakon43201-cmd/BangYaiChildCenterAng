@@ -164,7 +164,15 @@ const LoginModalComponent = {
     if (window.supabaseService) {
       const { data, error } = await window.supabaseService.signIn(email, password);
       if (!error && data?.session) {
-        window.authController.loginAsRole(roleId);
+        const sbUser = data.session.user;
+        const fullName = sbUser.user_metadata?.full_name || email.split('@')[0];
+        const customUser = {
+          username: email,
+          name: fullName,
+          subtitle: `บัญชี Supabase Auth (${email})`,
+          avatar: roleId === 'TEACHER' ? '👩‍🏫' : roleId === 'EXECUTIVE' ? '👨‍💼' : '👩‍👦'
+        };
+        window.authController.loginAsRole(roleId, customUser);
         if (window.ModalsComponent) window.ModalsComponent.showToast('เข้าสู่ระบบสำเร็จผ่าน Supabase Auth', 'success');
         return;
       }

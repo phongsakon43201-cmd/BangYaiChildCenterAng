@@ -145,18 +145,33 @@ const ExecutiveView = {
     }
 
     if (tab === 'REGISTRY') {
+      const showFullId = this.showFullNationalId || false;
+      const maskId = (idStr) => {
+        if (!idStr) return '-';
+        if (showFullId) return idStr;
+        return idStr.replace(/^(\d-\d{4}-)\d{5}(-\d{2}-\d)$/, '$1XXXXX$2');
+      };
+
       return `
         <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-            <h3 style="font-weight: 700; font-size: 1.1rem;">ทะเบียนข้อมูลเด็กปฐมวัยและผู้ปกครอง</h3>
-            <input type="text" placeholder="🔍 ค้นหาชื่อเด็ก / ผู้ปกครอง..." class="form-control btn-sm" style="max-width: 260px;" onkeyup="ExecutiveView.filterRegistry(this.value)">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">ทะเบียนข้อมูลเด็กปฐมวัยและผู้ปกครอง</h3>
+              <span class="badge badge-success" style="font-size: 0.75rem; margin-top: 4px;">🔒 มาตรฐาน PDPA (Data Minimization)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" onclick="ExecutiveView.showFullNationalId = !ExecutiveView.showFullNationalId; ExecutiveView.render('${containerId}');">
+                ${showFullId ? '🔒 ซ่อนเลขบัตรประชาชน (PDPA)' : '👁️ แสดงเลขบัตรประชาชนเต็ม'}
+              </button>
+              <input type="text" placeholder="🔍 ค้นหาชื่อเด็ก / ผู้ปกครอง..." class="form-control btn-sm" style="max-width: 240px;" onkeyup="ExecutiveView.filterRegistry(this.value)">
+            </div>
           </div>
 
           <div class="data-table-container">
             <table class="data-table" id="registry-table">
               <thead>
                 <tr>
-                  <th>เลขประจำตัวประชาชน</th>
+                  <th>เลขประจำตัวประชาชน (PDPA)</th>
                   <th>ชื่อ - นามสกุล (ชื่อเล่น)</th>
                   <th>เพศ</th>
                   <th>อายุ</th>
@@ -169,7 +184,7 @@ const ExecutiveView = {
               <tbody>
                 ${children.map(c => `
                   <tr>
-                    <td style="font-family: monospace;">${c.nationalId}</td>
+                    <td style="font-family: monospace;">${maskId(c.nationalId)}</td>
                     <td><strong>${c.firstName} ${c.lastName} (${c.nickname})</strong></td>
                     <td>${c.gender}</td>
                     <td>${c.ageString}</td>

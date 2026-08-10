@@ -90,7 +90,7 @@ const TeacherView = {
                 <div class="attendance-card">
                   <div class="student-info">
                     <div class="student-avatar" style="background-color: ${child.avatarColor}; color: #FFF;">
-                      ${child.nickname.substring(4, 5)}
+                      ${child.nickname.charAt(0)}
                     </div>
                     <div>
                       <strong style="font-size: 1rem; color: var(--text-main);">${child.nickname} (${child.firstName} ${child.lastName})</strong>
@@ -337,18 +337,23 @@ const TeacherView = {
   saveGrowthData(childId, childNickname, containerId) {
     const child = window.appStore.getChildById(childId);
     if (child) {
-      child.heightCm = parseFloat(document.getElementById(`growth-h-${childId}`).value) || 98.5;
-      child.weightKg = parseFloat(document.getElementById(`growth-w-${childId}`).value) || 15.2;
+      const height = parseFloat(document.getElementById(`growth-h-${childId}`).value) || 98.5;
+      const weight = parseFloat(document.getElementById(`growth-w-${childId}`).value) || 15.2;
+      const bmi = parseFloat((weight / ((height / 100) ** 2)).toFixed(1));
+      
+      child.heightCm = height;
+      child.weightKg = weight;
+      child.bmi = bmi;
       child.growthStatus = document.getElementById(`growth-status-${childId}`).value;
       window.appStore.saveData(window.appStore.data);
 
       window.appStore.addAuditLog(
         'ครูวิภาดา ศรีมงคล',
         'SAVE_GROWTH_DATA',
-        `บันทึกข้อมูลการเติบโต (ส่วนสูง/น้ำหนัก) ของ ${childNickname}`
+        `บันทึกข้อมูลการเติบโต (ส่วนสูง ${height} ซม. / น้ำหนัก ${weight} กก. / BMI ${bmi}) ของ ${childNickname}`
       );
 
-      alert(`บันทึกข้อมูลส่วนสูงและน้ำหนักของ ${childNickname} เรียบร้อยแล้ว!`);
+      alert(`บันทึกข้อมูลส่วนสูงและน้ำหนักของ ${childNickname} เรียบร้อยแล้ว! (คำนวณ BMI: ${bmi})`);
       this.render(containerId);
     }
   },

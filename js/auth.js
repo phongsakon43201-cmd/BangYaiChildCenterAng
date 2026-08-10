@@ -63,10 +63,10 @@ class AuthController {
     return this.currentUser;
   }
 
-  loginAsRole(roleId) {
+  loginAsRole(roleId, customUser = null) {
     if (ROLES[roleId]) {
       this.currentRole = roleId;
-      this.currentUser = ROLES[roleId].demoUser;
+      this.currentUser = customUser || ROLES[roleId].demoUser;
       this.isAuthenticated = true;
 
       localStorage.setItem('BANGYAI_IS_AUTHENTICATED', 'true');

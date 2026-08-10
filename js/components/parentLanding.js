@@ -187,7 +187,15 @@ const ParentLandingComponent = {
     if (window.supabaseService) {
       const { data, error } = await window.supabaseService.signIn(email, password);
       if (!error && data?.session) {
-        window.authController.loginAsRole('PARENT');
+        const sbUser = data.session.user;
+        const fullName = sbUser.user_metadata?.full_name || email.split('@')[0];
+        const customUser = {
+          username: email,
+          name: fullName,
+          subtitle: `ผู้ปกครอง (Supabase Auth)`,
+          avatar: '👩‍👦'
+        };
+        window.authController.loginAsRole('PARENT', customUser);
         if (window.ModalsComponent) window.ModalsComponent.showToast('เข้าสู่ระบบสำเร็จผ่าน Supabase Auth', 'success');
         return;
       }

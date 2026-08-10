@@ -261,10 +261,10 @@ class AppStore {
 
   getChildrenForParent(parentUser) {
     if (!parentUser) return [this.data.children[0]];
-    const parentName = parentUser.name || '';
+    const parentName = (parentUser.name || '').trim();
     const matched = this.data.children.filter(c => 
-      c.parentName.includes(parentName) || 
-      c.id === 'child-101'
+      c.parentName.includes(parentName) ||
+      (parentUser.username && c.parentName.includes(parentUser.username))
     );
     return matched.length ? matched : [this.data.children[0]];
   }
@@ -282,14 +282,20 @@ class AppStore {
       record.checkTime = now;
       record.checkedBy = checkedBy;
     } else {
-      this.data.attendance.push({
+      record = {
         id: 'att-' + Date.now(),
         childId,
         date: today,
         status,
         checkTime: now,
         checkedBy
-      });
+      };
+      this.data.attendance.push(record);
+    }
+
+    // Async Supabase DB Sync
+    if (window.supabaseService) {
+      window.supabaseService.syncAttendanceToDB(record);
     }
 
     // Trigger simulated LINE notification
@@ -317,6 +323,12 @@ class AppStore {
       ...req
     };
     this.data.leaveRequests.unshift(newReq);
+
+    // Async Supabase DB Sync
+    if (window.supabaseService) {
+      window.supabaseService.syncLeaveRequestToDB(newReq);
+    }
+
     this.saveData(this.data);
     return newReq;
   }
@@ -327,6 +339,11 @@ class AppStore {
       req.status = status;
       req.approvedBy = approvedBy;
       req.remark = remark;
+
+      // Async Supabase DB Sync
+      if (window.supabaseService) {
+        window.supabaseService.syncLeaveRequestToDB(req);
+      }
 
       this.sendLineNotification(
         `📩 ผลการอนุมัติคำขอแจ้งลา`,
@@ -380,7 +397,7 @@ class AppStore {
     this.saveData(this.data);
   }
 
-  // LINE Notification Simulation
+  // LINE Notification Simulation & API Sync
   getLineNotifications() {
     return this.data.lineNotifications || [];
   }
@@ -388,12 +405,19 @@ class AppStore {
   sendLineNotification(title, message) {
     if (!this.data.lineNotifications) this.data.lineNotifications = [];
     const now = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
-    this.data.lineNotifications.unshift({
+    const notifItem = {
       id: 'line-' + Date.now(),
       timestamp: now,
       title,
       message
-    });
+    };
+    this.data.lineNotifications.unshift(notifItem);
+
+    // Optional Real LINE Notify Integration (If LINE Token is set)
+    const lineToken = localStorage.getItem('BANGYAI_LINE_NOTIFY_TOKEN');
+    if (lineToken && window.supabaseService) {
+      window.supabaseService.sendLineNotifyAPI(lineToken, `${title}\n${message}`);
+    }
   }
 
   getAuditLogs() { return this.data.auditLogs; }
@@ -403,6 +427,12 @@ class AppStore {
     const timestamp = now.toISOString().replace('T', ' ').substring(0, 19);
     const newLog = { id: 'log-' + Date.now(), timestamp, user, action, details };
     this.data.auditLogs.unshift(newLog);
+
+    // Async Supabase DB Sync
+    if (window.supabaseService) {
+      window.supabaseService.syncAuditLogToDB(newLog);
+    }
+
     this.saveData(this.data);
   }
 }
