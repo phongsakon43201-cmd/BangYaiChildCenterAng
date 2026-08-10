@@ -33,8 +33,10 @@ class AppController {
 
     if (!window.authController.isAuthenticated) {
       if (mobileNav) mobileNav.style.display = 'none';
-      if (window.LoginModalComponent) {
-        window.LoginModalComponent.render(mainContainer);
+      if (window.ParentLandingComponent) {
+        window.ParentLandingComponent.render(mainContainer);
+      } else if (window.LoginModalComponent) {
+        window.LoginModalComponent.render(mainContainer, 'PARENT');
       }
       return;
     }
