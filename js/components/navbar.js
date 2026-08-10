@@ -44,41 +44,27 @@ const NavbarComponent = {
           <!-- Authentication Controls & User Profile Widget -->
           <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
             ${isAuthenticated ? `
-              <!-- Logged In User Pill -->
-              <div style="display: flex; align-items: center; gap: 0.65rem; background: var(--bg-app); border: 1px solid var(--border-color); padding: 0.35rem 0.85rem; border-radius: var(--radius-full);">
-                <span style="font-size: 1.25rem;">${currentUser.avatar || '👤'}</span>
+              <!-- Logged In User Profile & Strict Role Lock Badge -->
+              <div style="display: flex; align-items: center; gap: 0.75rem; background: var(--bg-app); border: 1px solid var(--border-color); padding: 0.4rem 1rem; border-radius: var(--radius-full);">
+                <span style="font-size: 1.35rem;">${currentUser.avatar || '👤'}</span>
                 <div>
-                  <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); leading: 1.1;">
+                  <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-main); line-height: 1.2;">
                     ${currentUser.name}
                   </div>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">
-                    <span class="badge ${currentRole.badgeClass}" style="padding: 1px 6px; font-size: 0.7rem;">${currentRole.name}</span>
+                  <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;">
+                    <span>🔒 สิทธิ์ผู้ใช้:</span>
+                    <span class="badge ${currentRole.badgeClass}" style="padding: 1px 8px; font-size: 0.75rem; font-weight: 700;">${currentRole.name}</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Quick Role Switcher Buttons -->
-              <div class="role-switcher-container" title="สลับบทบาทผู้ใช้งานเพื่อทดสอบ">
-                <button class="role-tab-btn role-parent ${currentRole.id === 'PARENT' ? 'active' : ''}" onclick="window.authController.setRole('PARENT')">
-                  <span>01 ผู้ปกครอง</span>
-                </button>
-                
-                <button class="role-tab-btn role-teacher ${currentRole.id === 'TEACHER' ? 'active' : ''}" onclick="window.authController.setRole('TEACHER')">
-                  <span>02 ครู</span>
-                </button>
-
-                <button class="role-tab-btn role-executive ${currentRole.id === 'EXECUTIVE' ? 'active' : ''}" onclick="window.authController.setRole('EXECUTIVE')">
-                  <span>03 ผู้บริหาร</span>
-                </button>
-              </div>
-
-              <!-- Logout Button -->
-              <button class="btn btn-secondary btn-sm" onclick="window.authController.logout()" title="ออกจากระบบ">
+              <!-- Logout Button (Must logout to change role/account) -->
+              <button class="btn btn-secondary btn-sm" onclick="window.authController.logout()" title="ออกจากระบบเพื่อสลับสิทธิ์" style="font-weight: 600; padding: 0.45rem 0.85rem;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 <span>ออกจากระบบ</span>
               </button>
             ` : `
-              <span class="badge badge-secondary">ยังไม่ได้ลงชื่อเข้าใช้</span>
+              <span class="badge badge-secondary" style="padding: 0.4rem 0.85rem;">ยังไม่ได้ลงชื่อเข้าใช้</span>
             `}
 
             <!-- Dark Mode Toggle -->

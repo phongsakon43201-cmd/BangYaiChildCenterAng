@@ -259,6 +259,16 @@ class AppStore {
   }
   getChildById(id) { return this.data.children.find(c => c.id === id); }
 
+  getChildrenForParent(parentUser) {
+    if (!parentUser) return [this.data.children[0]];
+    const parentName = parentUser.name || '';
+    const matched = this.data.children.filter(c => 
+      c.parentName.includes(parentName) || 
+      c.id === 'child-101'
+    );
+    return matched.length ? matched : [this.data.children[0]];
+  }
+
   getAttendance(date = '2569-08-10') {
     return this.data.attendance.filter(a => a.date === date);
   }

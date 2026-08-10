@@ -10,8 +10,9 @@ const ParentView = {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    const children = window.appStore.getChildren();
-    const activeChild = window.appStore.getChildById(this.selectedChildId) || children[0];
+    const currentUser = window.authController.getCurrentUser();
+    const parentChildren = window.appStore.getChildrenForParent(currentUser);
+    const activeChild = parentChildren.find(c => c.id === this.selectedChildId) || parentChildren[0];
     const attendance = window.appStore.getAttendance('2569-08-10');
     const childAtt = attendance.find(a => a.childId === activeChild.id);
     const leaveReqs = window.appStore.getLeaveRequests().filter(l => l.childId === activeChild.id);
@@ -23,28 +24,34 @@ const ParentView = {
 
     container.innerHTML = `
       <div class="animate-fade-in">
-        <!-- Top Banner & Child Selector -->
+        <!-- Top Banner & Child Scope -->
         <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(236, 253, 245, 0.9), rgba(209, 250, 229, 0.9)); border-color: rgba(16, 185, 129, 0.2);">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
             <div style="display: flex; align-items: center; gap: 1rem;">
               <div class="student-avatar" style="width: 56px; height: 56px; font-size: 1.5rem; background: var(--role-parent); color: #FFF;">
-                ${activeChild.nickname.substring(4, 5)}
+                ${activeChild.nickname.substring(activeChild.nickname.length - 1)}
               </div>
               <div>
-                <span class="badge badge-parent" style="margin-bottom: 0.25rem;">มุมมองผู้ปกครอง</span>
+                <span class="badge badge-parent" style="margin-bottom: 0.25rem;">🔒 ข้อมูลบุตรหลานในความดูแลของคุณ</span>
                 <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0;">${activeChild.firstName} ${activeChild.lastName} (${activeChild.nickname})</h2>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-                  ห้องอนุบาล 1/1 | อายุ ${activeChild.ageString} | ผู้ปกครอง: ${activeChild.parentName} (${activeChild.parentRelation})
+                  ห้องอนุบาล 1/1 | อายุ ${activeChild.ageString} | ผู้ปกครอง: ${currentUser ? currentUser.name : activeChild.parentName} (${activeChild.parentRelation})
                 </p>
               </div>
             </div>
 
-            <!-- Child Selector dropdown -->
+            <!-- Child Selector dropdown (Scoped strictly to this parent's children only) -->
             <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <label style="font-size: 0.85rem; font-weight: 600;">เลือกบุตรหลาน:</label>
-              <select class="form-control" style="width: auto; min-height: 38px;" onchange="ParentView.selectedChildId = this.value; ParentView.render('${containerId}');">
-                ${children.map(c => `<option value="${c.id}" ${c.id === activeChild.id ? 'selected' : ''}>${c.nickname} (${c.firstName})</option>`).join('')}
-              </select>
+              ${parentChildren.length > 1 ? `
+                <label style="font-size: 0.85rem; font-weight: 600;">เลือกบุตรหลาน:</label>
+                <select class="form-control" style="width: auto; min-height: 38px;" onchange="ParentView.selectedChildId = this.value; ParentView.render('${containerId}');">
+                  ${parentChildren.map(c => `<option value="${c.id}" ${c.id === activeChild.id ? 'selected' : ''}>${c.nickname} (${c.firstName})</option>`).join('')}
+                </select>
+              ` : `
+                <span class="badge badge-success" style="padding: 0.4rem 0.85rem; font-size: 0.85rem; font-weight: 600;">
+                  ✓ แสดงข้อมูลบุตรหลานของคุณเท่านั้น (1 คน)
+                </span>
+              `}
             </div>
           </div>
         </div>

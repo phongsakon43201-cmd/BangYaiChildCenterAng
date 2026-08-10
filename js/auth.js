@@ -123,6 +123,10 @@ class AuthController {
   }
 
   setRole(roleId) {
+    if (this.isAuthenticated && roleId !== this.currentRole) {
+      alert(`คุณกำลังอยู่ในระบบในฐานะ "${this.getCurrentRole().name}" หากต้องการเข้าใช้งานบทบาทอื่น โปรดกด "ออกจากระบบ" ก่อนครับ`);
+      return;
+    }
     this.loginAsRole(roleId);
   }
 
