@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบบริหารจัดการและสื่อสารข้อมูล ศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่ (Child Center MIS)</title>
+  <meta name="description" content="ระบบสารสนเทศเพื่อบริหารจัดการและสื่อสารข้อมูล ศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่ จังหวัดนนทบุรี รองรับการทำงาน 3 บทบาท (ผู้ปกครอง, ครู/ผู้ดูแลเด็ก, ผู้บริหาร/เทศบาล) สะดวก ปลอดภัย และมีประสิทธิภาพ">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="./assets/images/logo.png">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+</head>
+<body>
+
+  <!-- Top Navbar Root -->
+  <header id="navbar-root"></header>
+
+  <!-- Main Content View Root -->
+  <main id="main-view-root" class="app-container"></main>
+
+  <!-- Mobile Bottom Action Bar (WCAG 2.2 Mobile Friendly) -->
+  <nav class="mobile-nav-bar" id="mobile-nav-root">
+    <a href="#" class="mobile-nav-item" onclick="window.authController.setRole('PARENT'); return false;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>ผู้ปกครอง</span>
+    </a>
+    <a href="#" class="mobile-nav-item" onclick="window.authController.setRole('TEACHER'); return false;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>ครูผู้ดูแล</span>
+    </a>
+    <a href="#" class="mobile-nav-item" onclick="window.authController.setRole('EXECUTIVE'); return false;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      <span>ผู้บริหาร</span>
+    </a>
+  </nav>
+
+  <!-- Footer -->
+  <footer style="text-align: center; padding: 1.5rem 1rem; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-color); background: var(--bg-surface); margin-top: auto;">
+    <p>© 2569 โครงงานนวัตกรรมดิจิทัล: การพัฒนาเว็บแอปพลิเคชันเพื่อบริหารจัดการและสื่อสารข้อมูล ศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่ จังหวัดนนทบุรี</p>
+    <p style="margin-top: 0.25rem; font-size: 0.8rem; color: var(--text-subtle);">ผู้จัดทำ: นาย ณัฐธีร์ วิสุทธิ์อัมพร & นาย พงศกร ฤกษ์รูจี | สาขาวิชาการจัดการนวัตกรรมดิจิทัลและคอนเทนท์ มหาวิทยาลัยราชภัฏสวนสุนันทา</p>
+  </footer>
+
+  <!-- Modal Container Root -->
+  <div id="modal-root"></div>
+
+  <!-- JavaScript Scripts -->
+  <script src="./js/store.js"></script>
+  <script src="./js/auth.js"></script>
+  <script src="./js/utils/chart.js"></script>
+  <script src="./js/utils/export.js"></script>
+  <script src="./js/components/navbar.js"></script>
+  <script src="./js/components/parentView.js"></script>
+  <script src="./js/components/teacherView.js"></script>
+  <script src="./js/components/executiveView.js"></script>
+  <script src="./js/components/modals.js"></script>
+  <script src="./js/app.js"></script>
+
+</body>
+</html>

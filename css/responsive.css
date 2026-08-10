@@ -1,0 +1,131 @@
+/* ==========================================================================
+   Bang Yai Child Development Center MIS - Responsive & Accessibility CSS
+   WCAG 2.2 Mobile-First Guidelines
+   ========================================================================== */
+
+/* Mobile Bottom Action Bar for Parents & Teachers */
+.mobile-nav-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-color);
+  z-index: 999;
+  padding: 0.35rem 0.5rem;
+  justify-content: space-around;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  min-height: 48px;
+  justify-content: center;
+}
+
+.mobile-nav-item.active {
+  color: var(--primary-600);
+  font-weight: 600;
+}
+
+/* Breakpoints */
+
+/* Smart Phone Small Screens (< 640px) */
+@media (max-width: 640px) {
+  .top-navbar {
+    padding: 0.5rem 1rem;
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .navbar-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .role-switcher-container {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .role-tab-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .app-container {
+    padding: 1rem 0.75rem 5rem 0.75rem;
+  }
+
+  .mobile-nav-bar {
+    display: flex;
+  }
+
+  .view-tabs {
+    font-size: 0.85rem;
+  }
+
+  .attendance-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .attendance-btn-group {
+    justify-content: space-between;
+  }
+
+  .att-btn {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* Tablet Screens (< 1024px) */
+@media (max-width: 1024px) {
+  .grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+  .grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* Print Styles for Executive Reports */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  .top-navbar, .mobile-nav-bar, .role-switcher-container, .btn, .view-tabs {
+    display: none !important;
+  }
+
+  .app-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .glass-card {
+    box-shadow: none !important;
+    border: 1px solid #CCCCCC !important;
+    background: #FFFFFF !important;
+    break-inside: avoid;
+  }
+}
