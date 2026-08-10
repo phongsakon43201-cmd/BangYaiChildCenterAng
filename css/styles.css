@@ -6,6 +6,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
 
 :root {
+  /* Font Size Scale multiplier */
+  --font-scale: 1;
+
   /* Brand Primary Colors */
   --primary-50: #EEF2FF;
   --primary-100: #E0E7FF;
@@ -42,6 +45,10 @@
   --text-muted: #64748B;
   --text-subtle: #94A3B8;
 
+  /* Line Brand Color */
+  --line-green: #06C755;
+  --line-bg: #E8F9EE;
+
   /* Shadows & Elevations */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
@@ -75,6 +82,17 @@ body.dark-mode {
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
+/* High Contrast Mode (WCAG 2.2 AAA Accessibility) */
+body.high-contrast {
+  --bg-app: #000000 !important;
+  --bg-surface: #000000 !important;
+  --bg-surface-glass: #000000 !important;
+  --border-color: #FFFF00 !important;
+  --text-main: #FFFFFF !important;
+  --text-muted: #FFFF00 !important;
+  --primary-600: #00FFFF !important;
+}
+
 /* Base Styles */
 * {
   box-sizing: border-box;
@@ -84,7 +102,7 @@ body.dark-mode {
 }
 
 html {
-  font-size: 16px;
+  font-size: calc(16px * var(--font-scale));
   scroll-behavior: smooth;
 }
 
@@ -190,6 +208,7 @@ a:hover {
 .badge-warning { background-color: var(--warning-bg); color: var(--warning-500); }
 .badge-danger { background-color: var(--danger-bg); color: var(--danger-500); }
 .badge-info { background-color: var(--info-bg); color: var(--info-500); }
+.badge-line { background-color: var(--line-bg); color: var(--line-green); border: 1px solid rgba(6, 199, 85, 0.3); }
 
 .badge-parent { background-color: var(--role-parent-bg); color: var(--role-parent); border: 1px solid rgba(5, 150, 105, 0.2); }
 .badge-teacher { background-color: var(--role-teacher-bg); color: var(--role-teacher); border: 1px solid rgba(79, 70, 229, 0.2); }

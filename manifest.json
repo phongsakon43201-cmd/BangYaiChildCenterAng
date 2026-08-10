@@ -1,0 +1,21 @@
+{
+  "short_name": "ศูนย์เด็กเล็กบางใหญ่",
+  "name": "ระบบบริหารจัดการและสื่อสารข้อมูล ศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่",
+  "icons": [
+    {
+      "src": "./assets/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./assets/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#F8FAFC",
+  "theme_color": "#4F46E5",
+  "display": "standalone",
+  "orientation": "portrait"
+}

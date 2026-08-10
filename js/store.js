@@ -3,7 +3,7 @@
    LocalStorage Persistence with Full Seed Dataset for Bang Yai Municipality
    ========================================================================== */
 
-const STORAGE_KEY = 'BANGYAI_CHILD_CENTER_MIS_V1';
+const STORAGE_KEY = 'BANGYAI_CHILD_CENTER_MIS_V2';
 
 const INITIAL_SEED_DATA = {
   centerInfo: {
@@ -38,7 +38,12 @@ const INITIAL_SEED_DATA = {
       parentRelation: 'บิดา',
       allergy: 'ไม่มี',
       bloodType: 'O',
-      avatarColor: '#4F46E5'
+      avatarColor: '#4F46E5',
+      heightCm: 98.5,
+      weightKg: 15.2,
+      bmi: 15.6,
+      growthStatus: 'สมส่วนตามเกณฑ์',
+      vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'หัด-หัดเยอรมัน-คางทูม (MMR)', 'ไข้หวัดใหญ่ประจำปี']
     },
     {
       id: 'child-102',
@@ -55,7 +60,12 @@ const INITIAL_SEED_DATA = {
       parentRelation: 'มารดา',
       allergy: 'แพ้อาหารทะเล (กุ้ง)',
       bloodType: 'A',
-      avatarColor: '#EC4899'
+      avatarColor: '#EC4899',
+      heightCm: 96.0,
+      weightKg: 14.0,
+      bmi: 15.2,
+      growthStatus: 'สมส่วนตามเกณฑ์',
+      vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR']
     },
     {
       id: 'child-103',
@@ -72,7 +82,12 @@ const INITIAL_SEED_DATA = {
       parentRelation: 'บิดา',
       allergy: 'ไม่มี',
       bloodType: 'B',
-      avatarColor: '#10B981'
+      avatarColor: '#10B981',
+      heightCm: 95.0,
+      weightKg: 14.8,
+      bmi: 16.4,
+      growthStatus: 'สมส่วนตามเกณฑ์',
+      vaccines: ['BCG', 'MMR', 'ไข้หวัดใหญ่ประจำปี']
     },
     {
       id: 'child-104',
@@ -89,41 +104,12 @@ const INITIAL_SEED_DATA = {
       parentRelation: 'มารดา',
       allergy: 'ไม่มี',
       bloodType: 'AB',
-      avatarColor: '#F59E0B'
-    },
-    {
-      id: 'child-105',
-      classId: 'class-1',
-      nationalId: '1-1002-00347-88-9',
-      firstName: 'ภควัต',
-      lastName: 'อุยพานิชย์',
-      nickname: 'น้องโฟกัส',
-      gender: 'ชาย',
-      birthDate: '2567-02-14',
-      ageString: '2 ขวบ 6 เดือน',
-      parentName: 'ผศ.ดร. ธนากร อุยพานิชย์',
-      parentPhone: '083-999-8877',
-      parentRelation: 'บิดา',
-      allergy: 'ไม่มี',
-      bloodType: 'O',
-      avatarColor: '#6366F1'
-    },
-    {
-      id: 'child-106',
-      classId: 'class-3',
-      nationalId: '1-1002-00348-12-3',
-      firstName: 'ปานไพลิน',
-      lastName: 'ชูโตศรี',
-      nickname: 'น้องชีส',
-      gender: 'หญิง',
-      birthDate: '2566-02-28',
-      ageString: '3 ขวบ 6 เดือน',
-      parentName: 'นางสาว ทัศนันท์ ชูโตศรี',
-      parentPhone: '082-777-6655',
-      parentRelation: 'มารดา',
-      allergy: 'แพ้นมวัว',
-      bloodType: 'B',
-      avatarColor: '#8B5CF6'
+      avatarColor: '#F59E0B',
+      heightCm: 97.2,
+      weightKg: 14.5,
+      bmi: 15.3,
+      growthStatus: 'สมส่วนตามเกณฑ์',
+      vaccines: ['BCG', 'MMR']
     }
   ],
 
@@ -131,9 +117,7 @@ const INITIAL_SEED_DATA = {
     { id: 'att-1', childId: 'child-101', date: '2569-08-10', status: 'PRESENT', checkTime: '07:45 น.', checkedBy: 'ครูวิภาดา' },
     { id: 'att-2', childId: 'child-102', date: '2569-08-10', status: 'PRESENT', checkTime: '07:50 น.', checkedBy: 'ครูวิภาดา' },
     { id: 'att-3', childId: 'child-103', date: '2569-08-10', status: 'LEAVE', checkTime: '08:00 น.', checkedBy: 'ระบบ (ผู้ปกครองแจ้งลา)' },
-    { id: 'att-4', childId: 'child-104', date: '2569-08-10', status: 'PRESENT', checkTime: '08:05 น.', checkedBy: 'ครูวิภาดา' },
-    { id: 'att-5', childId: 'child-105', date: '2569-08-10', status: 'PRESENT', checkTime: '07:40 น.', checkedBy: 'ครูพิมลวรรณ' },
-    { id: 'att-6', childId: 'child-106', date: '2569-08-10', status: 'LATE', checkTime: '08:45 น.', checkedBy: 'ครูพงศกร' }
+    { id: 'att-4', childId: 'child-104', date: '2569-08-10', status: 'PRESENT', checkTime: '08:05 น.', checkedBy: 'ครูวิภาดา' }
   ],
 
   leaveRequests: [
@@ -150,20 +134,6 @@ const INITIAL_SEED_DATA = {
       submittedAt: '2569-08-09 19:30 น.',
       approvedBy: 'ครูวิภาดา ศรีมงคล',
       remark: 'รับทราบค่ะ ขอให้น้องหายไวๆ นะคะ'
-    },
-    {
-      id: 'leave-2',
-      childId: 'child-106',
-      childName: 'น้องชีส (ด.ญ. ปานไพลิน)',
-      parentName: 'นางสาว ทัศนันท์ ชูโตศรี',
-      leaveType: 'ลากิจ',
-      startDate: '2569-08-12',
-      endDate: '2569-08-12',
-      reason: 'พาบุตรหลานไปร่วมงานวันแม่แห่งชาติและเยี่ยมญาติที่ต่างจังหวัด',
-      status: 'PENDING',
-      submittedAt: '2569-08-10 14:15 น.',
-      approvedBy: null,
-      remark: null
     }
   ],
 
@@ -176,15 +146,6 @@ const INITIAL_SEED_DATA = {
       author: 'กองการศึกษา เทศบาลเมืองบางใหญ่',
       createdAt: '2569-08-08',
       pinned: true
-    },
-    {
-      id: 'news-2',
-      title: 'กิจกรรมส่งเสริมโภชนาการและวันแม่แห่งชาติ',
-      content: 'ขอเชิญผู้ปกครองเข้าร่วมกิจกรรมวันแม่ ณ อาคารอเนกประสงค์ ศูนย์พัฒนาเด็กเล็ก ในวันพรุ่งนี้ เวลา 08:30 น.',
-      targetClass: 'class-2',
-      author: 'ครูวิภาดา ศรีมงคล',
-      createdAt: '2569-08-09',
-      pinned: false
     }
   ],
 
@@ -196,14 +157,6 @@ const INITIAL_SEED_DATA = {
       lunch: 'ข้าวสวย + ต้มจืดฟักใส่ไก่ + ผัดบล็อคโคลี่หมูสับ',
       afternoonSnack: 'กล้วยน้ำว้าสุก + นมถั่วเหลือง',
       nutritionNote: 'ได้รับสารอาหารครบ 5 หมู่ พลังงาน 1,200 Kcal'
-    },
-    {
-      date: '2569-08-11',
-      dayOfWeek: 'วันอังคาร',
-      breakfast: 'โจ๊กไก่ใส่ไข่ + นมสดจืด',
-      lunch: 'ผัดซีอิ๊วเส้นใหญ่หมูหมัก + ส้มสายน้ำผึ้ง',
-      afternoonSnack: 'ขนมปังโฮลวีททาเนยสด + นมพาสเจอร์ไรส์',
-      nutritionNote: 'วิตามินซีสูง ช่วยเสริมภูมิคุ้มกัน'
     }
   ],
 
@@ -247,6 +200,21 @@ const INITIAL_SEED_DATA = {
     }
   ],
 
+  lineNotifications: [
+    {
+      id: 'line-1',
+      timestamp: '07:45 น.',
+      title: '🟢 เช็กชื่อเข้าเรียนเรียบร้อย',
+      message: 'น้องโปรด ได้มาถึงศูนย์พัฒนาเด็กเล็กเทศบาลเมืองบางใหญ่ แล้ว เวลา 07:45 น. (เช็กชื่อโดย ครูวิภาดา)'
+    },
+    {
+      id: 'line-2',
+      timestamp: '09:30 น.',
+      title: '📢 ประกาศข่าวสารใหม่',
+      message: 'แจ้งกำหนดการบริการฉีดวัคซีนป้องกันไข้หวัดใหญ่ประจำปี ณ ศูนย์พัฒนาเด็กเล็ก ในวันที่ 15 ส.ค. 2569'
+    }
+  ],
+
   auditLogs: [
     { id: 'log-1', timestamp: '2026-08-10 08:00:15', user: 'ครูวิภาดา (TEACHER)', action: 'CHECK_IN_ATTENDANCE', details: 'บันทึกการเข้าเรียนห้องอนุบาล 1/1 จำนวน 18 คน' },
     { id: 'log-2', timestamp: '2026-08-10 09:30:22', user: 'นาย สุรเดช (PARENT)', action: 'SUBMIT_LEAVE_REQUEST', details: 'ส่งคำขอแจ้งลาป่วยให้น้องวาเลน' },
@@ -283,12 +251,6 @@ class AppStore {
     }
   }
 
-  resetToDefaults() {
-    this.saveData(INITIAL_SEED_DATA);
-    return this.data;
-  }
-
-  // Getters & Mutators
   getCenterInfo() { return this.data.centerInfo; }
   getClassrooms() { return this.data.classrooms; }
   getChildren(classId = null) {
@@ -319,6 +281,17 @@ class AppStore {
         checkedBy
       });
     }
+
+    // Trigger simulated LINE notification
+    const child = this.getChildById(childId);
+    if (child) {
+      const statusText = status === 'PRESENT' ? 'มาเรียน' : status === 'LATE' ? 'มาสาย' : status === 'LEAVE' ? 'แจ้งลา' : 'ขาดเรียน';
+      this.sendLineNotification(
+        `🟢 เช็กชื่อเข้าเรียนเรียบร้อย`,
+        `${child.nickname} (${child.firstName}) ได้บันทึกสถานะ "${statusText}" แล้ว เวลา ${now}`
+      );
+    }
+
     this.saveData(this.data);
   }
 
@@ -344,6 +317,12 @@ class AppStore {
       req.status = status;
       req.approvedBy = approvedBy;
       req.remark = remark;
+
+      this.sendLineNotification(
+        `📩 ผลการอนุมัติคำขอแจ้งลา`,
+        `คำขอแจ้งลาของ ${req.childName} ได้รับการ "${status === 'APPROVED' ? 'อนุมัติเรียบร้อยแล้ว' : 'ไม่อนุมัติ'}" โดย ${approvedBy}`
+      );
+
       this.saveData(this.data);
     }
     return req;
@@ -359,20 +338,21 @@ class AppStore {
       ...ann
     };
     this.data.announcements.unshift(newAnn);
+
+    this.sendLineNotification(
+      `📢 ประกาศข่าวสารใหม่จากศูนย์ฯ`,
+      `${ann.title}`
+    );
+
     this.saveData(this.data);
     return newAnn;
   }
 
   getMealPlan() { return this.data.mealPlan; }
-
   getActivities() { return this.data.activities; }
 
   addActivity(act) {
-    const newAct = {
-      id: 'act-' + Date.now(),
-      date: '2569-08-10',
-      ...act
-    };
+    const newAct = { id: 'act-' + Date.now(), date: '2569-08-10', ...act };
     this.data.activities.unshift(newAct);
     this.saveData(this.data);
     return newAct;
@@ -385,12 +365,25 @@ class AppStore {
     if (existing) {
       Object.assign(existing, rec);
     } else {
-      this.data.developmentRecords.push({
-        id: 'dev-' + Date.now(),
-        ...rec
-      });
+      this.data.developmentRecords.push({ id: 'dev-' + Date.now(), ...rec });
     }
     this.saveData(this.data);
+  }
+
+  // LINE Notification Simulation
+  getLineNotifications() {
+    return this.data.lineNotifications || [];
+  }
+
+  sendLineNotification(title, message) {
+    if (!this.data.lineNotifications) this.data.lineNotifications = [];
+    const now = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
+    this.data.lineNotifications.unshift({
+      id: 'line-' + Date.now(),
+      timestamp: now,
+      title,
+      message
+    });
   }
 
   getAuditLogs() { return this.data.auditLogs; }
@@ -398,17 +391,10 @@ class AppStore {
   addAuditLog(user, action, details) {
     const now = new Date();
     const timestamp = now.toISOString().replace('T', ' ').substring(0, 19);
-    const newLog = {
-      id: 'log-' + Date.now(),
-      timestamp,
-      user,
-      action,
-      details
-    };
+    const newLog = { id: 'log-' + Date.now(), timestamp, user, action, details };
     this.data.auditLogs.unshift(newLog);
     this.saveData(this.data);
   }
 }
 
-// Global Store Instance
 window.appStore = new AppStore();

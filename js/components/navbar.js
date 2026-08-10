@@ -1,8 +1,11 @@
 /* ==========================================================================
    Bang Yai Child Development Center MIS - Navbar & Header Component
+   With WCAG 2.2 AAA Accessibility Bar (Font Resizing & High Contrast)
    ========================================================================== */
 
 const NavbarComponent = {
+  fontScale: 1,
+
   render(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -11,6 +14,20 @@ const NavbarComponent = {
     const centerInfo = window.appStore.getCenterInfo();
 
     container.innerHTML = `
+      <!-- Accessibility Control Strip for Elders / Accessibility -->
+      <div style="background: #1E293B; color: #F8FAFC; padding: 0.25rem 1.5rem; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <span>♿ เครื่องมือช่วยเหลือการเข้าถึง (WCAG 2.2):</span>
+          <button style="background: transparent; border: 1px solid #64748B; color: #FFF; border-radius: 4px; padding: 0 6px; cursor: pointer; min-height: auto;" onclick="NavbarComponent.changeFontSize(-0.1)" title="ลดขนาดตัวอักษร">A-</button>
+          <button style="background: transparent; border: 1px solid #64748B; color: #FFF; border-radius: 4px; padding: 0 6px; cursor: pointer; min-height: auto;" onclick="NavbarComponent.resetFontSize()" title="ขนาดปกติ">A</button>
+          <button style="background: transparent; border: 1px solid #64748B; color: #FFF; border-radius: 4px; padding: 0 6px; cursor: pointer; min-height: auto;" onclick="NavbarComponent.changeFontSize(0.15)" title="เพิ่มขนาดตัวอักษร">A+</button>
+          <button style="background: transparent; border: 1px solid #64748B; color: #FFD700; border-radius: 4px; padding: 0 6px; cursor: pointer; min-height: auto;" onclick="document.body.classList.toggle('high-contrast')" title="โหมดความต่างสีสูง">⚡ ความต่างสีสูง</button>
+        </div>
+        <div style="font-size: 0.75rem; color: #94A3B8;">
+          ศูนย์พัฒนาเด็กเล็กเทศบาลเมืองบางใหญ่
+        </div>
+      </div>
+
       <nav class="top-navbar">
         <div class="navbar-content">
           <!-- Brand Info -->
@@ -49,6 +66,16 @@ const NavbarComponent = {
         </div>
       </nav>
     `;
+  },
+
+  changeFontSize(delta) {
+    this.fontScale = Math.max(0.85, Math.min(1.4, this.fontScale + delta));
+    document.documentElement.style.setProperty('--font-scale', this.fontScale);
+  },
+
+  resetFontSize() {
+    this.fontScale = 1;
+    document.documentElement.style.setProperty('--font-scale', '1');
   }
 };
 

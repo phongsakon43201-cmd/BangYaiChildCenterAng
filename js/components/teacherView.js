@@ -1,11 +1,11 @@
 /* ==========================================================================
    Bang Yai Child Development Center MIS - Teacher View Component
-   Teacher Interface: Attendance Grid, Leave Approvals, Activity & Dev Records
+   Teacher Interface: Attendance Grid, Leave Approvals, Activity & Growth/Dev
    ========================================================================== */
 
 const TeacherView = {
   selectedClassId: 'class-2',
-  currentTab: 'ATTENDANCE', // ATTENDANCE, LEAVE_APPROVALS, DEV_EVAL, ACTIVITIES
+  currentTab: 'ATTENDANCE', // ATTENDANCE, LEAVE_APPROVALS, DEV_EVAL, GROWTH_RECORD, ACTIVITIES
 
   render(containerId) {
     const container = document.getElementById(containerId);
@@ -18,7 +18,6 @@ const TeacherView = {
     const leaveReqs = window.appStore.getLeaveRequests();
     const pendingLeaves = leaveReqs.filter(l => l.status === 'PENDING');
 
-    // Calculate attendance rate for active class
     const classAtts = attendance.filter(a => children.some(c => c.id === a.childId));
     const presentCount = classAtts.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length;
     const rate = Math.round((presentCount / (children.length || 1)) * 100);
@@ -58,6 +57,9 @@ const TeacherView = {
           <button class="tab-link ${this.currentTab === 'DEV_EVAL' ? 'active' : ''}" onclick="TeacherView.currentTab = 'DEV_EVAL'; TeacherView.render('${containerId}');">
             📊 ประเมินพัฒนาการ 4 ด้าน
           </button>
+          <button class="tab-link ${this.currentTab === 'GROWTH_RECORD' ? 'active' : ''}" onclick="TeacherView.currentTab = 'GROWTH_RECORD'; TeacherView.render('${containerId}');">
+            ⚖️ บันทึกส่วนสูง / น้ำหนัก / วัคซีน
+          </button>
           <button class="tab-link ${this.currentTab === 'ACTIVITIES' ? 'active' : ''}" onclick="TeacherView.currentTab = 'ACTIVITIES'; TeacherView.render('${containerId}');">
             🎨 บันทึกกิจกรรมประจำวัน
           </button>
@@ -77,7 +79,7 @@ const TeacherView = {
         <div class="glass-card">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
             <h3 style="font-weight: 700; font-size: 1.1rem;">ระบบเช็กชื่อรายวันประจำวันที่ 10 สิงหาคม 2569</h3>
-            <span class="badge badge-info">1-Click Attendance</span>
+            <span class="badge badge-line">💬 แจ้งเตือน LINE อัตโนมัติ</span>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
@@ -160,6 +162,47 @@ const TeacherView = {
                 `).join('')}
               </tbody>
             </table>
+          </div>
+        </div>
+      `;
+    }
+
+    if (tab === 'GROWTH_RECORD') {
+      return `
+        <div class="glass-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+            <h3 style="font-weight: 700; font-size: 1.1rem;">บันทึกส่วนสูง น้ำหนัก และประวัติวัคซีนเด็กปฐมวัย</h3>
+            <span class="badge badge-success">ตามเกณฑ์กรมอนามัย</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            ${children.map(child => `
+              <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem; background: var(--bg-surface);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                  <strong>${child.nickname} (${child.firstName} ${child.lastName})</strong>
+                  <button class="btn btn-primary btn-sm" onclick="TeacherView.saveGrowthData('${child.id}', '${child.nickname}', '${containerId}')">💾 บันทึกการเติบโต</button>
+                </div>
+
+                <div class="grid-3">
+                  <div>
+                    <label class="form-label" style="font-size: 0.8rem;">ส่วนสูง (ซม.)</label>
+                    <input type="number" step="0.1" id="growth-h-${child.id}" class="form-control btn-sm" value="${child.heightCm || 98.5}">
+                  </div>
+                  <div>
+                    <label class="form-label" style="font-size: 0.8rem;">น้ำหนัก (กก.)</label>
+                    <input type="number" step="0.1" id="growth-w-${child.id}" class="form-control btn-sm" value="${child.weightKg || 15.2}">
+                  </div>
+                  <div>
+                    <label class="form-label" style="font-size: 0.8rem;">การประเมินการเติบโต</label>
+                    <select id="growth-status-${child.id}" class="form-control btn-sm">
+                      <option value="สมส่วนตามเกณฑ์" ${child.growthStatus === 'สมส่วนตามเกณฑ์' ? 'selected' : ''}>สมส่วนตามเกณฑ์</option>
+                      <option value="ท้วม/เริ่มอ้วน" ${child.growthStatus === 'ท้วม/เริ่มอ้วน' ? 'selected' : ''}>ท้วม/เริ่มอ้วน</option>
+                      <option value="ค่อนข้างผอม" ${child.growthStatus === 'ค่อนข้างผอม' ? 'selected' : ''}>ค่อนข้างผอม</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
           </div>
         </div>
       `;
@@ -270,7 +313,6 @@ const TeacherView = {
     const child = window.appStore.getChildById(childId);
     window.appStore.updateAttendance(childId, status, 'ครูวิภาดา ศรีมงคล');
     
-    // Audit log
     window.appStore.addAuditLog(
       'ครูวิภาดา ศรีมงคล',
       'UPDATE_ATTENDANCE',
@@ -283,7 +325,6 @@ const TeacherView = {
   handleApproveLeave(leaveId, status, containerId) {
     window.appStore.updateLeaveStatus(leaveId, status, 'ครูวิภาดา ศรีมงคล', status === 'APPROVED' ? 'อนุมัติเรียบร้อยค่ะ' : 'เนื่องจากไม่อยู่ในเงื่อนไขการลา');
     
-    // Audit log
     window.appStore.addAuditLog(
       'ครูวิภาดา ศรีมงคล',
       'APPROVE_LEAVE',
@@ -291,6 +332,25 @@ const TeacherView = {
     );
 
     this.render(containerId);
+  },
+
+  saveGrowthData(childId, childNickname, containerId) {
+    const child = window.appStore.getChildById(childId);
+    if (child) {
+      child.heightCm = parseFloat(document.getElementById(`growth-h-${childId}`).value) || 98.5;
+      child.weightKg = parseFloat(document.getElementById(`growth-w-${childId}`).value) || 15.2;
+      child.growthStatus = document.getElementById(`growth-status-${childId}`).value;
+      window.appStore.saveData(window.appStore.data);
+
+      window.appStore.addAuditLog(
+        'ครูวิภาดา ศรีมงคล',
+        'SAVE_GROWTH_DATA',
+        `บันทึกข้อมูลการเติบโต (ส่วนสูง/น้ำหนัก) ของ ${childNickname}`
+      );
+
+      alert(`บันทึกข้อมูลส่วนสูงและน้ำหนักของ ${childNickname} เรียบร้อยแล้ว!`);
+      this.render(containerId);
+    }
   },
 
   saveDevEval(childId, childName, containerId) {

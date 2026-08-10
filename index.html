@@ -6,6 +6,10 @@
   <title>ระบบบริหารจัดการและสื่อสารข้อมูล ศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่ (Child Center MIS)</title>
   <meta name="description" content="ระบบสารสนเทศเพื่อบริหารจัดการและสื่อสารข้อมูล ศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่ จังหวัดนนทบุรี รองรับการทำงาน 3 บทบาท (ผู้ปกครอง, ครู/ผู้ดูแลเด็ก, ผู้บริหาร/เทศบาล) สะดวก ปลอดภัย และมีประสิทธิภาพ">
   
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#4F46E5">
+
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="./assets/images/logo.png">
 
@@ -16,7 +20,7 @@
 </head>
 <body>
 
-  <!-- Top Navbar Root -->
+  <!-- Top Navbar Root with WCAG Accessibility Bar -->
   <header id="navbar-root"></header>
 
   <!-- Main Content View Root -->
@@ -58,6 +62,17 @@
   <script src="./js/components/executiveView.js"></script>
   <script src="./js/components/modals.js"></script>
   <script src="./js/app.js"></script>
+
+  <!-- Service Worker Registration for PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('PWA ServiceWorker registered with scope:', reg.scope))
+          .catch(err => console.warn('PWA ServiceWorker registration failed:', err));
+      });
+    }
+  </script>
 
 </body>
 </html>
