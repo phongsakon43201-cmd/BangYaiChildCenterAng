@@ -1,18 +1,12 @@
 -- ==========================================================================
 -- 🏫 ศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่ จังหวัดนนทบุรี (Child Center MIS)
--- 📜 Supabase Database Schema & Seed Data (ฉบับสมบูรณ์ 100%)
+-- 📜 Supabase Database Schema & Seed Data (ฉบับแก้ไข Generated Column)
 -- ==========================================================================
 
--- --------------------------------------------------------------------------
--- 1. EXTENSIONS & SETUP
--- --------------------------------------------------------------------------
+-- 1. EXTENSIONS SETUP
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
 
--- --------------------------------------------------------------------------
--- 2. PUBLIC TABLES CREATION (ตารางข้อมูลระบบ)
--- --------------------------------------------------------------------------
-
--- 2.1 ตารางข้อมูลโปรไฟล์ผู้ใช้งาน (Profiles)
+-- 2. PUBLIC TABLES CREATION (สร้างตารางข้อมูลระบบ)
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT UNIQUE NOT NULL,
@@ -24,7 +18,6 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2.2 ตารางห้องเรียน (Classrooms)
 CREATE TABLE IF NOT EXISTS public.classrooms (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
@@ -33,7 +26,6 @@ CREATE TABLE IF NOT EXISTS public.classrooms (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2.3 ตารางข้อมูลเด็กรายบุคคล (Children - มี Parent ID เชื่อมโยงเพื่อแยกสิทธิ์ของใครของมัน)
 CREATE TABLE IF NOT EXISTS public.children (
   id TEXT PRIMARY KEY,
   class_id TEXT REFERENCES public.classrooms(id),
@@ -56,7 +48,6 @@ CREATE TABLE IF NOT EXISTS public.children (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2.4 ตารางการเช็กชื่อเข้าเรียนรายวัน (Attendance)
 CREATE TABLE IF NOT EXISTS public.attendance (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   child_id TEXT REFERENCES public.children(id) ON DELETE CASCADE,
@@ -67,7 +58,6 @@ CREATE TABLE IF NOT EXISTS public.attendance (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2.5 ตารางยื่นคำขอแจ้งลา (Leave Requests)
 CREATE TABLE IF NOT EXISTS public.leave_requests (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   child_id TEXT REFERENCES public.children(id) ON DELETE CASCADE,
@@ -81,7 +71,6 @@ CREATE TABLE IF NOT EXISTS public.leave_requests (
   submitted_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2.6 ตารางประเมินพัฒนาการ 4 ด้าน (Development Records)
 CREATE TABLE IF NOT EXISTS public.development_records (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   child_id TEXT REFERENCES public.children(id) ON DELETE CASCADE,
@@ -95,7 +84,6 @@ CREATE TABLE IF NOT EXISTS public.development_records (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2.7 ตารางประวัติ Audit Logs (Security Log)
 CREATE TABLE IF NOT EXISTS public.audit_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_name TEXT NOT NULL,
@@ -104,104 +92,113 @@ CREATE TABLE IF NOT EXISTS public.audit_logs (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- --------------------------------------------------------------------------
--- 3. ROW LEVEL SECURITY (RLS POLICIES - แยกสิทธิ์ข้อมูลเด็ดขาด)
--- --------------------------------------------------------------------------
+-- 3. ROW LEVEL SECURITY (RLS POLICIES)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.children ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.leave_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.development_records ENABLE ROW LEVEL SECURITY;
 
--- 3.1 Policy สำหรับ Profiles: ทุกคนที่ล็อกอินดูโปรไฟล์ตนเองได้
-CREATE POLICY "Users can view own profile" ON public.profiles
-  FOR SELECT USING (auth.uid() = id);
+DO $$ BEGIN
+  CREATE POLICY "Parents view own children strictly" ON public.children
+    FOR SELECT USING (
+      parent_id = auth.uid() 
+      OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('TEACHER', 'EXECUTIVE'))
+    );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- 3.2 Policy สำหรับ Children: ผู้ปกครองดูได้เฉพาะลูกตนเอง (parent_id = auth.uid()) | ครู/ผู้บริหารดูได้ทั้งหมด
-CREATE POLICY "Parents view own children strictly" ON public.children
-  FOR SELECT USING (
-    parent_id = auth.uid() 
-    OR EXISTS (
-      SELECT 1 FROM public.profiles 
-      WHERE id = auth.uid() AND role IN ('TEACHER', 'EXECUTIVE')
-    )
-  );
+-- 4. AUTH USERS SEEDING
 
--- 3.3 Policy สำหรับ Attendance & Leave: ผู้ปกครองดู/สร้างเฉพาะของลูกตนเอง
-CREATE POLICY "Parents access own child leave requests" ON public.leave_requests
-  FOR ALL USING (
-    parent_id = auth.uid()
-    OR EXISTS (
-      SELECT 1 FROM public.profiles 
-      WHERE id = auth.uid() AND role IN ('TEACHER', 'EXECUTIVE')
-    )
-  );
-
--- --------------------------------------------------------------------------
--- 4. AUTH USERS SEEDING (สร้างบัญชีผู้ใช้งาน 3 บทบาท - รหัสผ่าน: 1234)
--- --------------------------------------------------------------------------
-
--- 4.1 สร้างผู้ใช้ใน auth.users
+-- ผู้ปกครอง (Parent)
 INSERT INTO auth.users (
   instance_id, id, aud, role, email, encrypted_password,
   email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-) VALUES 
--- บัญชีผู้ปกครอง (Parent)
-(
+)
+SELECT 
   '00000000-0000-0000-0000-000000000000',
   'a1111111-1111-1111-1111-111111111111',
   'authenticated', 'authenticated', 'parent@bangyai.go.th',
   crypt('1234', gen_salt('bf')), NOW(),
-  '{"provider":"email","providers":["email"]}',
-  '{"role":"PARENT","full_name":"คุณวรรณา สมบูรณ์"}', NOW(), NOW()
-),
--- บัญชีครู (Teacher)
-(
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{"role":"PARENT","full_name":"คุณวรรณา สมบูรณ์"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'parent@bangyai.go.th');
+
+-- ครู (Teacher)
+INSERT INTO auth.users (
+  instance_id, id, aud, role, email, encrypted_password,
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at
+)
+SELECT 
   '00000000-0000-0000-0000-000000000000',
   'b2222222-2222-2222-2222-222222222222',
   'authenticated', 'authenticated', 'teacher@bangyai.go.th',
   crypt('1234', gen_salt('bf')), NOW(),
-  '{"provider":"email","providers":["email"]}',
-  '{"role":"TEACHER","full_name":"คุณครู สมศรี มีสุข"}', NOW(), NOW()
-),
--- บัญชีผู้บริหาร (Executive)
-(
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{"role":"TEACHER","full_name":"คุณครู สมศรี มีสุข"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'teacher@bangyai.go.th');
+
+-- ผู้บริหาร (Executive)
+INSERT INTO auth.users (
+  instance_id, id, aud, role, email, encrypted_password,
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at
+)
+SELECT 
   '00000000-0000-0000-0000-000000000000',
   'c3333333-3333-3333-3333-333333333333',
   'authenticated', 'authenticated', 'executive@bangyai.go.th',
   crypt('1234', gen_salt('bf')), NOW(),
-  '{"provider":"email","providers":["email"]}',
-  '{"role":"EXECUTIVE","full_name":"นายสมชาย ใจดี"}', NOW(), NOW()
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{"role":"EXECUTIVE","full_name":"นายสมชาย ใจดี"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'executive@bangyai.go.th');
+
+-- 5. IDENTITIES MAPPING (ตัดคอลัมน์ email ออกเพราะเป็น Generated Column)
+INSERT INTO auth.identities (
+  provider_id,
+  user_id,
+  identity_data,
+  provider,
+  last_sign_in_at,
+  created_at,
+  updated_at
 )
-ON CONFLICT (email) DO NOTHING;
+SELECT 
+  id::text,
+  id,
+  format('{"sub":"%s","email":"%s"}', id, email)::jsonb,
+  'email',
+  NOW(),
+  NOW(),
+  NOW()
+FROM auth.users 
+WHERE email IN ('parent@bangyai.go.th', 'teacher@bangyai.go.th', 'executive@bangyai.go.th')
+  AND NOT EXISTS (SELECT 1 FROM auth.identities WHERE user_id = auth.users.id);
 
--- 4.2 สร้าง Identities Mapping (เพื่อให้ล็อกอินผ่าน Supabase Auth ได้)
-INSERT INTO auth.identities (id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
-SELECT id, id, format('{"sub":"%s","email":"%s"}', id, email)::jsonb, 'email', NOW(), NOW(), NOW()
-FROM auth.users WHERE email IN ('parent@bangyai.go.th', 'teacher@bangyai.go.th', 'executive@bangyai.go.th')
-ON CONFLICT (provider, id) DO NOTHING;
+-- 6. PUBLIC PROFILES
+INSERT INTO public.profiles (id, email, full_name, role)
+SELECT 'a1111111-1111-1111-1111-111111111111', 'parent@bangyai.go.th', 'คุณวรรณา สมบูรณ์', 'PARENT'
+WHERE NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = 'a1111111-1111-1111-1111-111111111111');
 
--- 4.3 เพิ่มข้อมูลใน public.profiles
-INSERT INTO public.profiles (id, email, full_name, role) VALUES
-('a1111111-1111-1111-1111-111111111111', 'parent@bangyai.go.th', 'คุณวรรณา สมบูรณ์', 'PARENT'),
-('b2222222-2222-2222-2222-222222222222', 'teacher@bangyai.go.th', 'คุณครู สมศรี มีสุข', 'TEACHER'),
-('c3333333-3333-3333-3333-333333333333', 'executive@bangyai.go.th', 'นายสมชาย ใจดี', 'EXECUTIVE')
-ON CONFLICT (id) DO NOTHING;
+INSERT INTO public.profiles (id, email, full_name, role)
+SELECT 'b2222222-2222-2222-2222-222222222222', 'teacher@bangyai.go.th', 'คุณครู สมศรี มีสุข', 'TEACHER'
+WHERE NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = 'b2222222-2222-2222-2222-222222222222');
 
--- --------------------------------------------------------------------------
--- 5. INITIAL DATA SEEDING (เพิ่มข้อมูลเด็กและห้องเรียนตัวอย่าง)
--- --------------------------------------------------------------------------
-INSERT INTO public.classrooms (id, name, student_count) VALUES
-('class-1', 'ห้องเตรียมอนุบาล (2-3 ขวบ)', 15),
-('class-2', 'ห้องอนุบาล 1/1 (3-4 ขวบ)', 18),
-('class-3', 'ห้องอนุบาล 1/2 (3-4 ขวบ)', 17)
-ON CONFLICT (id) DO NOTHING;
+INSERT INTO public.profiles (id, email, full_name, role)
+SELECT 'c3333333-3333-3333-3333-333333333333', 'executive@bangyai.go.th', 'นายสมชาย ใจดี', 'EXECUTIVE'
+WHERE NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = 'c3333333-3333-3333-3333-333333333333');
 
--- เพิ่มเด็ก 1 คนที่ผูกกับผู้ปกครอง 'a1111111-1111-1111-1111-111111111111' (คุณวรรณา สมบูรณ์)
+-- 7. CLASSROOMS & CHILDREN
+INSERT INTO public.classrooms (id, name, student_count)
+SELECT 'class-1', 'ห้องเตรียมอนุบาล (2-3 ขวบ)', 15 WHERE NOT EXISTS (SELECT 1 FROM public.classrooms WHERE id = 'class-1');
+INSERT INTO public.classrooms (id, name, student_count)
+SELECT 'class-2', 'ห้องอนุบาล 1/1 (3-4 ขวบ)', 18 WHERE NOT EXISTS (SELECT 1 FROM public.classrooms WHERE id = 'class-2');
+INSERT INTO public.classrooms (id, name, student_count)
+SELECT 'class-3', 'ห้องอนุบาล 1/2 (3-4 ขวบ)', 17 WHERE NOT EXISTS (SELECT 1 FROM public.classrooms WHERE id = 'class-3');
+
 INSERT INTO public.children (
   id, class_id, parent_id, national_id, first_name, last_name, nickname, gender, age_string, parent_name, parent_phone, parent_relation, allergy
-) VALUES (
+)
+SELECT 
   'child-101', 'class-2', 'a1111111-1111-1111-1111-111111111111',
   '1-1002-00345-67-8', 'ปัณณธร', 'วิสุทธิ์อัมพร', 'น้องโปรด', 'ชาย',
   '3 ขวบ 5 เดือน', 'คุณวรรณา สมบูรณ์', '081-234-5678', 'มารดา', 'ไม่มี'
-) ON CONFLICT (id) DO NOTHING;
+WHERE NOT EXISTS (SELECT 1 FROM public.children WHERE id = 'child-101');

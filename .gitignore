@@ -14,6 +14,10 @@
 # Supabase Local & Secrets
 supabase/.temp/
 .supabase/
+*.sql
+supabase_schema_complete.sql
+seed*.sql
+schema*.sql
 
 # Node Dependencies
 node_modules/
@@ -26,6 +30,7 @@ pnpm-debug.log*
 .next/
 out/
 build/
+
 dist/
 
 # Operating System & IDE Files
