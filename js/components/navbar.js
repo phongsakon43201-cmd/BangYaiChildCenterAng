@@ -11,11 +11,13 @@ const NavbarComponent = {
     if (!container) return;
 
     const currentRole = window.authController.getCurrentRole();
+    const currentUser = window.authController.getCurrentUser();
+    const isAuthenticated = window.authController.isAuthenticated;
     const centerInfo = window.appStore.getCenterInfo();
 
     container.innerHTML = `
       <!-- Accessibility Control Strip for Elders / Accessibility -->
-      <div style="background: #1E293B; color: #F8FAFC; padding: 0.25rem 1.5rem; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between;">
+      <div style="background: #1E293B; color: #F8FAFC; padding: 0.25rem 1.5rem; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
           <span>♿ เครื่องมือช่วยเหลือการเข้าถึง (WCAG 2.2):</span>
           <button style="background: transparent; border: 1px solid #64748B; color: #FFF; border-radius: 4px; padding: 0 6px; cursor: pointer; min-height: auto;" onclick="NavbarComponent.changeFontSize(-0.1)" title="ลดขนาดตัวอักษร">A-</button>
@@ -24,7 +26,7 @@ const NavbarComponent = {
           <button style="background: transparent; border: 1px solid #64748B; color: #FFD700; border-radius: 4px; padding: 0 6px; cursor: pointer; min-height: auto;" onclick="document.body.classList.toggle('high-contrast')" title="โหมดความต่างสีสูง">⚡ ความต่างสีสูง</button>
         </div>
         <div style="font-size: 0.75rem; color: #94A3B8;">
-          ศูนย์พัฒนาเด็กเล็กเทศบาลเมืองบางใหญ่
+          ศูนย์พัฒนาเด็กเล็กเทศบาลเมืองบางใหญ่ จังหวัดนนทบุรี
         </div>
       </div>
 
@@ -35,28 +37,49 @@ const NavbarComponent = {
             <img src="./assets/images/logo.png" alt="Logo" class="brand-logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%234F46E5\' stroke-width=\'2\'><path d=\'M12 2L2 7l10 5 10-5-10-5z\'/><path d=\'M2 17l10 5 10-5\'/><path d=\'M2 12l10 5 10-5\'/></svg>'">
             <div>
               <h1 class="brand-title">${centerInfo.name}</h1>
-              <p class="brand-subtitle">เทศบาลเมืองบางใหญ่ จังหวัดนนทบุรี | ปีการศึกษา ${centerInfo.academicYear}</p>
+              <p class="brand-subtitle">เทศบาลเมืองบางใหญ่ | ปีการศึกษา ${centerInfo.academicYear}</p>
             </div>
           </div>
 
-          <!-- Role Switcher -->
-          <div style="display: flex; align-items: center; gap: 1rem;">
-            <div class="role-switcher-container" title="สลับบทบาทการใช้งานเพื่อทดสอบระบบ">
-              <button class="role-tab-btn role-parent ${currentRole.id === 'PARENT' ? 'active' : ''}" onclick="window.authController.setRole('PARENT')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <span>ผู้ปกครอง</span>
-              </button>
-              
-              <button class="role-tab-btn role-teacher ${currentRole.id === 'TEACHER' ? 'active' : ''}" onclick="window.authController.setRole('TEACHER')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                <span>ครู / ผู้ดูแล</span>
-              </button>
+          <!-- Authentication Controls & User Profile Widget -->
+          <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            ${isAuthenticated ? `
+              <!-- Logged In User Pill -->
+              <div style="display: flex; align-items: center; gap: 0.65rem; background: var(--bg-app); border: 1px solid var(--border-color); padding: 0.35rem 0.85rem; border-radius: var(--radius-full);">
+                <span style="font-size: 1.25rem;">${currentUser.avatar || '👤'}</span>
+                <div>
+                  <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); leading: 1.1;">
+                    ${currentUser.name}
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">
+                    <span class="badge ${currentRole.badgeClass}" style="padding: 1px 6px; font-size: 0.7rem;">${currentRole.name}</span>
+                  </div>
+                </div>
+              </div>
 
-              <button class="role-tab-btn role-executive ${currentRole.id === 'EXECUTIVE' ? 'active' : ''}" onclick="window.authController.setRole('EXECUTIVE')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                <span>ผู้บริหาร</span>
+              <!-- Quick Role Switcher Buttons -->
+              <div class="role-switcher-container" title="สลับบทบาทผู้ใช้งานเพื่อทดสอบ">
+                <button class="role-tab-btn role-parent ${currentRole.id === 'PARENT' ? 'active' : ''}" onclick="window.authController.setRole('PARENT')">
+                  <span>01 ผู้ปกครอง</span>
+                </button>
+                
+                <button class="role-tab-btn role-teacher ${currentRole.id === 'TEACHER' ? 'active' : ''}" onclick="window.authController.setRole('TEACHER')">
+                  <span>02 ครู</span>
+                </button>
+
+                <button class="role-tab-btn role-executive ${currentRole.id === 'EXECUTIVE' ? 'active' : ''}" onclick="window.authController.setRole('EXECUTIVE')">
+                  <span>03 ผู้บริหาร</span>
+                </button>
+              </div>
+
+              <!-- Logout Button -->
+              <button class="btn btn-secondary btn-sm" onclick="window.authController.logout()" title="ออกจากระบบ">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>ออกจากระบบ</span>
               </button>
-            </div>
+            ` : `
+              <span class="badge badge-secondary">ยังไม่ได้ลงชื่อเข้าใช้</span>
+            `}
 
             <!-- Dark Mode Toggle -->
             <button class="btn btn-secondary btn-sm" onclick="document.body.classList.toggle('dark-mode')" title="สลับโหมดมืด/สว่าง">
@@ -80,3 +103,4 @@ const NavbarComponent = {
 };
 
 window.NavbarComponent = NavbarComponent;
+

@@ -16,16 +16,32 @@ class AppController {
       // 2. Render Modal Backdrop Container
       window.ModalsComponent.renderContainer('modal-root');
 
-      // 3. Listen to Role Changes
-      window.authController.onRoleChange((role) => {
+      // 3. Listen to Role / Auth State Changes
+      window.authController.onRoleChange((role, isAuthenticated) => {
         window.NavbarComponent.render('navbar-root');
-        this.renderViewForRole(role.id);
+        this.updateView();
       });
 
-      // 4. Initial Render based on current role
-      const initialRole = window.authController.getCurrentRole();
-      this.renderViewForRole(initialRole.id);
+      // 4. Initial Render based on current auth state
+      this.updateView();
     });
+  }
+
+  updateView() {
+    const mainContainer = 'main-view-root';
+    const mobileNav = document.getElementById('mobile-nav-root');
+
+    if (!window.authController.isAuthenticated) {
+      if (mobileNav) mobileNav.style.display = 'none';
+      if (window.LoginModalComponent) {
+        window.LoginModalComponent.render(mainContainer);
+      }
+      return;
+    }
+
+    if (mobileNav) mobileNav.style.display = 'flex';
+    const roleId = window.authController.currentRole;
+    this.renderViewForRole(roleId);
   }
 
   renderViewForRole(roleId) {
@@ -40,9 +56,9 @@ class AppController {
   }
 
   refreshCurrentView() {
-    const roleId = window.authController.currentRole;
-    this.renderViewForRole(roleId);
+    this.updateView();
   }
 }
 
 window.appController = new AppController();
+

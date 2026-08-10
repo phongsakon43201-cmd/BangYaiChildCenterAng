@@ -7,28 +7,51 @@ const ROLES = {
   PARENT: {
     id: 'PARENT',
     name: 'ผู้ปกครอง',
-    description: 'ดูข้อมูลบุตรหลาน เช็กชื่อ เมนูอาหาร บันทึกพัฒนาการ และส่งคำขอแจ้งลา',
+    code: '01',
+    description: 'ติดตามข้อมูลบุตรหลาน ประวัติการมาเรียน บันทึกพัฒนาการ และยื่นคำขอแจ้งลา',
     badgeClass: 'badge-parent',
-    defaultChildId: 'child-101'
+    defaultChildId: 'child-101',
+    demoUser: {
+      username: 'parent',
+      name: 'คุณวรรณา สมบูรณ์',
+      subtitle: 'ผู้ปกครอง ด.ช. กิตติภพ (น้องภพ)',
+      avatar: '👩'
+    }
   },
   TEACHER: {
     id: 'TEACHER',
     name: 'ครู / ผู้ดูแลเด็ก',
-    description: 'เช็กชื่อเข้าเรียน อนุมัติคำขอแจ้งลา บันทึกพัฒนาการ และประกาศข่าวสาร',
+    code: '02',
+    description: 'บันทึกและสื่อสารงานประจำ เช็กชื่อ อนุมัติคำขอแจ้งลา และประเมินพัฒนาการ',
     badgeClass: 'badge-teacher',
-    defaultClassId: 'class-2'
+    defaultClassId: 'class-2',
+    demoUser: {
+      username: 'teacher',
+      name: 'คุณครู สมศรี มีสุข',
+      subtitle: 'ครูประจำชั้นห้อง อนุบาล 2/1',
+      avatar: '👩‍🏫'
+    }
   },
   EXECUTIVE: {
     id: 'EXECUTIVE',
     name: 'ผู้บริหาร / เทศบาล',
-    description: 'ดูแดชบอร์ดสถิติ ภาพรวมพัฒนาการ จัดการทะเบียน และตรวจสอบ Audit Logs',
-    badgeClass: 'badge-executive'
+    code: '03',
+    description: 'มองภาพรวมเพื่อการตัดสินใจ แดชบอร์ดสถิติ ภาพรวมพัฒนาการ และออกรายงาน',
+    badgeClass: 'badge-executive',
+    demoUser: {
+      username: 'executive',
+      name: 'นายสมชาย ใจดี',
+      subtitle: 'ผู้อำนวยการกองการศึกษา เทศบาลเมืองบางใหญ่',
+      avatar: '👨‍💼'
+    }
   }
 };
 
 class AuthController {
   constructor() {
+    this.isAuthenticated = localStorage.getItem('BANGYAI_IS_AUTHENTICATED') === 'true';
     this.currentRole = localStorage.getItem('BANGYAI_CURRENT_ROLE') || 'TEACHER';
+    this.currentUser = JSON.parse(localStorage.getItem('BANGYAI_CURRENT_USER')) || ROLES[this.currentRole].demoUser;
     this.listeners = [];
   }
 
@@ -36,20 +59,71 @@ class AuthController {
     return ROLES[this.currentRole] || ROLES.TEACHER;
   }
 
-  setRole(roleId) {
+  getCurrentUser() {
+    return this.currentUser;
+  }
+
+  loginAsRole(roleId) {
     if (ROLES[roleId]) {
       this.currentRole = roleId;
+      this.currentUser = ROLES[roleId].demoUser;
+      this.isAuthenticated = true;
+
+      localStorage.setItem('BANGYAI_IS_AUTHENTICATED', 'true');
       localStorage.setItem('BANGYAI_CURRENT_ROLE', roleId);
-      
-      // Audit log the role switch
-      window.appStore.addAuditLog(
-        `ผู้ใช้ระบบ (${ROLES[roleId].name})`,
-        'SWITCH_ROLE',
-        `สลับบทบาทการทำงานเข้าสู่ ${ROLES[roleId].name}`
-      );
+      localStorage.setItem('BANGYAI_CURRENT_USER', JSON.stringify(this.currentUser));
+
+      if (window.appStore && typeof window.appStore.addAuditLog === 'function') {
+        window.appStore.addAuditLog(
+          `${this.currentUser.name} (${ROLES[roleId].name})`,
+          'LOGIN',
+          `ลงชื่อเข้าสู่ระบบในบทบาท ${ROLES[roleId].name}`
+        );
+      }
 
       this.notifyListeners();
+      return { success: true };
     }
+    return { success: false, message: 'ไม่พบบทบาทผู้ใช้งาน' };
+  }
+
+  login(username, password) {
+    const cleanUser = username.trim().toLowerCase();
+    let targetRole = null;
+
+    if (cleanUser === 'parent' || cleanUser.includes('ผู้ปกครอง')) {
+      targetRole = 'PARENT';
+    } else if (cleanUser === 'teacher' || cleanUser.includes('ครู')) {
+      targetRole = 'TEACHER';
+    } else if (cleanUser === 'executive' || cleanUser.includes('บริหาร')) {
+      targetRole = 'EXECUTIVE';
+    } else {
+      // Default to teacher if generic login
+      targetRole = 'TEACHER';
+    }
+
+    return this.loginAsRole(targetRole);
+  }
+
+  logout() {
+    const prevUser = this.currentUser ? this.currentUser.name : 'ผู้ใช้';
+    this.isAuthenticated = false;
+    localStorage.setItem('BANGYAI_IS_AUTHENTICATED', 'false');
+    localStorage.removeItem('BANGYAI_CURRENT_USER');
+
+    if (window.appStore && typeof window.appStore.addAuditLog === 'function') {
+      window.appStore.addAuditLog(
+        prevUser,
+        'LOGOUT',
+        'ออกจากระบบเรียบร้อย'
+      );
+    }
+
+    this.notifyListeners();
+  }
+
+  setRole(roleId) {
+    this.loginAsRole(roleId);
   }
 
   onRoleChange(callback) {
@@ -58,11 +132,12 @@ class AuthController {
 
   notifyListeners() {
     const roleInfo = this.getCurrentRole();
-    this.listeners.forEach(fn => fn(roleInfo));
+    this.listeners.forEach(fn => fn(roleInfo, this.isAuthenticated));
   }
 
   // Permission check helper
   canAccess(permissionKey) {
+    if (!this.isAuthenticated) return false;
     const role = this.currentRole;
     const matrix = {
       PARENT: ['VIEW_CHILD', 'SUBMIT_LEAVE', 'VIEW_MEAL', 'VIEW_DEV', 'VIEW_NEWS'],
@@ -74,3 +149,4 @@ class AuthController {
 }
 
 window.authController = new AuthController();
+
