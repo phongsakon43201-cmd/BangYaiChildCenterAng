@@ -146,21 +146,22 @@ const ModalsComponent = {
     const title = document.getElementById('modal-ann-title').value;
     const targetClass = document.getElementById('modal-ann-target').value;
     const content = document.getElementById('modal-ann-content').value;
+    const authorName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
 
     window.appStore.addAnnouncement({
       title,
       targetClass,
       content,
-      author: 'ครูวิภาดา ศรีมงคล'
+      author: authorName
     });
 
     window.appStore.addAuditLog(
-      'ครูวิภาดา ศรีมงคล',
+      authorName,
       'CREATE_ANNOUNCEMENT',
       `เผยแพร่ประกาศข่าวสาร: ${title}`
     );
 
-    alert('เผยแพร่ประกาศข่าวสารเรียบร้อยแล้ว!');
+    this.showToast('เผยแพร่ประกาศข่าวสารเรียบร้อยแล้ว!', 'success');
     this.closeModal();
 
     if (window.appController) {
@@ -204,6 +205,7 @@ const ModalsComponent = {
     e.preventDefault();
     const title = document.getElementById('modal-act-title').value;
     const description = document.getElementById('modal-act-desc').value;
+    const authorName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
 
     window.appStore.addActivity({
       title,
@@ -213,12 +215,12 @@ const ModalsComponent = {
     });
 
     window.appStore.addAuditLog(
-      'ครูวิภาดา ศรีมงคล',
+      authorName,
       'ADD_ACTIVITY',
       `เพิ่มบันทึกกิจกรรมประจำวัน: ${title}`
     );
 
-    alert('บันทึกกิจกรรมประจำวันเรียบร้อยแล้ว!');
+    this.showToast('บันทึกกิจกรรมประจำวันเรียบร้อยแล้ว!', 'success');
     this.closeModal();
 
     if (window.appController) {
@@ -229,6 +231,33 @@ const ModalsComponent = {
   closeModal() {
     const backdrop = document.getElementById('app-modal-backdrop');
     if (backdrop) backdrop.classList.remove('active');
+  },
+
+  showToast(message, type = 'info') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      container.style.cssText = 'position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.75rem; pointer-events: none;';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    const bgColor = type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : type === 'warning' ? '#F59E0B' : '#3B82F6';
+    const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+
+    toast.style.cssText = `background: ${bgColor}; color: #FFFFFF; padding: 0.85rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 0.6rem; pointer-events: auto; opacity: 1; transition: opacity 0.4s ease, transform 0.4s ease;`;
+    toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-10px)';
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 400);
+    }, 3200);
   }
 };
 

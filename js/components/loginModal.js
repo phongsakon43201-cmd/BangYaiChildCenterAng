@@ -165,10 +165,11 @@ const LoginModalComponent = {
       const { data, error } = await window.supabaseService.signIn(email, password);
       if (!error && data?.session) {
         const sbUser = data.session.user;
-        const fullName = sbUser.user_metadata?.full_name || email.split('@')[0];
+        const rawName = sbUser.user_metadata?.full_name || email.split('@')[0];
+        const cleanName = window.authController ? window.authController.sanitizeName(rawName, roleId) : rawName;
         const customUser = {
           username: email,
-          name: fullName,
+          name: cleanName,
           subtitle: `บัญชี Supabase Auth (${email})`,
           avatar: roleId === 'TEACHER' ? '👩‍🏫' : roleId === 'EXECUTIVE' ? '👨‍💼' : '👩‍👦'
         };

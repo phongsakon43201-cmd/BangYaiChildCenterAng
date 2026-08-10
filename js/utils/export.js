@@ -16,8 +16,9 @@ const ExportUtils = {
     const rate = Math.round((presentCount / (children.length || 1)) * 100);
 
     // Audit log
+    const userName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ผู้บริหารเทศบาล';
     window.appStore.addAuditLog(
-      'ผู้บริหารเทศบาล',
+      userName,
       'EXPORT_REPORT',
       'ส่งออกและพิมพ์รายงานสรุปผลการบริหารจัดการประจำวัน'
     );

@@ -310,11 +310,12 @@ const TeacherView = {
   },
 
   handleCheckIn(childId, status, containerId) {
+    const teacherName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
     const child = window.appStore.getChildById(childId);
-    window.appStore.updateAttendance(childId, status, 'ครูวิภาดา ศรีมงคล');
+    window.appStore.updateAttendance(childId, status, teacherName);
     
     window.appStore.addAuditLog(
-      'ครูวิภาดา ศรีมงคล',
+      teacherName,
       'UPDATE_ATTENDANCE',
       `เช็กชื่อ ${child ? child.nickname : childId} เป็นสถานะ ${status}`
     );
@@ -323,10 +324,11 @@ const TeacherView = {
   },
 
   handleApproveLeave(leaveId, status, containerId) {
-    window.appStore.updateLeaveStatus(leaveId, status, 'ครูวิภาดา ศรีมงคล', status === 'APPROVED' ? 'อนุมัติเรียบร้อยค่ะ' : 'เนื่องจากไม่อยู่ในเงื่อนไขการลา');
+    const teacherName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
+    window.appStore.updateLeaveStatus(leaveId, status, teacherName, status === 'APPROVED' ? 'อนุมัติเรียบร้อยค่ะ' : 'เนื่องจากไม่อยู่ในเงื่อนไขการลา');
     
     window.appStore.addAuditLog(
-      'ครูวิภาดา ศรีมงคล',
+      teacherName,
       'APPROVE_LEAVE',
       `ปรับสถานะคำขอแจ้งลา (${leaveId}) เป็น ${status}`
     );
@@ -335,6 +337,7 @@ const TeacherView = {
   },
 
   saveGrowthData(childId, childNickname, containerId) {
+    const teacherName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
     const child = window.appStore.getChildById(childId);
     if (child) {
       const height = parseFloat(document.getElementById(`growth-h-${childId}`).value) || 98.5;
@@ -348,17 +351,20 @@ const TeacherView = {
       window.appStore.saveData(window.appStore.data);
 
       window.appStore.addAuditLog(
-        'ครูวิภาดา ศรีมงคล',
+        teacherName,
         'SAVE_GROWTH_DATA',
         `บันทึกข้อมูลการเติบโต (ส่วนสูง ${height} ซม. / น้ำหนัก ${weight} กก. / BMI ${bmi}) ของ ${childNickname}`
       );
 
-      alert(`บันทึกข้อมูลส่วนสูงและน้ำหนักของ ${childNickname} เรียบร้อยแล้ว! (คำนวณ BMI: ${bmi})`);
+      if (window.ModalsComponent) {
+        window.ModalsComponent.showToast(`บันทึกข้อมูลส่วนสูงและน้ำหนักของ ${childNickname} เรียบร้อยแล้ว! (BMI: ${bmi})`, 'success');
+      }
       this.render(containerId);
     }
   },
 
   saveDevEval(childId, childName, containerId) {
+    const teacherName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
     const physicalScore = parseInt(document.getElementById(`dev-phy-${childId}`).value);
     const emotionalScore = parseInt(document.getElementById(`dev-emo-${childId}`).value);
     const socialScore = parseInt(document.getElementById(`dev-soc-${childId}`).value);
@@ -374,17 +380,19 @@ const TeacherView = {
       emotionalScore,
       socialScore,
       intellectualScore,
-      evaluator: 'ครูวิภาดา ศรีมงคล',
+      evaluator: teacherName,
       notes
     });
 
     window.appStore.addAuditLog(
-      'ครูวิภาดา ศรีมงคล',
+      teacherName,
       'SAVE_DEV_EVAL',
       `บันทึกผลการประเมินพัฒนาการ 4 ด้าน ของ ${childName}`
     );
 
-    alert(`บันทึกผลประเมินพัฒนาการของ ${childName} เรียบร้อยแล้ว!`);
+    if (window.ModalsComponent) {
+      window.ModalsComponent.showToast(`บันทึกผลประเมินพัฒนาการของ ${childName} เรียบร้อยแล้ว!`, 'success');
+    }
     this.render(containerId);
   }
 };

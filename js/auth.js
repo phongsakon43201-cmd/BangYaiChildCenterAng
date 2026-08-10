@@ -51,8 +51,34 @@ class AuthController {
   constructor() {
     this.isAuthenticated = localStorage.getItem('BANGYAI_IS_AUTHENTICATED') === 'true';
     this.currentRole = localStorage.getItem('BANGYAI_CURRENT_ROLE') || 'TEACHER';
-    this.currentUser = JSON.parse(localStorage.getItem('BANGYAI_CURRENT_USER')) || ROLES[this.currentRole].demoUser;
+    
+    let storedUser = null;
+    try {
+      storedUser = JSON.parse(localStorage.getItem('BANGYAI_CURRENT_USER'));
+    } catch (e) {
+      storedUser = null;
+    }
+
+    const defaultUser = ROLES[this.currentRole] ? ROLES[this.currentRole].demoUser : ROLES.TEACHER.demoUser;
+    this.currentUser = storedUser || defaultUser;
+    
+    // Auto-Healing: Ensure user name is never corrupted or question marks
+    this.currentUser.name = this.sanitizeName(this.currentUser.name, this.currentRole);
+    localStorage.setItem('BANGYAI_CURRENT_USER', JSON.stringify(this.currentUser));
+
     this.listeners = [];
+  }
+
+  sanitizeName(name, roleId = 'TEACHER') {
+    const roleDefault = ROLES[roleId] ? ROLES[roleId].demoUser.name : 'ผู้ใช้งานระบบ';
+    if (!name || typeof name !== 'string') return roleDefault;
+    
+    const trimmed = name.trim();
+    // Check if name contains only ? or question marks or invalid replacement chars
+    if (trimmed.includes('?') || /^[?\s\uFFFD]+$/.test(trimmed) || trimmed.length < 2) {
+      return roleDefault;
+    }
+    return trimmed;
   }
 
   getCurrentRole() {
@@ -60,13 +86,19 @@ class AuthController {
   }
 
   getCurrentUser() {
+    if (this.currentUser) {
+      this.currentUser.name = this.sanitizeName(this.currentUser.name, this.currentRole);
+    }
     return this.currentUser;
   }
 
   loginAsRole(roleId, customUser = null) {
     if (ROLES[roleId]) {
       this.currentRole = roleId;
-      this.currentUser = customUser || ROLES[roleId].demoUser;
+      const targetUser = customUser ? { ...customUser } : { ...ROLES[roleId].demoUser };
+      targetUser.name = this.sanitizeName(targetUser.name, roleId);
+      
+      this.currentUser = targetUser;
       this.isAuthenticated = true;
 
       localStorage.setItem('BANGYAI_IS_AUTHENTICATED', 'true');

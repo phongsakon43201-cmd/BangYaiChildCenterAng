@@ -15,6 +15,8 @@ const NavbarComponent = {
     const isAuthenticated = window.authController.isAuthenticated;
     const centerInfo = window.appStore.getCenterInfo();
 
+    const displayName = window.authController ? window.authController.sanitizeName(currentUser?.name, currentRole.id) : (currentUser?.name || 'ผู้ใช้งานระบบ');
+
     container.innerHTML = `
       <!-- Accessibility Control Strip for Elders / Accessibility -->
       <div style="background: #1E293B; color: #F8FAFC; padding: 0.25rem 1.5rem; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
@@ -46,10 +48,10 @@ const NavbarComponent = {
             ${isAuthenticated ? `
               <!-- Logged In User Profile & Strict Role Lock Badge -->
               <div style="display: flex; align-items: center; gap: 0.75rem; background: var(--bg-app); border: 1px solid var(--border-color); padding: 0.4rem 1rem; border-radius: var(--radius-full);">
-                <span style="font-size: 1.35rem;">${currentUser.avatar || '👤'}</span>
+                <span style="font-size: 1.35rem;">${currentUser?.avatar || '👤'}</span>
                 <div>
                   <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-main); line-height: 1.2;">
-                    ${currentUser.name}
+                    ${displayName}
                   </div>
                   <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;">
                     <span>🔒 สิทธิ์ผู้ใช้:</span>

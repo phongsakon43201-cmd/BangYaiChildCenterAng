@@ -188,10 +188,11 @@ const ParentLandingComponent = {
       const { data, error } = await window.supabaseService.signIn(email, password);
       if (!error && data?.session) {
         const sbUser = data.session.user;
-        const fullName = sbUser.user_metadata?.full_name || email.split('@')[0];
+        const rawName = sbUser.user_metadata?.full_name || email.split('@')[0];
+        const cleanName = window.authController ? window.authController.sanitizeName(rawName, 'PARENT') : rawName;
         const customUser = {
           username: email,
-          name: fullName,
+          name: cleanName,
           subtitle: `ผู้ปกครอง (Supabase Auth)`,
           avatar: '👩‍👦'
         };
