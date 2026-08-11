@@ -117,9 +117,13 @@ class SupabaseService {
     const client = this.getClient();
     if (!client) return;
     try {
+      let normalizedLeaveType = leaveReq.leaveType || 'ลาป่วย';
+      if (normalizedLeaveType === 'ลากิจ') normalizedLeaveType = 'ลากิจจำเป็น';
+      if (normalizedLeaveType === 'อื่นๆ') normalizedLeaveType = 'ลาอื่นๆ';
+
       await client.from('leave_requests').upsert({
         child_id: leaveReq.childId,
-        leave_type: leaveReq.leaveType,
+        leave_type: normalizedLeaveType,
         start_date: leaveReq.startDate,
         end_date: leaveReq.endDate,
         reason: leaveReq.reason,
@@ -167,6 +171,52 @@ class SupabaseService {
     } catch (err) {
       console.warn('LINE Notify API Notice:', err);
       return false;
+    }
+  }
+  // Supabase Database Realtime Channel Listener
+  subscribeRealtimeDB(onDatabaseChange) {
+    const client = this.getClient();
+    if (!client) return null;
+    try {
+      const channel = client
+        .channel('public-db-changes')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public' },
+          (payload) => {
+            console.log('⚡ Supabase Realtime DB Event Received:', payload);
+            if (typeof onDatabaseChange === 'function') {
+              onDatabaseChange(payload);
+            }
+          }
+        )
+        .subscribe();
+      console.log('📡 Supabase Realtime DB Subscription Active');
+      return channel;
+    } catch (err) {
+      console.warn('Supabase Realtime notice:', err);
+      return null;
+    }
+  }
+
+  // Supabase Database Fetch All Initial State
+  async fetchAllDBData() {
+    const client = this.getClient();
+    if (!client) return null;
+    try {
+      const [leavesRes, attRes, auditRes] = await Promise.all([
+        client.from('leave_requests').select('*').order('submitted_at', { ascending: false }),
+        client.from('attendance').select('*'),
+        client.from('audit_logs').select('*').order('created_at', { ascending: false })
+      ]);
+      return {
+        leaveRequests: leavesRes.data || [],
+        attendance: attRes.data || [],
+        auditLogs: auditRes.data || []
+      };
+    } catch (err) {
+      console.warn('Supabase DB fetch notice:', err);
+      return null;
     }
   }
 }

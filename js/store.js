@@ -324,6 +324,9 @@ class AppStore {
     };
     this.data.leaveRequests.unshift(newReq);
 
+    // Auto-update today's attendance status to 'LEAVE' so it instantly reflects in attendance stats and UI
+    this.updateAttendance(req.childId, 'LEAVE', 'ระบบ (ผู้ปกครองแจ้งลา)');
+
     // Async Supabase DB Sync
     if (window.supabaseService) {
       window.supabaseService.syncLeaveRequestToDB(newReq);
@@ -339,6 +342,10 @@ class AppStore {
       req.status = status;
       req.approvedBy = approvedBy;
       req.remark = remark;
+
+      if (status === 'APPROVED') {
+        this.updateAttendance(req.childId, 'LEAVE', approvedBy);
+      }
 
       // Async Supabase DB Sync
       if (window.supabaseService) {

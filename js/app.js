@@ -24,6 +24,13 @@ class AppController {
 
       // 4. Initial Render based on current auth state
       this.updateView();
+
+      // 5. Connect Realtime Supabase Database Sync Listener
+      if (window.supabaseService && typeof window.supabaseService.subscribeRealtimeDB === 'function') {
+        window.supabaseService.subscribeRealtimeDB(() => {
+          this.updateView();
+        });
+      }
     });
   }
 

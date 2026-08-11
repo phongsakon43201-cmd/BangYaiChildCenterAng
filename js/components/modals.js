@@ -45,11 +45,11 @@ const ModalsComponent = {
         <div class="grid-2" style="margin-bottom: 1rem;">
           <div>
             <label class="form-label">ตั้งแต่วันที่</label>
-            <input type="date" id="modal-leave-start" class="form-control" value="2569-08-11" required>
+            <input type="date" id="modal-leave-start" class="form-control" value="2569-08-10" required>
           </div>
           <div>
             <label class="form-label">ถึงวันที่</label>
-            <input type="date" id="modal-leave-end" class="form-control" value="2569-08-11" required>
+            <input type="date" id="modal-leave-end" class="form-control" value="2569-08-10" required>
           </div>
         </div>
 
@@ -75,7 +75,7 @@ const ModalsComponent = {
     const endDate = document.getElementById('modal-leave-end').value;
     const reason = document.getElementById('modal-leave-reason').value;
 
-    const child = window.appStore.getChildById(this.activeChildId);
+    const child = window.appStore.getChildById(this.activeChildId) || { nickname: 'บุตรหลาน', firstName: 'ปัณณธร', parentName: 'ผู้ปกครอง' };
 
     window.appStore.addLeaveRequest({
       childId: this.activeChildId,
@@ -93,7 +93,7 @@ const ModalsComponent = {
       `ยื่นคำขอแจ้งลา (${leaveType}) ให้ ${child.nickname} วันที่ ${startDate}`
     );
 
-    alert('ส่งคำขอแจ้งลาเรียบร้อยแล้ว! ระบบได้ส่งข้อมูลไปยังครูประจำชั้นแล้ว');
+    this.showToast('ส่งคำขอแจ้งลาเรียบร้อยแล้ว! ระบบได้ส่งข้อมูลและอัปเดตสถานะการเข้าเรียนเรียบร้อย', 'success');
     this.closeModal();
 
     if (window.appController) {
