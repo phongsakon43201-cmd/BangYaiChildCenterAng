@@ -255,9 +255,11 @@ const ExecutiveView = {
 
   exportDataCSV() {
     const children = window.appStore.getChildren();
+    const showFullId = this.showFullNationalId || false;
+    const maskId = (idStr) => (showFullId ? idStr : (idStr || '').replace(/^(\d-\d{4}-)\d{5}(-\d{2}-\d)$/, '$1XXXXX$2'));
     const rows = [
-      ['National ID', 'First Name', 'Last Name', 'Nickname', 'Gender', 'Age', 'Parent Name', 'Parent Phone', 'Allergy'],
-      ...children.map(c => [c.nationalId, c.firstName, c.lastName, c.nickname, c.gender, c.ageString, c.parentName, c.parentPhone, c.allergy])
+      ['เลขประจำตัวประชาชน (PDPA)', 'ชื่อ', 'นามสกุล', 'ชื่อเล่น', 'เพศ', 'อายุ', 'ผู้ปกครอง', 'เบอร์โทรศัพท์', 'ประวัติการแพ้อาหาร'],
+      ...children.map(c => [maskId(c.nationalId), c.firstName, c.lastName, c.nickname, c.gender, c.ageString, c.parentName, c.parentPhone, c.allergy])
     ];
     window.ExportUtils.exportToCSV('BangYai_Child_Center_Registry_2569.csv', rows);
   }

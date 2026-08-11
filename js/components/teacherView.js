@@ -212,9 +212,12 @@ const TeacherView = {
       const devRecs = window.appStore.getDevelopmentRecords();
       return `
         <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-            <h3 style="font-weight: 700; font-size: 1.1rem;">แบบบันทึกการประเมินพัฒนาการ 4 ด้าน (เทอม 1/2569)</h3>
-            <span class="badge badge-parent">มาตรฐานสถานพัฒนาเด็กปฐมวัยแห่งชาติ</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+            <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">แบบบันทึกการประเมินพัฒนาการ 4 ด้าน (เทอม 1/2569)</h3>
+            <div>
+              <span class="badge badge-parent">มาตรฐานสถานพัฒนาเด็กปฐมวัยแห่งชาติ</span>
+              <span class="badge badge-warning" style="font-size: 0.72rem; margin-left: 0.25rem;">⚠️ ไม่ใช้แทนการวินิจฉัยทางการแพทย์</span>
+            </div>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 1.25rem;">

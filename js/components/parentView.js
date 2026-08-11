@@ -29,7 +29,7 @@ const ParentView = {
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
             <div style="display: flex; align-items: center; gap: 1rem;">
               <div class="student-avatar" style="width: 56px; height: 56px; font-size: 1.5rem; background: var(--role-parent); color: #FFF;">
-                ${activeChild.nickname.substring(activeChild.nickname.length - 1)}
+                ${activeChild.nickname.charAt(0)}
               </div>
               <div>
                 <span class="badge badge-parent" style="margin-bottom: 0.25rem;">🔒 ข้อมูลบุตรหลานในความดูแลของคุณ</span>
@@ -66,7 +66,12 @@ const ParentView = {
             <div>
               <div class="stat-label">สถานะการมาเรียนวันนี้</div>
               <div class="stat-value" style="font-size: 1.2rem;">
-                ${childAtt ? (childAtt.status === 'PRESENT' ? '<span style="color: var(--success-500);">มาเรียน (07:45 น.)</span>' : '<span style="color: var(--warning-500);">แจ้งลาป่วย</span>') : 'รอครูเช็กชื่อ'}
+                ${childAtt ? (
+                  childAtt.status === 'PRESENT' ? `<span style="color: var(--success-500);">มาเรียน (${childAtt.checkTime || '07:45 น.'})</span>` :
+                  childAtt.status === 'LATE' ? `<span style="color: var(--warning-500);">มาสาย (${childAtt.checkTime || '08:15 น.'})</span>` :
+                  childAtt.status === 'LEAVE' ? `<span style="color: var(--info-500);">แจ้งลา (${childAtt.checkTime || '-'})</span>` :
+                  '<span style="color: var(--danger-500);">ขาดเรียน</span>'
+                ) : 'รอครูเช็กชื่อ'}
               </div>
               <div class="stat-label" style="font-size: 0.75rem;">ผู้เช็กชื่อ: ${childAtt ? childAtt.checkedBy : '-'}</div>
             </div>
@@ -137,9 +142,12 @@ const ParentView = {
         <div class="grid-2" style="margin-bottom: 1.5rem;">
           <!-- Left: Spider Radar Chart -->
           <div class="glass-card">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-              <h3 style="font-weight: 700; font-size: 1.1rem;">กราฟใยแมงมุมประเมินพัฒนาการ 4 ด้าน</h3>
-              <span class="badge badge-info">เทอม 1/2569</span>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+              <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">กราฟใยแมงมุมประเมินพัฒนาการ 4 ด้าน</h3>
+              <div>
+                <span class="badge badge-info">เทอม 1/2569</span>
+                <span class="badge badge-warning" style="font-size: 0.72rem; margin-left: 0.25rem;">⚠️ ไม่ใช้แทนการวินิจฉัยทางการแพทย์</span>
+              </div>
             </div>
 
             <div style="display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap;">
