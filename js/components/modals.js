@@ -122,7 +122,7 @@ const ModalsComponent = {
           <label class="form-label">กลุ่มเป้าหมายผู้รับ</label>
           <select id="modal-ann-target" class="form-control">
             <option value="ALL">ทุกห้องเรียนในศูนย์พัฒนาเด็กเล็ก</option>
-            <option value="class-2">เฉพาะห้องอนุบาล 1/1</option>
+            <option value="class-bm">เฉพาะห้องลูกหมีน่ารัก</option>
           </select>
         </div>
 
@@ -210,7 +210,7 @@ const ModalsComponent = {
     window.appStore.addActivity({
       title,
       description,
-      classId: 'class-2',
+      classId: 'class-bm',
       image: './assets/images/banner.png'
     });
 
