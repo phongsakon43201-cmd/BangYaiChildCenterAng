@@ -151,25 +151,30 @@ class SupabaseService {
     }
   }
 
-  // LINE Messaging API / LINE Notify Helper
-  async sendLineNotifyAPI(token, messageText) {
-    if (!token) return false;
+  // LINE Messaging API Helper (Modern Replacement for Deprecated LINE Notify)
+  async sendLineMessagingAPI(channelAccessToken, toUserIdOrGroupId, messageText) {
+    if (!channelAccessToken || !toUserIdOrGroupId) return false;
     try {
-      const formData = new URLSearchParams();
-      formData.append('message', messageText);
-      
-      await fetch('https://notify-api.line.me/api/notify', {
+      await fetch('https://api.line.me/v2/bot/message/push', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${channelAccessToken}`
         },
-        body: formData
+        body: JSON.stringify({
+          to: toUserIdOrGroupId,
+          messages: [
+            {
+              type: 'text',
+              text: messageText
+            }
+          ]
+        })
       });
-      console.log('📲 Real LINE Notify sent successfully!');
+      console.log('📲 Real LINE Messaging API Push sent successfully!');
       return true;
     } catch (err) {
-      console.warn('LINE Notify API Notice:', err);
+      console.warn('LINE Messaging API Notice:', err);
       return false;
     }
   }

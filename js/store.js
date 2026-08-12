@@ -375,10 +375,11 @@ class AppStore {
     };
     this.data.lineNotifications.unshift(notifItem);
 
-    // Optional Real LINE Notify Integration (If LINE Token is set)
-    const lineToken = localStorage.getItem('BANGYAI_LINE_NOTIFY_TOKEN');
-    if (lineToken && window.supabaseService) {
-      window.supabaseService.sendLineNotifyAPI(lineToken, `${title}\n${message}`);
+    // Optional Real LINE Messaging API Integration (Official Replacement for LINE Notify)
+    const channelToken = localStorage.getItem('BANGYAI_LINE_CHANNEL_TOKEN') || 'L7/4yLNWgK1roywgIIx98q84tRljHPAv7SjKG6ExDkATxkCGNwqqI3Nm4oiaeVMBEtAgflw8LJzt4ghPKfFLXUWRsRlHAraAHUaXDbwk/W0FsibrVYyVaYDFI1RBPh0HGXGwxYqqYVLRP8Snr6bSSwdB04t89/1O/w1cDnyilFU=';
+    const lineTargetId = localStorage.getItem('BANGYAI_LINE_TARGET_ID') || 'U97dc0505bb590d70c66d401224a422db';
+    if (channelToken && lineTargetId && window.supabaseService) {
+      window.supabaseService.sendLineMessagingAPI(channelToken, lineTargetId, `${title}\n${message}`);
     }
   }
 
