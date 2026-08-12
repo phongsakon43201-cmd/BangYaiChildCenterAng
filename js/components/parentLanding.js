@@ -126,12 +126,12 @@ const ParentLandingComponent = {
             <form onsubmit="ParentLandingComponent.handleParentLogin(event)">
               <div class="form-group">
                 <label class="form-label" for="parent-email">ชื่อผู้ใช้ (Username) หรือ อีเมล</label>
-                <input type="text" id="parent-email" class="form-control" placeholder="เช่น BY-PAR01 หรือ by-par01@bangyai.go.th" required>
+                <input type="text" id="parent-email" class="form-control" placeholder="" required>
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="parent-password">รหัสผ่าน (Password)</label>
-                <input type="password" id="parent-password" class="form-control" placeholder="••••••••" required>
+                <input type="password" id="parent-password" class="form-control" placeholder="" required>
               </div>
 
               <button type="submit" id="btn-parent-login" class="btn" style="width: 100%; background: #2563EB; color: #FFF; padding: 0.85rem; font-size: 1rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; border: none; box-shadow: 0 4px 14px rgba(37,99,235,0.3); margin-top: 0.5rem;">

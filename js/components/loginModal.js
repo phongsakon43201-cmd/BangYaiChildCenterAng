@@ -35,7 +35,7 @@ const LoginModalComponent = {
         accentColor: '#10B981',
         btnBg: '#059669',
         icon: '👩‍🏫',
-        usernamePlaceholder: 'เช่น BY-T01 หรือ by-t01@bangyai.go.th',
+        usernamePlaceholder: '',
         desc: 'สำหรับบันทึกการเช็กชื่อ อนุมัติคำขอแจ้งลา ประเมินพัฒนาการ และเผยแพร่ข่าวสาร',
         items: ['เช็กชื่อและบันทึกสถานะ', 'ตอบรับคำขอแจ้งลา', 'บันทึกพัฒนาการ 4 ด้าน', 'เผยแพร่ข่าวสารประจำชั้น', 'สื่อสารกับผู้ปกครอง']
       },
@@ -46,7 +46,7 @@ const LoginModalComponent = {
         accentColor: '#8B5CF6',
         btnBg: '#7C3AED',
         icon: '👨‍💼',
-        usernamePlaceholder: 'เช่น BY-EXEC01 หรือ by-exec01@bangyai.go.th',
+        usernamePlaceholder: '',
         desc: 'สำหรับตรวจสอบแดชบอร์ดภาพรวม สถิติการมาเรียน การเติบโต และรายงานเชิงนโยบาย',
         items: ['Dashboard จำนวนเด็กและห้อง', 'สถิติอัตราการมาเรียน', 'ภาพรวมพัฒนาการเด็ก', 'ข่าวสารกิจกรรมภาพรวม', 'ออกรายงานและ Audit Logs']
       }
@@ -57,7 +57,7 @@ const LoginModalComponent = {
       accentColor: '#3B82F6',
       btnBg: '#2563EB',
       icon: '👩‍👦',
-      usernamePlaceholder: 'เช่น BY-PAR01 หรือ by-par01@bangyai.go.th',
+      usernamePlaceholder: '',
       desc: 'สำหรับติดตามประวัติการมาเรียน บันทึกพัฒนาการ และยื่นคำขอแจ้งลาบุตรหลาน',
       items: ['ประวัติและการมาเรียน', 'ข่าวสาร • กิจกรรม • อาหาร', 'บันทึกพัฒนาการ', 'ส่งและติดตามคำขอแจ้งลา', 'รับข้อมูลหรือติดต่อครู']
     };
@@ -125,7 +125,7 @@ const LoginModalComponent = {
 
               <div class="form-group">
                 <label class="form-label">รหัสผ่าน (Password)</label>
-                <input type="password" id="portal-password" class="form-control" placeholder="••••••••" required>
+                <input type="password" id="portal-password" class="form-control" placeholder="" required>
               </div>
 
               <button type="submit" id="btn-portal-submit" class="btn" style="width: 100%; background: ${roleInfo.btnBg}; color: #FFF; padding: 0.85rem; font-size: 1rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; border: none; box-shadow: 0 4px 14px ${roleInfo.accentColor}40;">

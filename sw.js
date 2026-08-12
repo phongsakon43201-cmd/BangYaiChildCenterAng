@@ -1,9 +1,9 @@
 /* ==========================================================================
    Bang Yai Child Development Center MIS - PWA Service Worker
-   Offline Cache Management & PWA Functionality
+   Offline Cache Management & PWA Functionality (Network-First Strategy)
    ========================================================================== */
 
-const CACHE_NAME = 'bangyai-child-mis-v2';
+const CACHE_NAME = 'bangyai-child-mis-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -52,10 +52,22 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+// Network-First fetch strategy: Fetch fresh version from Netlify first, fallback to cache if offline
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request);
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && event.request.url.startsWith('http')) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });
