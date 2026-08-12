@@ -155,7 +155,11 @@ class SupabaseService {
   async sendLineMessagingAPI(channelAccessToken, toUserIdOrGroupId, messageText) {
     if (!channelAccessToken || !toUserIdOrGroupId) return false;
     try {
-      await fetch('https://api.line.me/v2/bot/message/push', {
+      const lineEndpoint = 'https://api.line.me/v2/bot/message/push';
+      // Use CORS proxy to bypass browser-side CORS restriction when running client-side
+      const targetUrl = 'https://corsproxy.io/?' + encodeURIComponent(lineEndpoint);
+
+      const response = await fetch(targetUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -171,8 +175,15 @@ class SupabaseService {
           ]
         })
       });
-      console.log('📲 Real LINE Messaging API Push sent successfully!');
-      return true;
+
+      if (response.ok) {
+        console.log('📲 Real LINE Messaging API Push sent successfully!');
+        return true;
+      } else {
+        const errText = await response.text();
+        console.warn('LINE Messaging API Response Error:', response.status, errText);
+        return false;
+      }
     } catch (err) {
       console.warn('LINE Messaging API Notice:', err);
       return false;
