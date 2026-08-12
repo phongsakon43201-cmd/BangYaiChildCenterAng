@@ -19,8 +19,9 @@ const TeacherView = {
     const pendingLeaves = leaveReqs.filter(l => l.status === 'PENDING');
 
     const classAtts = attendance.filter(a => children.some(c => c.id === a.childId));
+    const checkedCount = classAtts.length;
     const presentCount = classAtts.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length;
-    const rate = Math.round((presentCount / (children.length || 1)) * 100);
+    const rate = checkedCount > 0 ? Math.round((presentCount / (checkedCount || 1)) * 100) : 0;
 
     container.innerHTML = `
       <div class="animate-fade-in">
@@ -31,7 +32,7 @@ const TeacherView = {
               <span class="badge badge-teacher" style="margin-bottom: 0.25rem;">มุมมองครู / ผู้ดูแลเด็ก</span>
               <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0;">${activeClass.name}</h2>
               <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-                ครูประจำชั้น: <strong>${activeClass.teacherName}</strong> | จำนวนเด็กทั้งหมด: ${children.length} คน
+                ครูประจำชั้น: <strong>${activeClass.teacherName}</strong> | เช็กชื่อแล้ว: <strong>${checkedCount}/${children.length} คน</strong>
               </p>
             </div>
 
@@ -49,7 +50,7 @@ const TeacherView = {
         <!-- Sub Tabs for Teacher -->
         <div class="view-tabs">
           <button class="tab-link ${this.currentTab === 'ATTENDANCE' ? 'active' : ''}" onclick="TeacherView.currentTab = 'ATTENDANCE'; TeacherView.render('${containerId}');">
-            📋 เช็กชื่อการเข้าเรียน (${rate}%)
+            📋 เช็กชื่อการเข้าเรียน (${checkedCount}/${children.length} คน)
           </button>
           <button class="tab-link ${this.currentTab === 'LEAVE_APPROVALS' ? 'active' : ''}" onclick="TeacherView.currentTab = 'LEAVE_APPROVALS'; TeacherView.render('${containerId}');">
             📩 คำขอแจ้งลา (${pendingLeaves.length})
@@ -85,7 +86,21 @@ const TeacherView = {
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
             ${children.map(child => {
               const att = attendance.find(a => a.childId === child.id);
-              const status = att ? att.status : 'PRESENT';
+              const status = att ? att.status : null;
+              
+              let statusBadgeHtml = '';
+              if (!status) {
+                statusBadgeHtml = `<span class="badge" style="background: #F3F4F6; color: #6B7280; border: 1px dashed #D1D5DB; font-size: 0.75rem;">⏳ ยังไม่ได้เช็กชื่อ</span>`;
+              } else if (status === 'PRESENT') {
+                statusBadgeHtml = `<span class="badge badge-success" style="font-size: 0.75rem;">✓ มาเรียน (${att.checkTime || '07:45 น.'})</span>`;
+              } else if (status === 'LATE') {
+                statusBadgeHtml = `<span class="badge badge-warning" style="font-size: 0.75rem;">⏱ มาสาย (${att.checkTime || '08:15 น.'})</span>`;
+              } else if (status === 'LEAVE') {
+                statusBadgeHtml = `<span class="badge badge-info" style="font-size: 0.75rem;">📄 แจ้งลา (${att.checkedBy || 'ผู้ปกครองแจ้งลา'})</span>`;
+              } else if (status === 'ABSENT') {
+                statusBadgeHtml = `<span class="badge badge-danger" style="font-size: 0.75rem;">✕ ขาดเรียน</span>`;
+              }
+
               return `
                 <div class="attendance-card">
                   <div class="student-info">
@@ -93,8 +108,11 @@ const TeacherView = {
                       ${child.nickname.charAt(0)}
                     </div>
                     <div>
-                      <strong style="font-size: 1rem; color: var(--text-main);">${child.nickname} (${child.firstName} ${child.lastName})</strong>
-                      <p style="font-size: 0.8rem; color: var(--text-muted);">ผู้ปกครอง: ${child.parentName} | โทร: ${child.parentPhone}</p>
+                      <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <strong style="font-size: 1rem; color: var(--text-main);">${child.nickname} (${child.firstName} ${child.lastName})</strong>
+                        ${statusBadgeHtml}
+                      </div>
+                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">ผู้ปกครอง: ${child.parentName} | โทร: ${child.parentPhone}</p>
                     </div>
                   </div>
 

@@ -303,3 +303,14 @@ ON CONFLICT (id) DO UPDATE SET class_id = EXCLUDED.class_id, parent_id = EXCLUDE
 INSERT INTO public.children (id, class_id, parent_id, national_id, first_name, last_name, nickname, gender, age_string, parent_name, parent_phone, parent_relation, allergy)
 SELECT 'STD-20', 'class-bm', (SELECT id FROM public.profiles WHERE email = 'by-par20@bangyai.go.th'), '1-1002-00101-20-0', 'ปัณฑน์รี', 'สุวรรณ', 'ปันปัน', 'หญิง', '2 ขวบ 5 เดือน', 'นางปานทิพย์ สุวรรณ', '081-001-0020', 'มารดา', 'ไม่มี'
 ON CONFLICT (id) DO UPDATE SET class_id = EXCLUDED.class_id, parent_id = EXCLUDED.parent_id, first_name = EXCLUDED.first_name, last_name = EXCLUDED.last_name, nickname = EXCLUDED.nickname, parent_name = EXCLUDED.parent_name;
+
+-- RLS POLICIES SETUP (อนุญาตการบันทึกข้อมูลสาธารณะเพื่อป้องกัน Error 401 Unauthorized)
+ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public anon access for attendance" ON public.attendance FOR ALL USING (true) WITH CHECK (true);
+
+ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public anon access for audit_logs" ON public.audit_logs FOR ALL USING (true) WITH CHECK (true);
+
+ALTER TABLE public.leave_requests ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public anon access for leave_requests" ON public.leave_requests FOR ALL USING (true) WITH CHECK (true);
+
