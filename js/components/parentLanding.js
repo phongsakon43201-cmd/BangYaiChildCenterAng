@@ -110,7 +110,7 @@ const ParentLandingComponent = {
             </div>
           </div>
 
-          <!-- Column Right: Dedicated Parent Login Box (กับระบบ Supabase Auth) -->
+          <!-- Column Right: Dedicated Parent Login Box -->
           <div id="parent-login-box" class="card" style="padding: 2.25rem; border-top: 6px solid #2563EB; box-shadow: var(--shadow-xl); background: var(--bg-surface);">
             
             <div style="text-align: center; margin-bottom: 1.5rem;">
@@ -119,36 +119,25 @@ const ParentLandingComponent = {
                 ระบบลงชื่อเข้าใช้ผู้ปกครอง
               </h2>
               <p style="font-size: 0.85rem; color: var(--text-muted);">
-                (เข้าใช้งานด้วยบัญชี Supabase Authentication)
+                ศูนย์พัฒนาเด็กเล็กเทศบาลบางใหญ่
               </p>
             </div>
 
             <form onsubmit="ParentLandingComponent.handleParentLogin(event)">
               <div class="form-group">
-                <label class="form-label" for="parent-email">อีเมล / เบอร์โทรศัพท์ผู้ปกครอง</label>
-                <input type="text" id="parent-email" class="form-control" placeholder="เช่น parent@bangyai.go.th หรือ 0812345678" value="parent@bangyai.go.th" required>
+                <label class="form-label" for="parent-email">ชื่อผู้ใช้ (Username) หรือ อีเมล</label>
+                <input type="text" id="parent-email" class="form-control" placeholder="เช่น BY-PAR01 หรือ by-par01@bangyai.go.th" required>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="parent-password">รหัสผ่าน / PIN 6 หลัก</label>
-                <input type="password" id="parent-password" class="form-control" placeholder="••••••••" value="1234" required>
+                <label class="form-label" for="parent-password">รหัสผ่าน (Password)</label>
+                <input type="password" id="parent-password" class="form-control" placeholder="••••••••" required>
               </div>
 
               <button type="submit" id="btn-parent-login" class="btn" style="width: 100%; background: #2563EB; color: #FFF; padding: 0.85rem; font-size: 1rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; border: none; box-shadow: 0 4px 14px rgba(37,99,235,0.3); margin-top: 0.5rem;">
                 เข้าสู่ระบบผู้ปกครอง
               </button>
             </form>
-
-            <div style="margin: 1.5rem 0 1rem 0; text-align: center; position: relative;">
-              <hr style="border: 0; border-top: 1px solid var(--border-color);">
-              <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--bg-surface); padding: 0 10px; font-size: 0.8rem; color: var(--text-muted);">
-                หรือ ทดสอบสิทธิ์ทันที (Quick Demo)
-              </span>
-            </div>
-
-            <button onclick="window.authController.loginAsRole('PARENT')" class="btn" style="width: 100%; background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; font-weight: 600; padding: 0.75rem; border-radius: var(--radius-md); cursor: pointer;">
-              ⚡ ทดสอบเข้าใช้งานบทบาท ผู้ปกครอง (Demo)
-            </button>
 
             <!-- Link to Portal Switcher for Staff/Exec -->
             <div style="margin-top: 1.75rem; text-align: center; font-size: 0.85rem; color: var(--text-muted); border-top: 1px dashed var(--border-color); padding-top: 1rem;">
@@ -177,21 +166,21 @@ const ParentLandingComponent = {
 
   async handleParentLogin(event) {
     event.preventDefault();
-    const email = document.getElementById('parent-email').value;
+    const userInput = document.getElementById('parent-email').value.trim();
     const password = document.getElementById('parent-password').value;
     const btn = document.getElementById('btn-parent-login');
 
-    if (btn) btn.innerText = 'กำลังตรวจสอบข้อมูลกับ Supabase...';
+    if (btn) btn.innerText = 'กำลังตรวจสอบสิทธิ์...';
 
-    // Try Supabase Auth Login
-    if (window.supabaseService) {
-      const { data, error } = await window.supabaseService.signIn(email, password);
+    // Try Supabase Auth Login if email
+    if (userInput.includes('@') && window.supabaseService) {
+      const { data, error } = await window.supabaseService.signIn(userInput, password);
       if (!error && data?.session) {
         const sbUser = data.session.user;
-        const rawName = sbUser.user_metadata?.full_name || email.split('@')[0];
+        const rawName = sbUser.user_metadata?.full_name || userInput.split('@')[0];
         const cleanName = window.authController ? window.authController.sanitizeName(rawName, 'PARENT') : rawName;
         const customUser = {
-          username: email,
+          username: userInput,
           name: cleanName,
           subtitle: `ผู้ปกครอง (Supabase Auth)`,
           avatar: '👩‍👦'
@@ -202,10 +191,19 @@ const ParentLandingComponent = {
       }
     }
 
-    // Fallback login for demo testing
-    window.authController.loginAsRole('PARENT');
-    if (window.ModalsComponent) {
-      window.ModalsComponent.showToast('เข้าสู่ระบบในฐานะผู้ปกครองเรียบร้อย', 'success');
+    // Local Verification with Official Accounts
+    const res = window.authController.login(userInput, password);
+    if (res.success) {
+      if (window.ModalsComponent) {
+        window.ModalsComponent.showToast(`ยินดีต้อนรับคุณ ${res.user.name} เข้าสู่ระบบ`, 'success');
+      }
+    } else {
+      if (btn) btn.innerText = 'เข้าสู่ระบบผู้ปกครอง';
+      if (window.ModalsComponent) {
+        window.ModalsComponent.showToast(res.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง', 'error');
+      } else {
+        alert(res.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+      }
     }
   }
 };

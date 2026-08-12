@@ -4,7 +4,7 @@
    ========================================================================== */
 
 const TeacherView = {
-  selectedClassId: 'class-2',
+  selectedClassId: 'class-bm',
   currentTab: 'ATTENDANCE', // ATTENDANCE, LEAVE_APPROVALS, DEV_EVAL, GROWTH_RECORD, ACTIVITIES
 
   render(containerId) {

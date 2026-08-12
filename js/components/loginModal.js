@@ -1,7 +1,7 @@
 /* ==========================================================================
    Bang Yai Child Development Center MIS - Role-Specific Login Portals
    Provides dedicated login portals for Parent, Teacher, Executive (ของใครของมัน)
-   Integrated with Supabase Authentication
+   Integrated with Supabase Authentication & Official Accounts
    ========================================================================== */
 
 const LoginModalComponent = {
@@ -35,7 +35,7 @@ const LoginModalComponent = {
         accentColor: '#10B981',
         btnBg: '#059669',
         icon: '👩‍🏫',
-        emailPlaceholder: 'teacher@bangyai.go.th',
+        usernamePlaceholder: 'เช่น BY-T01 หรือ by-t01@bangyai.go.th',
         desc: 'สำหรับบันทึกการเช็กชื่อ อนุมัติคำขอแจ้งลา ประเมินพัฒนาการ และเผยแพร่ข่าวสาร',
         items: ['เช็กชื่อและบันทึกสถานะ', 'ตอบรับคำขอแจ้งลา', 'บันทึกพัฒนาการ 4 ด้าน', 'เผยแพร่ข่าวสารประจำชั้น', 'สื่อสารกับผู้ปกครอง']
       },
@@ -46,7 +46,7 @@ const LoginModalComponent = {
         accentColor: '#8B5CF6',
         btnBg: '#7C3AED',
         icon: '👨‍💼',
-        emailPlaceholder: 'executive@bangyai.go.th',
+        usernamePlaceholder: 'เช่น BY-EXEC01 หรือ by-exec01@bangyai.go.th',
         desc: 'สำหรับตรวจสอบแดชบอร์ดภาพรวม สถิติการมาเรียน การเติบโต และรายงานเชิงนโยบาย',
         items: ['Dashboard จำนวนเด็กและห้อง', 'สถิติอัตราการมาเรียน', 'ภาพรวมพัฒนาการเด็ก', 'ข่าวสารกิจกรรมภาพรวม', 'ออกรายงานและ Audit Logs']
       }
@@ -57,7 +57,7 @@ const LoginModalComponent = {
       accentColor: '#3B82F6',
       btnBg: '#2563EB',
       icon: '👩‍👦',
-      emailPlaceholder: 'parent@bangyai.go.th',
+      usernamePlaceholder: 'เช่น BY-PAR01 หรือ by-par01@bangyai.go.th',
       desc: 'สำหรับติดตามประวัติการมาเรียน บันทึกพัฒนาการ และยื่นคำขอแจ้งลาบุตรหลาน',
       items: ['ประวัติและการมาเรียน', 'ข่าวสาร • กิจกรรม • อาหาร', 'บันทึกพัฒนาการ', 'ส่งและติดตามคำขอแจ้งลา', 'รับข้อมูลหรือติดต่อครู']
     };
@@ -105,7 +105,7 @@ const LoginModalComponent = {
             </div>
 
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px dashed var(--border-color);">
-              🔒 เชื่อมต่อกับระบบ Supabase Auth เทศบาลเมืองบางใหญ่
+              🔒 ระบบความปลอดภัยและระบุตัวตน ศูนย์พัฒนาเด็กเล็กเทศบาลบางใหญ่
             </div>
           </div>
 
@@ -119,30 +119,19 @@ const LoginModalComponent = {
 
             <form onsubmit="LoginModalComponent.handlePortalSubmit(event, '${roleId}')">
               <div class="form-group">
-                <label class="form-label">อีเมลผู้ใช้งาน</label>
-                <input type="email" id="portal-email" class="form-control" placeholder="${roleInfo.emailPlaceholder}" value="${roleInfo.emailPlaceholder}" required>
+                <label class="form-label">ชื่อผู้ใช้ (Username) หรือ อีเมล</label>
+                <input type="text" id="portal-email" class="form-control" placeholder="${roleInfo.usernamePlaceholder}" required>
               </div>
 
               <div class="form-group">
-                <label class="form-label">รหัสผ่าน</label>
-                <input type="password" id="portal-password" class="form-control" placeholder="••••••••" value="1234" required>
+                <label class="form-label">รหัสผ่าน (Password)</label>
+                <input type="password" id="portal-password" class="form-control" placeholder="••••••••" required>
               </div>
 
               <button type="submit" id="btn-portal-submit" class="btn" style="width: 100%; background: ${roleInfo.btnBg}; color: #FFF; padding: 0.85rem; font-size: 1rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; border: none; box-shadow: 0 4px 14px ${roleInfo.accentColor}40;">
                 เข้าสู่ระบบ (${roleInfo.badge})
               </button>
             </form>
-
-            <div style="margin: 1.5rem 0 1rem 0; text-align: center; position: relative;">
-              <hr style="border: 0; border-top: 1px solid var(--border-color);">
-              <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--bg-surface); padding: 0 10px; font-size: 0.78rem; color: var(--text-muted);">
-                ทดสอบเข้าใช้งาน (Quick Demo)
-              </span>
-            </div>
-
-            <button onclick="window.authController.loginAsRole('${roleId}')" class="btn btn-secondary" style="width: 100%; font-weight: 600; padding: 0.75rem;">
-              ⚡ ทดสอบสิทธิ์ ${roleInfo.badge} (Demo Login)
-            </button>
 
           </div>
 
@@ -154,23 +143,23 @@ const LoginModalComponent = {
 
   async handlePortalSubmit(event, roleId) {
     event.preventDefault();
-    const email = document.getElementById('portal-email').value;
+    const userInput = document.getElementById('portal-email').value.trim();
     const password = document.getElementById('portal-password').value;
     const btn = document.getElementById('btn-portal-submit');
 
-    if (btn) btn.innerText = 'กำลังตรวจสอบข้อมูลกับ Supabase...';
+    if (btn) btn.innerText = 'กำลังตรวจสอบสิทธิ์...';
 
-    // Try Supabase Auth
-    if (window.supabaseService) {
-      const { data, error } = await window.supabaseService.signIn(email, password);
+    // Try Supabase Auth first if input contains '@'
+    if (userInput.includes('@') && window.supabaseService) {
+      const { data, error } = await window.supabaseService.signIn(userInput, password);
       if (!error && data?.session) {
         const sbUser = data.session.user;
-        const rawName = sbUser.user_metadata?.full_name || email.split('@')[0];
+        const rawName = sbUser.user_metadata?.full_name || userInput.split('@')[0];
         const cleanName = window.authController ? window.authController.sanitizeName(rawName, roleId) : rawName;
         const customUser = {
-          username: email,
+          username: userInput,
           name: cleanName,
-          subtitle: `บัญชี Supabase Auth (${email})`,
+          subtitle: `บัญชี Supabase Auth (${userInput})`,
           avatar: roleId === 'TEACHER' ? '👩‍🏫' : roleId === 'EXECUTIVE' ? '👨‍💼' : '👩‍👦'
         };
         window.authController.loginAsRole(roleId, customUser);
@@ -179,10 +168,19 @@ const LoginModalComponent = {
       }
     }
 
-    // Fallback demo login
-    window.authController.loginAsRole(roleId);
-    if (window.ModalsComponent) {
-      window.ModalsComponent.showToast(`เข้าสู่ระบบในฐานะ ${window.authController.getCurrentRole().name} เรียบร้อย`, 'success');
+    // Official Accounts Auth Verification
+    const res = window.authController.login(userInput, password);
+    if (res.success) {
+      if (window.ModalsComponent) {
+        window.ModalsComponent.showToast(`ยินดีต้อนรับคุณ ${res.user.name} เข้าสู่ระบบ`, 'success');
+      }
+    } else {
+      if (btn) btn.innerText = `เข้าสู่ระบบ (${roleId === 'TEACHER' ? 'ครู / ผู้ดูแลเด็ก' : roleId === 'EXECUTIVE' ? 'ผู้บริหาร / เทศบาล' : 'ผู้ปกครอง'})`;
+      if (window.ModalsComponent) {
+        window.ModalsComponent.showToast(res.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง', 'error');
+      } else {
+        alert(res.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+      }
     }
   }
 };

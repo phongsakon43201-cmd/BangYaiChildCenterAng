@@ -4,7 +4,7 @@
    ========================================================================== */
 
 const ParentView = {
-  selectedChildId: 'child-101',
+  selectedChildId: 'STD-01',
 
   render(containerId) {
     const container = document.getElementById(containerId);
@@ -35,7 +35,7 @@ const ParentView = {
                 <span class="badge badge-parent" style="margin-bottom: 0.25rem;">🔒 ข้อมูลบุตรหลานในความดูแลของคุณ</span>
                 <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0;">${activeChild.firstName} ${activeChild.lastName} (${activeChild.nickname})</h2>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-                  ห้องอนุบาล 1/1 | อายุ ${activeChild.ageString} | ผู้ปกครอง: ${currentUser ? currentUser.name : activeChild.parentName} (${activeChild.parentRelation})
+                  ห้องลูกหมีน่ารัก | อายุ ${activeChild.ageString} | ผู้ปกครอง: ${currentUser ? currentUser.name : activeChild.parentName} (${activeChild.parentRelation})
                 </p>
               </div>
             </div>

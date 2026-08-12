@@ -3,136 +3,65 @@
    LocalStorage Persistence with Full Seed Dataset for Bang Yai Municipality
    ========================================================================== */
 
-const STORAGE_KEY = 'BANGYAI_CHILD_CENTER_MIS_V2';
+const STORAGE_KEY = 'BANGYAI_CHILD_CENTER_MIS_V3';
 
 const INITIAL_SEED_DATA = {
   centerInfo: {
-    name: 'ศูนย์พัฒนาเด็กเล็กเทศบาลเมืองบางใหญ่',
+    name: 'ศูนย์พัฒนาเด็กเล็กเทศบาลบางใหญ่',
     subdistrict: 'บางใหญ่',
     district: 'บางใหญ่',
     province: 'นนทบุรี',
     academicYear: '2569',
     term: '1/2569',
-    totalCapacity: 60
+    totalCapacity: 20
   },
 
   classrooms: [
-    { id: 'class-1', name: 'ห้องเตรียมอนุบาล (2-3 ขวบ)', teacherName: 'ครูพิมลวรรณ สุขเสริฐ', studentCount: 15 },
-    { id: 'class-2', name: 'ห้องอนุบาล 1/1 (3-4 ขวบ)', teacherName: 'ครูวิภาดา ศรีมงคล', studentCount: 18 },
-    { id: 'class-3', name: 'ห้องอนุบาล 1/2 (3-4 ขวบ)', teacherName: 'ครูพงศกร ฤกษ์รูจี', studentCount: 17 }
+    { id: 'class-bm', name: 'ห้อง "ลูกหมีน่ารัก" (กลุ่มเตรียมความพร้อม อายุ 2-3 ขวบ)', teacherName: 'นางสาวกานดา ใจดี (ครูแก้ว)', studentCount: 20 }
   ],
 
   children: [
-    {
-      id: 'child-101',
-      classId: 'class-2',
-      nationalId: '1-1002-00345-67-8',
-      firstName: 'ปัณณธร',
-      lastName: 'วิสุทธิ์อัมพร',
-      nickname: 'น้องโปรด',
-      gender: 'ชาย',
-      birthDate: '2566-03-12',
-      ageString: '3 ขวบ 5 เดือน',
-      parentName: 'นาย ณัฐธีร์ วิสุทธิ์อัมพร',
-      parentPhone: '081-234-5678',
-      parentRelation: 'บิดา',
-      allergy: 'ไม่มี',
-      bloodType: 'O',
-      avatarColor: '#4F46E5',
-      heightCm: 98.5,
-      weightKg: 15.2,
-      bmi: 15.6,
-      growthStatus: 'สมส่วนตามเกณฑ์',
-      vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'หัด-หัดเยอรมัน-คางทูม (MMR)', 'ไข้หวัดใหญ่ประจำปี']
-    },
-    {
-      id: 'child-102',
-      classId: 'class-2',
-      nationalId: '1-1002-00345-99-1',
-      firstName: 'มนสิชา',
-      lastName: 'ฤกษ์รูจี',
-      nickname: 'น้องมิริน',
-      gender: 'หญิง',
-      birthDate: '2566-01-20',
-      ageString: '3 ขวบ 7 เดือน',
-      parentName: 'นางสาว ปรียาพร ฤกษ์รูจี',
-      parentPhone: '089-876-5432',
-      parentRelation: 'มารดา',
-      allergy: 'แพ้อาหารทะเล (กุ้ง)',
-      bloodType: 'A',
-      avatarColor: '#EC4899',
-      heightCm: 96.0,
-      weightKg: 14.0,
-      bmi: 15.2,
-      growthStatus: 'สมส่วนตามเกณฑ์',
-      vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR']
-    },
-    {
-      id: 'child-103',
-      classId: 'class-2',
-      nationalId: '1-1002-00346-11-2',
-      firstName: 'วรภพ',
-      lastName: 'สมบูรณ์',
-      nickname: 'น้องวาเลน',
-      gender: 'ชาย',
-      birthDate: '2566-05-15',
-      ageString: '3 ขวบ 3 เดือน',
-      parentName: 'นาย สุรเดช สมบูรณ์',
-      parentPhone: '086-111-2233',
-      parentRelation: 'บิดา',
-      allergy: 'ไม่มี',
-      bloodType: 'B',
-      avatarColor: '#10B981',
-      heightCm: 95.0,
-      weightKg: 14.8,
-      bmi: 16.4,
-      growthStatus: 'สมส่วนตามเกณฑ์',
-      vaccines: ['BCG', 'MMR', 'ไข้หวัดใหญ่ประจำปี']
-    },
-    {
-      id: 'child-104',
-      classId: 'class-2',
-      nationalId: '1-1002-00346-44-5',
-      firstName: 'ณิชารีย์',
-      lastName: 'กิจเจริญ',
-      nickname: 'น้องเฌอเอม',
-      gender: 'หญิง',
-      birthDate: '2566-04-10',
-      ageString: '3 ขวบ 4 เดือน',
-      parentName: 'นาง วนิดา กิจเจริญ',
-      parentPhone: '084-555-6677',
-      parentRelation: 'มารดา',
-      allergy: 'ไม่มี',
-      bloodType: 'AB',
-      avatarColor: '#F59E0B',
-      heightCm: 97.2,
-      weightKg: 14.5,
-      bmi: 15.3,
-      growthStatus: 'สมส่วนตามเกณฑ์',
-      vaccines: ['BCG', 'MMR']
-    }
+    { id: 'STD-01', classId: 'class-bm', nationalId: '1-1002-00101-01-1', firstName: 'กวินท์', lastName: 'สุขเสริฐ', nickname: 'วิน', gender: 'ชาย', birthDate: '2567-02-10', ageString: '2 ขวบ 6 เดือน', parentName: 'นายวิทวัส สุขเสริฐ', parentPhone: '081-001-0001', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'O', avatarColor: '#4F46E5', heightCm: 92.0, weightKg: 13.5, bmi: 15.9, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR', 'ไข้หวัดใหญ่'], username: 'BY-PAR01' },
+    { id: 'STD-02', classId: 'class-bm', nationalId: '1-1002-00101-02-2', firstName: 'กัญญารัตน์', lastName: 'โพธิ์ทอง', nickname: 'แก้ม', gender: 'หญิง', birthDate: '2567-01-15', ageString: '2 ขวบ 7 เดือน', parentName: 'นางสมพร โพธิ์ทอง', parentPhone: '081-001-0002', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'A', avatarColor: '#EC4899', heightCm: 90.5, weightKg: 12.8, bmi: 15.6, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR'], username: 'BY-PAR02' },
+    { id: 'STD-03', classId: 'class-bm', nationalId: '1-1002-00101-03-3', firstName: 'ชยพล', lastName: 'มงคลดี', nickname: 'พอล', gender: 'ชาย', birthDate: '2567-03-20', ageString: '2 ขวบ 5 เดือน', parentName: 'นายชาญชัย มงคลดี', parentPhone: '081-001-0003', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'B', avatarColor: '#10B981', heightCm: 91.0, weightKg: 13.2, bmi: 15.9, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR03' },
+    { id: 'STD-04', classId: 'class-bm', nationalId: '1-1002-00101-04-4', firstName: 'ณิชาภัทร', lastName: 'วงศ์สว่าง', nickname: 'ณิชา', gender: 'หญิง', birthDate: '2567-04-12', ageString: '2 ขวบ 4 เดือน', parentName: 'นางสาวนภา วงศ์สว่าง', parentPhone: '081-001-0004', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'AB', avatarColor: '#F59E0B', heightCm: 89.5, weightKg: 12.5, bmi: 15.6, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR04' },
+    { id: 'STD-05', classId: 'class-bm', nationalId: '1-1002-00101-05-5', firstName: 'ธนกฤต', lastName: 'รัตนอุบล', nickname: 'คุณ', gender: 'ชาย', birthDate: '2567-02-28', ageString: '2 ขวบ 6 เดือน', parentName: 'นายธนากร รัตนอุบล', parentPhone: '081-001-0005', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'O', avatarColor: '#6366F1', heightCm: 93.0, weightKg: 14.0, bmi: 16.2, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR', 'ไข้หวัดใหญ่'], username: 'BY-PAR05' },
+    { id: 'STD-06', classId: 'class-bm', nationalId: '1-1002-00101-06-6', firstName: 'ธันย์ชนก', lastName: 'เพิ่มพูน', nickname: 'วาฬ', gender: 'หญิง', birthDate: '2567-05-18', ageString: '2 ขวบ 3 เดือน', parentName: 'นางวิไล เพิ่มพูน', parentPhone: '081-001-0006', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'A', avatarColor: '#8B5CF6', heightCm: 88.5, weightKg: 12.0, bmi: 15.3, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR06' },
+    { id: 'STD-07', classId: 'class-bm', nationalId: '1-1002-00101-07-7', firstName: 'นพณัฐ', lastName: 'แก้วมณี', nickname: 'นัท', gender: 'ชาย', birthDate: '2567-01-30', ageString: '2 ขวบ 7 เดือน', parentName: 'นายณัฐพล แก้วมณี', parentPhone: '081-001-0007', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'B', avatarColor: '#3B82F6', heightCm: 92.5, weightKg: 13.8, bmi: 16.1, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR07' },
+    { id: 'STD-08', classId: 'class-bm', nationalId: '1-1002-00101-08-8', firstName: 'ปรินดา', lastName: 'บุญมี', nickname: 'ปาน', gender: 'หญิง', birthDate: '2567-03-05', ageString: '2 ขวบ 5 เดือน', parentName: 'นางปรียา บุญมี', parentPhone: '081-001-0008', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'AB', avatarColor: '#EC4899', heightCm: 90.0, weightKg: 12.6, bmi: 15.6, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR08' },
+    { id: 'STD-09', classId: 'class-bm', nationalId: '1-1002-00101-09-9', firstName: 'พงศกร', lastName: 'แจ่มใส', nickname: 'ป๋อ', gender: 'ชาย', birthDate: '2567-04-22', ageString: '2 ขวบ 4 เดือน', parentName: 'นายพงษ์เทพ แจ่มใส', parentPhone: '081-001-0009', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'O', avatarColor: '#10B981', heightCm: 91.5, weightKg: 13.4, bmi: 16.0, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR09' },
+    { id: 'STD-10', classId: 'class-bm', nationalId: '1-1002-00101-10-0', firstName: 'พิชญา', lastName: 'เจริญสุข', nickname: 'พาย', gender: 'หญิง', birthDate: '2567-02-14', ageString: '2 ขวบ 6 เดือน', parentName: 'นางพิศมัย เจริญสุข', parentPhone: '081-001-0010', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'A', avatarColor: '#F59E0B', heightCm: 89.0, weightKg: 12.3, bmi: 15.5, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR10' },
+    { id: 'STD-11', classId: 'class-bm', nationalId: '1-1002-00101-11-1', firstName: 'ภัทรดนัย', lastName: 'สายชล', nickname: 'ภีม', gender: 'ชาย', birthDate: '2567-01-10', ageString: '2 ขวบ 7 เดือน', parentName: 'นายภานุ สายชล', parentPhone: '081-001-0011', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'B', avatarColor: '#6366F1', heightCm: 93.5, weightKg: 14.2, bmi: 16.2, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR11' },
+    { id: 'STD-12', classId: 'class-bm', nationalId: '1-1002-00101-12-2', firstName: 'มลนภัส', lastName: 'ศรีสมบูรณ์', nickname: 'โมเม', gender: 'หญิง', birthDate: '2567-03-25', ageString: '2 ขวบ 5 เดือน', parentName: 'นางมณีศรี สมบูรณ์', parentPhone: '081-001-0012', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'O', avatarColor: '#8B5CF6', heightCm: 90.2, weightKg: 12.7, bmi: 15.6, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR12' },
+    { id: 'STD-13', classId: 'class-bm', nationalId: '1-1002-00101-13-3', firstName: 'วรภพ', lastName: 'เผ่าทอง', nickname: 'ภพ', gender: 'ชาย', birthDate: '2567-05-02', ageString: '2 ขวบ 3 เดือน', parentName: 'นายวรวุฒิ เผ่าทอง', parentPhone: '081-001-0013', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'A', avatarColor: '#3B82F6', heightCm: 91.0, weightKg: 13.0, bmi: 15.7, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR13' },
+    { id: 'STD-14', classId: 'class-bm', nationalId: '1-1002-00101-14-4', firstName: 'ศุภิสรา', lastName: 'รุ่งเรือง', nickname: 'มายด์', gender: 'หญิง', birthDate: '2567-04-08', ageString: '2 ขวบ 4 เดือน', parentName: 'นางศิริพร รุ่งเรือง', parentPhone: '081-001-0014', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'B', avatarColor: '#EC4899', heightCm: 89.8, weightKg: 12.4, bmi: 15.4, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR14' },
+    { id: 'STD-15', classId: 'class-bm', nationalId: '1-1002-00101-15-5', firstName: 'อัครวินท์', lastName: 'ประเสริฐ', nickname: 'อ๋อง', gender: 'ชาย', birthDate: '2567-02-20', ageString: '2 ขวบ 6 เดือน', parentName: 'นายอนุชา ประเสริฐ', parentPhone: '081-001-0015', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'O', avatarColor: '#10B981', heightCm: 92.8, weightKg: 13.9, bmi: 16.1, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR15' },
+    { id: 'STD-16', classId: 'class-bm', nationalId: '1-1002-00101-16-6', firstName: 'อัญชิสา', lastName: 'มิ่งขวัญ', nickname: 'เอม', gender: 'หญิง', birthDate: '2567-03-14', ageString: '2 ขวบ 5 เดือน', parentName: 'นางอุมาพร มิ่งขวัญ', parentPhone: '081-001-0016', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'A', avatarColor: '#F59E0B', heightCm: 89.2, weightKg: 12.2, bmi: 15.3, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR16' },
+    { id: 'STD-17', classId: 'class-bm', nationalId: '1-1002-00101-17-7', firstName: 'กิตติภพ', lastName: 'แสงสว่าง', nickname: 'กิต', gender: 'ชาย', birthDate: '2567-01-25', ageString: '2 ขวบ 7 เดือน', parentName: 'นายกิตติ แสงสว่าง', parentPhone: '081-001-0017', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'B', avatarColor: '#6366F1', heightCm: 93.2, weightKg: 14.1, bmi: 16.2, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR17' },
+    { id: 'STD-18', classId: 'class-bm', nationalId: '1-1002-00101-18-8', firstName: 'ชนกนันท์', lastName: 'วงษ์ไทย', nickname: 'ชาเนล', gender: 'หญิง', birthDate: '2567-04-30', ageString: '2 ขวบ 4 เดือน', parentName: 'นางชลธิชา วงษ์ไทย', parentPhone: '081-001-0018', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'AB', avatarColor: '#8B5CF6', heightCm: 88.8, weightKg: 12.1, bmi: 15.3, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR18' },
+    { id: 'STD-19', classId: 'class-bm', nationalId: '1-1002-00101-19-9', firstName: 'ณัฐดนัย', lastName: 'สมบูรณ์', nickname: 'ดนัย', gender: 'ชาย', birthDate: '2567-02-05', ageString: '2 ขวบ 6 เดือน', parentName: 'นายณรงค์ สมบูรณ์', parentPhone: '081-001-0019', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'O', avatarColor: '#3B82F6', heightCm: 92.1, weightKg: 13.6, bmi: 16.0, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR19' },
+    { id: 'STD-20', classId: 'class-bm', nationalId: '1-1002-00101-20-0', firstName: 'ปัณฑน์รี', lastName: 'สุวรรณ', nickname: 'ปันปัน', gender: 'หญิง', birthDate: '2567-03-01', ageString: '2 ขวบ 5 เดือน', parentName: 'นางปานทิพย์ สุวรรณ', parentPhone: '081-001-0020', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'A', avatarColor: '#EC4899', heightCm: 90.6, weightKg: 12.9, bmi: 15.7, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR20' }
   ],
 
   attendance: [
-    { id: 'att-1', childId: 'child-101', date: '2569-08-10', status: 'PRESENT', checkTime: '07:45 น.', checkedBy: 'ครูวิภาดา' },
-    { id: 'att-2', childId: 'child-102', date: '2569-08-10', status: 'PRESENT', checkTime: '07:50 น.', checkedBy: 'ครูวิภาดา' },
-    { id: 'att-3', childId: 'child-103', date: '2569-08-10', status: 'LEAVE', checkTime: '08:00 น.', checkedBy: 'ระบบ (ผู้ปกครองแจ้งลา)' },
-    { id: 'att-4', childId: 'child-104', date: '2569-08-10', status: 'PRESENT', checkTime: '08:05 น.', checkedBy: 'ครูวิภาดา' }
+    { id: 'att-1', childId: 'STD-01', date: '2569-08-10', status: 'PRESENT', checkTime: '07:45 น.', checkedBy: 'นางสาวกานดา ใจดี (ครูแก้ว)' },
+    { id: 'att-2', childId: 'STD-02', date: '2569-08-10', status: 'PRESENT', checkTime: '07:50 น.', checkedBy: 'นางสาวกานดา ใจดี (ครูแก้ว)' },
+    { id: 'att-3', childId: 'STD-03', date: '2569-08-10', status: 'LEAVE', checkTime: '08:00 น.', checkedBy: 'ระบบ (ผู้ปกครองแจ้งลา)' }
   ],
 
   leaveRequests: [
     {
       id: 'leave-1',
-      childId: 'child-103',
-      childName: 'น้องวาเลน (ด.ช. วรภพ)',
-      parentName: 'นาย สุรเดช สมบูรณ์',
+      childId: 'STD-03',
+      childName: 'พอล (ด.ช. ชยพล มงคลดี)',
+      parentName: 'นายชาญชัย มงคลดี',
       leaveType: 'ลาป่วย',
       startDate: '2569-08-10',
       endDate: '2569-08-11',
-      reason: 'น้องมีอาการเป็นไข้สูงและตัวร้อน ต้องไปพบแพทย์ที่ รพ.บางใหญ่',
+      reason: 'น้องมีอาการเป็นไข้สูง ต้องไปพบแพทย์ที่ รพ.บางใหญ่',
       status: 'APPROVED',
       submittedAt: '2569-08-09 19:30 น.',
-      approvedBy: 'ครูวิภาดา ศรีมงคล',
+      approvedBy: 'นางสาวกานดา ใจดี (ครูแก้ว)',
       remark: 'รับทราบค่ะ ขอให้น้องหายไวๆ นะคะ'
     }
   ],
@@ -141,9 +70,9 @@ const INITIAL_SEED_DATA = {
     {
       id: 'news-1',
       title: 'แจ้งการให้บริการฉีดวัคซีนป้องกันไข้หวัดใหญ่ประจำปี',
-      content: 'ศูนย์พัฒนาเด็กเล็กเทศบาลเมืองบางใหญ่ ร่วมกับ โรงพยาบาลส่งเสริมสุขภาพตำบลบางใหญ่ ขอเชิญชวนผู้ปกครองนำบุตรหลานเข้ารับการฉีดวัคซีนในวันศุกร์ที่ 15 สิงหาคม 2569 เวลา 09:00 - 12:00 น.',
+      content: 'ศูนย์พัฒนาเด็กเล็กเทศบาลบางใหญ่ ขอเชิญชวนผู้ปกครองนำบุตรหลานเข้ารับการฉีดวัคซีนในวันศุกร์ที่ 15 สิงหาคม 2569 เวลา 09:00 - 12:00 น.',
       targetClass: 'ALL',
-      author: 'กองการศึกษา เทศบาลเมืองบางใหญ่',
+      author: 'กองการศึกษา เทศบาลบางใหญ่',
       createdAt: '2569-08-08',
       pinned: true
     }
@@ -164,9 +93,9 @@ const INITIAL_SEED_DATA = {
     {
       id: 'act-1',
       title: 'กิจกรรมศิลปะสร้างสรรค์ "ระบายสีภาพในฝัน"',
-      classId: 'class-2',
+      classId: 'class-bm',
       date: '2569-08-10',
-      description: 'เด็กๆ ร่วมกันใช้นิ้วมือและสีน้ำระบายสีอย่างสนุกสนาน ส่งเสริมกล้ามเนื้อมัดเล็กและจินตนาการ',
+      description: 'เด็กๆ ห้องลูกหมีน่ารัก ร่วมกันใช้นิ้วมือและสีน้ำระบายสีอย่างสนุกสนาน',
       image: './assets/images/banner.png'
     }
   ],
@@ -174,29 +103,16 @@ const INITIAL_SEED_DATA = {
   developmentRecords: [
     {
       id: 'dev-1',
-      childId: 'child-101',
-      childName: 'น้องโปรด (ด.ช. ปัณณธร)',
+      childId: 'STD-01',
+      childName: 'น้องวิน (ด.ช. กวินท์ สุขเสริฐ)',
       term: '1/2569',
       evalDate: '2569-08-05',
-      physicalScore: 4,      /* 4=ดีเยี่ยม, 3=ดี, 2=ผ่าน, 1=ควรส่งเสริม */
+      physicalScore: 4,
       emotionalScore: 4,
       socialScore: 3,
       intellectualScore: 4,
-      evaluator: 'ครูวิภาดา ศรีมงคล',
-      notes: 'เด็กมีความคล่องแคล่วในการเคลื่อนไหว ร่าเริงแจ่มใส และสื่อสารภาษาไทยได้ชัดเจนเป็นประโยคยาว'
-    },
-    {
-      id: 'dev-2',
-      childId: 'child-102',
-      childName: 'น้องมิริน (ด.ญ. มนสิชา)',
-      term: '1/2569',
-      evalDate: '2569-08-05',
-      physicalScore: 3,
-      emotionalScore: 4,
-      socialScore: 4,
-      intellectualScore: 4,
-      evaluator: 'ครูวิภาดา ศรีมงคล',
-      notes: 'มีความตั้งใจฟัง เข้ากับเพื่อนร่วมห้องได้ดี มีน้ำใจแบ่งปันของเล่น'
+      evaluator: 'นางสาวกานดา ใจดี (ครูแก้ว)',
+      notes: 'เด็กมีความคล่องแคล่วในการเคลื่อนไหว ร่าเริงแจ่มใส'
     }
   ],
 
@@ -205,21 +121,12 @@ const INITIAL_SEED_DATA = {
       id: 'line-1',
       timestamp: '07:45 น.',
       title: '🟢 เช็กชื่อเข้าเรียนเรียบร้อย',
-      message: 'น้องโปรด ได้มาถึงศูนย์พัฒนาเด็กเล็กเทศบาลเมืองบางใหญ่ แล้ว เวลา 07:45 น. (เช็กชื่อโดย ครูวิภาดา)'
-    },
-    {
-      id: 'line-2',
-      timestamp: '09:30 น.',
-      title: '📢 ประกาศข่าวสารใหม่',
-      message: 'แจ้งกำหนดการบริการฉีดวัคซีนป้องกันไข้หวัดใหญ่ประจำปี ณ ศูนย์พัฒนาเด็กเล็ก ในวันที่ 15 ส.ค. 2569'
+      message: 'น้องวิน (ด.ช. กวินท์) ได้มาถึงศูนย์พัฒนาเด็กเล็กเทศบาลบางใหญ่ แล้ว เวลา 07:45 น. (เช็กชื่อโดย ครูแก้ว)'
     }
   ],
 
   auditLogs: [
-    { id: 'log-1', timestamp: '2026-08-10 08:00:15', user: 'ครูวิภาดา (TEACHER)', action: 'CHECK_IN_ATTENDANCE', details: 'บันทึกการเข้าเรียนห้องอนุบาล 1/1 จำนวน 18 คน' },
-    { id: 'log-2', timestamp: '2026-08-10 09:30:22', user: 'นาย สุรเดช (PARENT)', action: 'SUBMIT_LEAVE_REQUEST', details: 'ส่งคำขอแจ้งลาป่วยให้น้องวาเลน' },
-    { id: 'log-3', timestamp: '2026-08-10 10:15:00', user: 'ครูวิภาดา (TEACHER)', action: 'APPROVE_LEAVE_REQUEST', details: 'อนุมัติคำขอแจ้งลาป่วย ของน้องวาเลน' },
-    { id: 'log-4', timestamp: '2026-08-10 14:00:10', user: 'ผู้บริหารเทศบาล (EXECUTIVE)', action: 'GENERATE_EXECUTIVE_REPORT', details: 'เรียกดูแดชบอร์ดภาพรวมและส่งออกรายงานการมาเรียนประจำเดือน' }
+    { id: 'log-1', timestamp: '2026-08-10 08:00:15', user: 'นางสาวกานดา ใจดี (TEACHER)', action: 'CHECK_IN_ATTENDANCE', details: 'บันทึกการเข้าเรียนห้องลูกหมีน่ารัก' }
   ]
 };
 

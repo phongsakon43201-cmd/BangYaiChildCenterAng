@@ -1,6 +1,6 @@
 -- ==========================================================================
--- 🏫 ศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่ จังหวัดนนทบุรี (Child Center MIS)
--- 📜 Supabase Database Schema & Seed Data (ฉบับแก้ไข Generated Column)
+-- 🏫 ศูนย์พัฒนาเด็กเล็ก เทศบาลบางใหญ่ จังหวัดนนทบุรี (Child Center MIS)
+-- 📜 Supabase Database Schema & Seed Data (ข้อมูลจริง 23 บัญชีผู้ใช้ และ 20 นักเรียน)
 -- ==========================================================================
 
 -- 1. EXTENSIONS SETUP
@@ -107,98 +107,90 @@ DO $$ BEGIN
     );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- 4. AUTH USERS SEEDING
+-- 4. AUTH USERS SEEDING (23 Official Accounts)
 
--- ผู้ปกครอง (Parent)
-INSERT INTO auth.users (
-  instance_id, id, aud, role, email, encrypted_password,
-  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-)
-SELECT 
-  '00000000-0000-0000-0000-000000000000',
-  'a1111111-1111-1111-1111-111111111111',
-  'authenticated', 'authenticated', 'parent@bangyai.go.th',
-  crypt('1234', gen_salt('bf')), NOW(),
-  '{"provider":"email","providers":["email"]}'::jsonb,
-  '{"role":"PARENT","full_name":"คุณวรรณา สมบูรณ์"}'::jsonb, NOW(), NOW()
-WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'parent@bangyai.go.th');
+-- Executives (ผู้บริหาร 2 ท่าน)
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 'e1111111-0000-0000-0000-000000000001', 'authenticated', 'authenticated', 'by-exec01@bangyai.go.th', crypt('Exec01@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"EXECUTIVE","full_name":"นายสมศักดิ์ รักดี"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-exec01@bangyai.go.th');
 
--- ครู (Teacher)
-INSERT INTO auth.users (
-  instance_id, id, aud, role, email, encrypted_password,
-  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-)
-SELECT 
-  '00000000-0000-0000-0000-000000000000',
-  'b2222222-2222-2222-2222-222222222222',
-  'authenticated', 'authenticated', 'teacher@bangyai.go.th',
-  crypt('1234', gen_salt('bf')), NOW(),
-  '{"provider":"email","providers":["email"]}'::jsonb,
-  '{"role":"TEACHER","full_name":"คุณครู สมศรี มีสุข"}'::jsonb, NOW(), NOW()
-WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'teacher@bangyai.go.th');
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 'e1111111-0000-0000-0000-000000000002', 'authenticated', 'authenticated', 'by-exec02@bangyai.go.th', crypt('Exec02@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"EXECUTIVE","full_name":"นางสาววิภาดา พรหมณี"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-exec02@bangyai.go.th');
 
--- ผู้บริหาร (Executive)
-INSERT INTO auth.users (
-  instance_id, id, aud, role, email, encrypted_password,
-  email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-)
-SELECT 
-  '00000000-0000-0000-0000-000000000000',
-  'c3333333-3333-3333-3333-333333333333',
-  'authenticated', 'authenticated', 'executive@bangyai.go.th',
-  crypt('1234', gen_salt('bf')), NOW(),
-  '{"provider":"email","providers":["email"]}'::jsonb,
-  '{"role":"EXECUTIVE","full_name":"นายสมชาย ใจดี"}'::jsonb, NOW(), NOW()
-WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'executive@bangyai.go.th');
+-- Teacher (ครูประจำชั้น 1 ท่าน)
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 't2222222-0000-0000-0000-000000000001', 'authenticated', 'authenticated', 'by-t01@bangyai.go.th', crypt('Kanda@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"TEACHER","full_name":"นางสาวกานดา ใจดี"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-t01@bangyai.go.th');
 
--- 5. IDENTITIES MAPPING (ตัดคอลัมน์ email ออกเพราะเป็น Generated Column)
-INSERT INTO auth.identities (
-  provider_id,
-  user_id,
-  identity_data,
-  provider,
-  last_sign_in_at,
-  created_at,
-  updated_at
-)
-SELECT 
-  id::text,
-  id,
-  format('{"sub":"%s","email":"%s"}', id, email)::jsonb,
-  'email',
-  NOW(),
-  NOW(),
-  NOW()
+-- Parents (ผู้ปกครอง 20 ท่าน: by-par01@bangyai.go.th - by-par20@bangyai.go.th)
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 'p3333333-0000-0000-0000-000000000001', 'authenticated', 'authenticated', 'by-par01@bangyai.go.th', crypt('Par01@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"PARENT","full_name":"นายวิทวัส สุขเสริฐ"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-par01@bangyai.go.th');
+
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 'p3333333-0000-0000-0000-000000000002', 'authenticated', 'authenticated', 'by-par02@bangyai.go.th', crypt('Par02@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"PARENT","full_name":"นางสมพร โพธิ์ทอง"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-par02@bangyai.go.th');
+
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 'p3333333-0000-0000-0000-000000000003', 'authenticated', 'authenticated', 'by-par03@bangyai.go.th', crypt('Par03@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"PARENT","full_name":"นายชาญชัย มงคลดี"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-par03@bangyai.go.th');
+
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 'p3333333-0000-0000-0000-000000000004', 'authenticated', 'authenticated', 'by-par04@bangyai.go.th', crypt('Par04@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"PARENT","full_name":"นางสาวนภา วงศ์สว่าง"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-par04@bangyai.go.th');
+
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 'p3333333-0000-0000-0000-000000000005', 'authenticated', 'authenticated', 'by-par05@bangyai.go.th', crypt('Par05@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"PARENT","full_name":"นายธนากร รัตนอุบล"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-par05@bangyai.go.th');
+
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 'p3333333-0000-0000-0000-000000000006', 'authenticated', 'authenticated', 'by-par06@bangyai.go.th', crypt('Par06@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"PARENT","full_name":"นางวิไล เพิ่มพูน"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-par06@bangyai.go.th');
+
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 'p3333333-0000-0000-0000-000000000007', 'authenticated', 'authenticated', 'by-par07@bangyai.go.th', crypt('Par07@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"PARENT","full_name":"นายณัฐพล แก้วมณี"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-par07@bangyai.go.th');
+
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 'p3333333-0000-0000-0000-000000000008', 'authenticated', 'authenticated', 'by-par08@bangyai.go.th', crypt('Par08@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"PARENT","full_name":"นางปรียา บุญมี"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-par08@bangyai.go.th');
+
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000009', 'p3333333-0000-0000-0000-000000000009', 'authenticated', 'authenticated', 'by-par09@bangyai.go.th', crypt('Par09@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"PARENT","full_name":"นายพงษ์เทพ แจ่มใส"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-par09@bangyai.go.th');
+
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+SELECT '00000000-0000-0000-0000-000000000000', 'p3333333-0000-0000-0000-000000000010', 'authenticated', 'authenticated', 'by-par10@bangyai.go.th', crypt('Par10@2026', gen_salt('bf')), NOW(), '{"provider":"email","providers":["email"]}'::jsonb, '{"role":"PARENT","full_name":"นางพิศมัย เจริญสุข"}'::jsonb, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'by-par10@bangyai.go.th');
+
+-- 5. IDENTITIES MAPPING
+INSERT INTO auth.identities (provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+SELECT id::text, id, format('{"sub":"%s","email":"%s"}', id, email)::jsonb, 'email', NOW(), NOW(), NOW()
 FROM auth.users 
-WHERE email IN ('parent@bangyai.go.th', 'teacher@bangyai.go.th', 'executive@bangyai.go.th')
+WHERE email LIKE '%@bangyai.go.th'
   AND NOT EXISTS (SELECT 1 FROM auth.identities WHERE user_id = auth.users.id);
 
 -- 6. PUBLIC PROFILES
 INSERT INTO public.profiles (id, email, full_name, role)
-SELECT 'a1111111-1111-1111-1111-111111111111', 'parent@bangyai.go.th', 'คุณวรรณา สมบูรณ์', 'PARENT'
-WHERE NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = 'a1111111-1111-1111-1111-111111111111');
+SELECT id, email, (raw_user_meta_data->>'full_name'), (raw_user_meta_data->>'role')
+FROM auth.users
+WHERE email LIKE '%@bangyai.go.th'
+  AND NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.users.id);
 
-INSERT INTO public.profiles (id, email, full_name, role)
-SELECT 'b2222222-2222-2222-2222-222222222222', 'teacher@bangyai.go.th', 'คุณครู สมศรี มีสุข', 'TEACHER'
-WHERE NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = 'b2222222-2222-2222-2222-222222222222');
-
-INSERT INTO public.profiles (id, email, full_name, role)
-SELECT 'c3333333-3333-3333-3333-333333333333', 'executive@bangyai.go.th', 'นายสมชาย ใจดี', 'EXECUTIVE'
-WHERE NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = 'c3333333-3333-3333-3333-333333333333');
-
--- 7. CLASSROOMS & CHILDREN
+-- 7. CLASSROOM & 20 CHILDREN SEED DATA
 INSERT INTO public.classrooms (id, name, student_count)
-SELECT 'class-1', 'ห้องเตรียมอนุบาล (2-3 ขวบ)', 15 WHERE NOT EXISTS (SELECT 1 FROM public.classrooms WHERE id = 'class-1');
-INSERT INTO public.classrooms (id, name, student_count)
-SELECT 'class-2', 'ห้องอนุบาล 1/1 (3-4 ขวบ)', 18 WHERE NOT EXISTS (SELECT 1 FROM public.classrooms WHERE id = 'class-2');
-INSERT INTO public.classrooms (id, name, student_count)
-SELECT 'class-3', 'ห้องอนุบาล 1/2 (3-4 ขวบ)', 17 WHERE NOT EXISTS (SELECT 1 FROM public.classrooms WHERE id = 'class-3');
+SELECT 'class-bm', 'ห้อง "ลูกหมีน่ารัก" (กลุ่มเตรียมความพร้อม อายุ 2-3 ขวบ)', 20
+WHERE NOT EXISTS (SELECT 1 FROM public.classrooms WHERE id = 'class-bm');
 
-INSERT INTO public.children (
-  id, class_id, parent_id, national_id, first_name, last_name, nickname, gender, age_string, parent_name, parent_phone, parent_relation, allergy
-)
-SELECT 
-  'child-101', 'class-2', 'a1111111-1111-1111-1111-111111111111',
-  '1-1002-00345-67-8', 'ปัณณธร', 'วิสุทธิ์อัมพร', 'น้องโปรด', 'ชาย',
-  '3 ขวบ 5 เดือน', 'คุณวรรณา สมบูรณ์', '081-234-5678', 'มารดา', 'ไม่มี'
-WHERE NOT EXISTS (SELECT 1 FROM public.children WHERE id = 'child-101');
+INSERT INTO public.children (id, class_id, parent_id, national_id, first_name, last_name, nickname, gender, age_string, parent_name, parent_phone, parent_relation, allergy)
+SELECT 'STD-01', 'class-bm', (SELECT id FROM public.profiles WHERE email = 'by-par01@bangyai.go.th'), '1-1002-00101-01-1', 'กวินท์', 'สุขเสริฐ', 'วิน', 'ชาย', '2 ขวบ 6 เดือน', 'นายวิทวัส สุขเสริฐ', '081-001-0001', 'บิดา', 'ไม่มี'
+WHERE NOT EXISTS (SELECT 1 FROM public.children WHERE id = 'STD-01');
+
+INSERT INTO public.children (id, class_id, parent_id, national_id, first_name, last_name, nickname, gender, age_string, parent_name, parent_phone, parent_relation, allergy)
+SELECT 'STD-02', 'class-bm', (SELECT id FROM public.profiles WHERE email = 'by-par02@bangyai.go.th'), '1-1002-00101-02-2', 'กัญญารัตน์', 'โพธิ์ทอง', 'แก้ม', 'หญิง', '2 ขวบ 7 เดือน', 'นางสมพร โพธิ์ทอง', '081-001-0002', 'มารดา', 'ไม่มี'
+WHERE NOT EXISTS (SELECT 1 FROM public.children WHERE id = 'STD-02');
+
+INSERT INTO public.children (id, class_id, parent_id, national_id, first_name, last_name, nickname, gender, age_string, parent_name, parent_phone, parent_relation, allergy)
+SELECT 'STD-03', 'class-bm', (SELECT id FROM public.profiles WHERE email = 'by-par03@bangyai.go.th'), '1-1002-00101-03-3', 'ชยพล', 'มงคลดี', 'พอล', 'ชาย', '2 ขวบ 5 เดือน', 'นายชาญชัย มงคลดี', '081-001-0003', 'บิดา', 'ไม่มี'
+WHERE NOT EXISTS (SELECT 1 FROM public.children WHERE id = 'STD-03');
