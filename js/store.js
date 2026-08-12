@@ -136,17 +136,60 @@ class AppStore {
     this.data = this.loadData();
   }
 
+  getTodayBEString() {
+    const today = new Date();
+    const beYear = today.getFullYear() + 543;
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${beYear}-${month}-${day}`;
+  }
+
+  getTodayThaiFormatted() {
+    const today = new Date();
+    const ThaiMonths = [
+      'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+    const day = today.getDate();
+    const month = ThaiMonths[today.getMonth()];
+    const beYear = today.getFullYear() + 543;
+    return `${day} ${month} ${beYear}`;
+  }
+
   loadData() {
+    let data = null;
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        return JSON.parse(stored);
+        data = JSON.parse(stored);
       }
     } catch (e) {
       console.warn('LocalStorage error, fallback to seed data', e);
     }
-    this.saveData(INITIAL_SEED_DATA);
-    return INITIAL_SEED_DATA;
+    if (!data) {
+      data = JSON.parse(JSON.stringify(INITIAL_SEED_DATA));
+    }
+
+    // Auto-update sample dates to today's date dynamically for smooth demo
+    const todayStr = this.getTodayBEString();
+    if (data.attendance) {
+      data.attendance.forEach(a => {
+        if (!a.date || a.date === '2569-08-10') a.date = todayStr;
+      });
+    }
+    if (data.mealPlan) {
+      data.mealPlan.forEach(m => {
+        if (!m.date || m.date === '2569-08-10') m.date = todayStr;
+      });
+    }
+    if (data.activities) {
+      data.activities.forEach(act => {
+        if (!act.date || act.date === '2569-08-10') act.date = todayStr;
+      });
+    }
+
+    this.saveData(data);
+    return data;
   }
 
   saveData(newData) {
@@ -176,12 +219,17 @@ class AppStore {
     return matched.length ? matched : [this.data.children[0]];
   }
 
-  getAttendance(date = '2569-08-10') {
-    return this.data.attendance.filter(a => a.date === date);
+  getAttendance(date) {
+    const targetDate = date || this.getTodayBEString();
+    const filtered = this.data.attendance.filter(a => a.date === targetDate);
+    if (filtered.length === 0 && !date) {
+      return this.data.attendance;
+    }
+    return filtered;
   }
 
   updateAttendance(childId, status, checkedBy = 'ครูผู้ดูแล') {
-    const today = '2569-08-10';
+    const today = this.getTodayBEString();
     let record = this.data.attendance.find(a => a.childId === childId && a.date === today);
     const now = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
     if (record) {
@@ -293,7 +341,7 @@ class AppStore {
   getActivities() { return this.data.activities; }
 
   addActivity(act) {
-    const newAct = { id: 'act-' + Date.now(), date: '2569-08-10', ...act };
+    const newAct = { id: 'act-' + Date.now(), date: this.getTodayBEString(), ...act };
     this.data.activities.unshift(newAct);
     this.saveData(this.data);
     return newAct;

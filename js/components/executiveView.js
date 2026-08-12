@@ -12,7 +12,7 @@ const ExecutiveView = {
 
     const centerInfo = window.appStore.getCenterInfo();
     const children = window.appStore.getChildren();
-    const attendance = window.appStore.getAttendance('2569-08-10');
+    const attendance = window.appStore.getAttendance();
     const presentCount = attendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length;
     const rate = Math.round((presentCount / (children.length || 1)) * 100);
     const leaveReqs = window.appStore.getLeaveRequests();

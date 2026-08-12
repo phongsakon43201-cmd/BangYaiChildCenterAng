@@ -13,7 +13,7 @@ const ParentView = {
     const currentUser = window.authController.getCurrentUser();
     const parentChildren = window.appStore.getChildrenForParent(currentUser);
     const activeChild = parentChildren.find(c => c.id === this.selectedChildId) || parentChildren[0];
-    const attendance = window.appStore.getAttendance('2569-08-10');
+    const attendance = window.appStore.getAttendance();
     const childAtt = attendance.find(a => a.childId === activeChild.id);
     const leaveReqs = window.appStore.getLeaveRequests().filter(l => l.childId === activeChild.id);
     const meals = window.appStore.getMealPlan();

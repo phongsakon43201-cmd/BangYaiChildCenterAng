@@ -45,11 +45,11 @@ const ModalsComponent = {
         <div class="grid-2" style="margin-bottom: 1rem;">
           <div>
             <label class="form-label">ตั้งแต่วันที่</label>
-            <input type="date" id="modal-leave-start" class="form-control" value="2569-08-10" required>
+            <input type="date" id="modal-leave-start" class="form-control" value="${window.appStore ? window.appStore.getTodayBEString() : '2569-08-12'}" required>
           </div>
           <div>
             <label class="form-label">ถึงวันที่</label>
-            <input type="date" id="modal-leave-end" class="form-control" value="2569-08-10" required>
+            <input type="date" id="modal-leave-end" class="form-control" value="${window.appStore ? window.appStore.getTodayBEString() : '2569-08-12'}" required>
           </div>
         </div>
 

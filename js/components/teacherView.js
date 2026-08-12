@@ -14,7 +14,7 @@ const TeacherView = {
     const classrooms = window.appStore.getClassrooms();
     const activeClass = classrooms.find(c => c.id === this.selectedClassId) || classrooms[0];
     const children = window.appStore.getChildren(this.selectedClassId);
-    const attendance = window.appStore.getAttendance('2569-08-10');
+    const attendance = window.appStore.getAttendance();
     const leaveReqs = window.appStore.getLeaveRequests();
     const pendingLeaves = leaveReqs.filter(l => l.status === 'PENDING');
 
@@ -78,7 +78,7 @@ const TeacherView = {
       return `
         <div class="glass-card">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-            <h3 style="font-weight: 700; font-size: 1.1rem;">ระบบเช็กชื่อรายวันประจำวันที่ 10 สิงหาคม 2569</h3>
+            <h3 style="font-weight: 700; font-size: 1.1rem;">ระบบเช็กชื่อรายวันประจำวันที่ ${window.appStore.getTodayThaiFormatted()}</h3>
             <span class="badge badge-line">💬 แจ้งเตือน LINE อัตโนมัติ</span>
           </div>
 
@@ -378,7 +378,7 @@ const TeacherView = {
       childId,
       childName,
       term: '1/2569',
-      evalDate: '2569-08-10',
+      evalDate: window.appStore.getTodayBEString(),
       physicalScore,
       emotionalScore,
       socialScore,
