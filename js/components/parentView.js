@@ -116,6 +116,28 @@ const ParentView = {
           </div>
         </div>
 
+        <!-- LINE Connect Banner Card for Parent -->
+        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(236, 253, 245, 0.95), rgba(209, 250, 229, 0.95)); border-color: rgba(6, 199, 85, 0.3);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 48px; height: 48px; border-radius: 12px; background: #06C755; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; box-shadow: 0 4px 12px rgba(6, 199, 85, 0.3);">
+                💬
+              </div>
+              <div>
+                <span class="badge badge-line" style="margin-bottom: 0.25rem;">LINE Messaging API</span>
+                <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0; color: #065F46;">เชื่อมต่อ LINE รับแจ้งเตือนส่วนบุคคลของ ${activeChild.nickname}</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
+                  รับแจ้งเตือนเมื่อ ${activeChild.nickname} เดินทางถึงศูนย์ฯ (มา/สาย/ลา) และผลอนุมัติใบลาตรงเข้า LINE ส่วนตัวของคุณทันที
+                  ${activeChild.parentLineId ? `<strong style="color: #059669;">(เชื่อมต่อแล้ว: ${activeChild.parentLineId})</strong>` : ''}
+                </p>
+              </div>
+            </div>
+            <button class="btn btn-success" style="background: #06C755; border-color: #06C755; color: white; font-weight: 700;" onclick="ModalsComponent.openConnectLineModal('${activeChild.id}')">
+              📱 เชื่อมต่อ LINE ส่วนตัว
+            </button>
+          </div>
+        </div>
+
         <!-- LINE Official Account Live Notification Stream -->
         <div class="glass-card" style="margin-bottom: 1.5rem; background: var(--line-bg); border-color: rgba(6, 199, 85, 0.3);">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">

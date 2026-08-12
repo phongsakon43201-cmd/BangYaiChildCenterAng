@@ -154,40 +154,61 @@ class SupabaseService {
   // LINE Messaging API Helper (Modern Replacement for Deprecated LINE Notify)
   async sendLineMessagingAPI(channelAccessToken, toUserIdOrGroupId, messageText) {
     if (!channelAccessToken || !toUserIdOrGroupId) return false;
-    try {
-      const lineEndpoint = 'https://api.line.me/v2/bot/message/push';
-      // Use CORS proxy to bypass browser-side CORS restriction when running client-side
-      const targetUrl = 'https://corsproxy.io/?' + encodeURIComponent(lineEndpoint);
+    const payload = {
+      to: toUserIdOrGroupId,
+      messages: [{ type: 'text', text: messageText }]
+    };
 
-      const response = await fetch(targetUrl, {
+    const lineEndpoint = 'https://api.line.me/v2/bot/message/push';
+
+    // List of CORS Proxy endpoints for client-side browser fetch
+    const proxyUrls = [
+      `https://thingproxy.freeboard.io/fetch/${lineEndpoint}`,
+      `https://corsproxy.org/?${encodeURIComponent(lineEndpoint)}`,
+      `https://corsproxy.io/?${encodeURIComponent(lineEndpoint)}`
+    ];
+
+    // Try direct fetch first (if backend/server environment)
+    try {
+      const res = await fetch(lineEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${channelAccessToken}`
         },
-        body: JSON.stringify({
-          to: toUserIdOrGroupId,
-          messages: [
-            {
-              type: 'text',
-              text: messageText
-            }
-          ]
-        })
+        body: JSON.stringify(payload)
       });
-
-      if (response.ok) {
-        console.log('📲 Real LINE Messaging API Push sent successfully!');
+      if (res.ok) {
+        console.log(`📲 Real LINE Messaging API Push sent successfully to ${toUserIdOrGroupId}!`);
         return true;
-      } else {
-        const errText = await response.text();
-        console.warn('LINE Messaging API Response Error:', response.status, errText);
-        return false;
       }
-    } catch (err) {
-      console.warn('LINE Messaging API Notice:', err);
-      return false;
+    } catch (e) {
+      // CORS block on direct fetch is expected in browser, continue to proxies
     }
+
+    // Try CORS proxy endpoints
+    for (const proxyUrl of proxyUrls) {
+      try {
+        const response = await fetch(proxyUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${channelAccessToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response && response.ok) {
+          console.log(`📲 Real LINE Messaging API Push sent successfully via Proxy to ${toUserIdOrGroupId}!`);
+          return true;
+        }
+      } catch (err) {
+        console.warn(`Proxy notice (${proxyUrl}):`, err.message);
+      }
+    }
+
+    console.warn('LINE Messaging API notice: Client-side CORS prevented direct API call. Background notification logged to local state.');
+    return false;
   }
   // Supabase Database Realtime Channel Listener
   subscribeRealtimeDB(onDatabaseChange) {

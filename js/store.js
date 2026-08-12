@@ -21,7 +21,7 @@ const INITIAL_SEED_DATA = {
   ],
 
   children: [
-    { id: 'STD-01', classId: 'class-bm', nationalId: '1-1002-00101-01-1', firstName: 'กวินท์', lastName: 'สุขเสริฐ', nickname: 'วิน', gender: 'ชาย', birthDate: '2567-02-10', ageString: '2 ขวบ 6 เดือน', parentName: 'นายวิทวัส สุขเสริฐ', parentPhone: '081-001-0001', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'O', avatarColor: '#4F46E5', heightCm: 92.0, weightKg: 13.5, bmi: 15.9, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR', 'ไข้หวัดใหญ่'], username: 'BY-PAR01' },
+    { id: 'STD-01', classId: 'class-bm', nationalId: '1-1002-00101-01-1', firstName: 'กวินท์', lastName: 'สุขเสริฐ', nickname: 'วิน', gender: 'ชาย', birthDate: '2567-02-10', ageString: '2 ขวบ 6 เดือน', parentName: 'นายวิทวัส สุขเสริฐ', parentPhone: '081-001-0001', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'O', avatarColor: '#4F46E5', heightCm: 92.0, weightKg: 13.5, bmi: 15.9, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR', 'ไข้หวัดใหญ่'], username: 'BY-PAR01', parentLineId: 'U97dc0505bb590d70c66d401224a422db' },
     { id: 'STD-02', classId: 'class-bm', nationalId: '1-1002-00101-02-2', firstName: 'กัญญารัตน์', lastName: 'โพธิ์ทอง', nickname: 'แก้ม', gender: 'หญิง', birthDate: '2567-01-15', ageString: '2 ขวบ 7 เดือน', parentName: 'นางสมพร โพธิ์ทอง', parentPhone: '081-001-0002', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'A', avatarColor: '#EC4899', heightCm: 90.5, weightKg: 12.8, bmi: 15.6, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR'], username: 'BY-PAR02' },
     { id: 'STD-03', classId: 'class-bm', nationalId: '1-1002-00101-03-3', firstName: 'ชยพล', lastName: 'มงคลดี', nickname: 'พอล', gender: 'ชาย', birthDate: '2567-03-20', ageString: '2 ขวบ 5 เดือน', parentName: 'นายชาญชัย มงคลดี', parentPhone: '081-001-0003', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'B', avatarColor: '#10B981', heightCm: 91.0, weightKg: 13.2, bmi: 15.9, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR03' },
     { id: 'STD-04', classId: 'class-bm', nationalId: '1-1002-00101-04-4', firstName: 'ณิชาภัทร', lastName: 'วงศ์สว่าง', nickname: 'ณิชา', gender: 'หญิง', birthDate: '2567-04-12', ageString: '2 ขวบ 4 เดือน', parentName: 'นางสาวนภา วงศ์สว่าง', parentPhone: '081-001-0004', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'AB', avatarColor: '#F59E0B', heightCm: 89.5, weightKg: 12.5, bmi: 15.6, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR04' },
@@ -257,9 +257,11 @@ class AppStore {
     const child = this.getChildById(childId);
     if (child) {
       const statusText = status === 'PRESENT' ? 'มาเรียน' : status === 'LATE' ? 'มาสาย' : status === 'LEAVE' ? 'แจ้งลา' : 'ขาดเรียน';
+      const targetParentLineId = child.parentLineId || localStorage.getItem('BANGYAI_LINE_TARGET_ID') || 'U97dc0505bb590d70c66d401224a422db';
       this.sendLineNotification(
         `🟢 เช็กชื่อเข้าเรียนเรียบร้อย`,
-        `${child.nickname} (${child.firstName}) ได้บันทึกสถานะ "${statusText}" แล้ว เวลา ${now}`
+        `${child.nickname} (${child.firstName}) ได้บันทึกสถานะ "${statusText}" แล้ว เวลา ${now}`,
+        targetParentLineId
       );
     }
 
@@ -364,7 +366,7 @@ class AppStore {
     return this.data.lineNotifications || [];
   }
 
-  sendLineNotification(title, message) {
+  sendLineNotification(title, message, targetIdOverride = null) {
     if (!this.data.lineNotifications) this.data.lineNotifications = [];
     const now = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
     const notifItem = {
@@ -375,11 +377,20 @@ class AppStore {
     };
     this.data.lineNotifications.unshift(notifItem);
 
-    // Optional Real LINE Messaging API Integration (Official Replacement for LINE Notify)
+    // Dual LINE Messaging API Integration (Both LINE Group AND Personal Parent User ID)
     const channelToken = localStorage.getItem('BANGYAI_LINE_CHANNEL_TOKEN') || 'L7/4yLNWgK1roywgIIx98q84tRljHPAv7SjKG6ExDkATxkCGNwqqI3Nm4oiaeVMBEtAgflw8LJzt4ghPKfFLXUWRsRlHAraAHUaXDbwk/W0FsibrVYyVaYDFI1RBPh0HGXGwxYqqYVLRP8Snr6bSSwdB04t89/1O/w1cDnyilFU=';
-    const lineTargetId = localStorage.getItem('BANGYAI_LINE_TARGET_ID') || 'Cf41f004eb886e7c190b9d4d2e823055d';
-    if (channelToken && lineTargetId && window.supabaseService) {
-      window.supabaseService.sendLineMessagingAPI(channelToken, lineTargetId, `${title}\n${message}`);
+    const lineGroupId = localStorage.getItem('BANGYAI_LINE_GROUP_ID') || 'Cf41f004eb886e7c190b9d4d2e823055d';
+    const personalUserId = targetIdOverride || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || 'U97dc0505bb590d70c66d401224a422db';
+
+    if (channelToken && window.supabaseService) {
+      // 1. Send to LINE Group
+      if (lineGroupId) {
+        window.supabaseService.sendLineMessagingAPI(channelToken, lineGroupId, `${title}\n${message}`);
+      }
+      // 2. Send to Personal Parent LINE
+      if (personalUserId && personalUserId !== lineGroupId) {
+        window.supabaseService.sendLineMessagingAPI(channelToken, personalUserId, `${title}\n[แจ้งเตือนส่วนตัวผู้ปกครอง]\n${message}`);
+      }
     }
   }
 

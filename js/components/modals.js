@@ -233,6 +233,82 @@ const ModalsComponent = {
     if (backdrop) backdrop.classList.remove('active');
   },
 
+  openConnectLineModal(childId) {
+    const modal = document.getElementById('app-modal');
+    if (!modal) return;
+
+    const child = window.appStore.getChildById(childId) || window.appStore.getChildren()[0];
+    const currentLineId = child.parentLineId || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || 'U97dc0505bb590d70c66d401224a422db';
+
+    modal.innerHTML = `
+      <div class="modal-dialog animate-fade-in" style="max-width: 480px;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #06C755, #05B34C); color: white;">
+          <h3 class="modal-title" style="color: white; margin: 0; font-size: 1.15rem;">💬 เชื่อมต่อ LINE รับแจ้งเตือนส่วนบุคคล</h3>
+          <button class="modal-close" style="color: white;" onclick="ModalsComponent.closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 1.5rem;">
+          <div style="text-align: center; margin-bottom: 1.25rem;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📲</div>
+            <h4 style="font-weight: 700; margin-bottom: 0.25rem; font-size: 1.1rem; color: var(--text-main);">รับการแจ้งเตือนของ ${child.nickname} (${child.firstName} ${child.lastName})</h4>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+              รับข้อความเมื่อครูเช็กชื่อ (มา/สาย/ลา) และผลอนุมัติใบลาตรงเข้า LINE ส่วนตัวของคุณทันที
+            </p>
+          </div>
+
+          <div style="background: var(--bg-neutral); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; text-align: center; border: 1px solid var(--border-color);">
+            <span class="badge badge-line" style="margin-bottom: 0.5rem;">ขั้นตอนที่ 1</span>
+            <p style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">แอดเพื่อนกับ LINE Official Account ของศูนย์ฯ</p>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 0.85rem; background: white; padding: 0.4rem 0.85rem; border-radius: 6px; border: 1px dashed var(--line-green); font-weight: 700; color: var(--line-green);">
+                @ศูนย์พัฒนาเด็กเล็กเทศบาลเมืองบางใหญ่
+              </span>
+            </div>
+          </div>
+
+          <form onsubmit="ModalsComponent.handleConnectLineSubmit(event, '${child.id}')">
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+              <label class="form-label" style="font-weight: 700;">ขั้นตอนที่ 2: ระบุ LINE User ID ของคุณ</label>
+              <input type="text" id="modal-connect-line-id" class="form-control" value="${currentLineId}" placeholder="เช่น U97dc0505bb590d70c66d401224a422db" required style="font-family: monospace; font-weight: 600;">
+              <small style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.35rem;">
+                * ดูรหัส User ID ได้จากเมนู Basic settings ใน LINE Developers Console
+              </small>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+              <button type="button" class="btn btn-neutral" onclick="ModalsComponent.closeModal()">ยกเลิก</button>
+              <button type="submit" class="btn btn-success" style="background: #06C755; border-color: #06C755; color: white; font-weight: 700;">
+                💾 บันทึกการเชื่อมต่อ LINE
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+    modal.classList.add('active');
+  },
+
+  handleConnectLineSubmit(e, childId) {
+    e.preventDefault();
+    const lineId = document.getElementById('modal-connect-line-id').value.trim();
+    if (!lineId) return;
+
+    const child = window.appStore.getChildById(childId);
+    if (child) {
+      child.parentLineId = lineId;
+    }
+
+    localStorage.setItem('BANGYAI_LINE_PERSONAL_USER_ID', lineId);
+    window.appStore.saveData(window.appStore.data);
+
+    this.showToast(`เชื่อมต่อ LINE รับแจ้งเตือนของ ${child ? child.nickname : 'บุตรหลาน'} เรียบร้อยแล้ว!`, 'success');
+    this.closeModal();
+
+    if (window.ParentView) {
+      window.ParentView.render('main-content');
+    }
+  },
+
   showToast(message, type = 'info') {
     let container = document.getElementById('toast-container');
     if (!container) {
