@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS public.classrooms (
   name TEXT NOT NULL,
   teacher_id UUID REFERENCES public.profiles(id),
   student_count INT DEFAULT 0,
+  line_group_id TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
