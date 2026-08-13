@@ -1,6 +1,6 @@
 /* ==========================================================================
    Bang Yai Child Development Center MIS - Responsive & Accessibility CSS
-   WCAG 2.2 Mobile-First Guidelines
+   WCAG 2.2 Mobile-First Guidelines & Native Mobile App Experience
    ========================================================================== */
 
 /* Mobile Bottom Action Bar for Parents & Teachers */
@@ -11,39 +11,74 @@
   left: 0;
   right: 0;
   background: var(--bg-surface-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--border-color);
-  z-index: 999;
-  padding: 0.35rem 0.5rem;
+  z-index: 1000;
+  padding: 0.4rem 0.75rem calc(0.4rem + env(safe-area-inset-bottom, 0px)) 0.75rem;
   justify-content: space-around;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .mobile-nav-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.2rem;
-  padding: 0.4rem;
+  gap: 0.15rem;
+  padding: 0.35rem 0.5rem;
   color: var(--text-muted);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   text-decoration: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   min-height: 48px;
   justify-content: center;
+  font-weight: 500;
+  transition: all var(--transition-fast);
 }
 
 .mobile-nav-item.active {
   color: var(--primary-600);
-  font-weight: 600;
+  font-weight: 700;
+  background: rgba(99, 102, 241, 0.1);
 }
 
-/* Breakpoints */
+/* Base Responsive Grid Adjustments */
+@media (max-width: 1024px) {
+  .grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
 
-/* Smart Phone Small Screens (< 640px) */
-@media (max-width: 640px) {
+/* Tablet & Mobile Breakpoints (< 768px) */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+
+  .app-container {
+    padding: 1rem 0.85rem 5.5rem 0.85rem;
+  }
+
   .top-navbar {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 0.85rem;
+  }
+
+  .brand-logo {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-title {
+    font-size: 1rem;
   }
 
   .brand-subtitle {
@@ -53,56 +88,147 @@
   .navbar-content {
     flex-direction: column;
     align-items: stretch;
-    gap: 0.75rem;
+    gap: 0.65rem;
   }
 
   .role-switcher-container {
     width: 100%;
     justify-content: space-between;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .role-tab-btn {
     flex: 1;
     justify-content: center;
-    padding: 0.4rem 0.5rem;
+    padding: 0.4rem 0.4rem;
     font-size: 0.8rem;
+    white-space: nowrap;
+    min-height: 40px;
   }
 
-  .app-container {
-    padding: 1rem 0.75rem 5rem 0.75rem;
-  }
-
-  .mobile-nav-bar {
-    display: flex;
-  }
-
+  /* Sub Tabs Scrolling on Mobile */
   .view-tabs {
+    font-size: 0.85rem;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab-link {
+    padding: 0.5rem 0.85rem;
     font-size: 0.85rem;
   }
 
-  .attendance-card {
-    flex-direction: column;
-    align-items: stretch;
+  /* Glass Cards Mobile Spacing */
+  .glass-card {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+  }
+
+  .stat-card {
+    padding: 0.85rem;
     gap: 0.75rem;
   }
 
+  .stat-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 1.25rem;
+  }
+
+  .stat-value {
+    font-size: 1.35rem;
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+  }
+
+  /* Attendance Card Mobile Optimizations */
+  .attendance-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+    padding: 0.85rem;
+  }
+
+  .student-info {
+    gap: 0.65rem;
+  }
+
+  .student-avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 0.95rem;
+  }
+
+  /* Mobile Touch Grid for 5 Attendance Buttons */
   .attendance-btn-group {
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
+    gap: 4px;
+    width: 100%;
   }
 
   .att-btn {
-    flex: 1;
+    padding: 0.45rem 0.25rem;
+    font-size: 0.75rem;
     text-align: center;
+    justify-content: center;
+    min-height: 42px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+  }
+
+  /* Data Table Mobile Container */
+  .data-table-container {
+    margin: 0 -0.5rem;
+    width: calc(100% + 1rem);
+    border-radius: 0;
+  }
+
+  .data-table th, .data-table td {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  /* Modals Mobile Responsiveness */
+  .modal-content {
+    padding: 1.25rem;
+    max-width: 95vw;
+    max-height: 88vh;
+    border-radius: var(--radius-md);
+  }
+
+  .modal-title {
+    font-size: 1.1rem;
+  }
+
+  /* Enable Bottom Mobile Navigation Bar */
+  .mobile-nav-bar {
+    display: flex;
   }
 }
 
-/* Tablet Screens (< 1024px) */
-@media (max-width: 1024px) {
-  .grid-3 {
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  }
+/* Smartphone Small Screens (< 480px) */
+@media (max-width: 480px) {
   .grid-4 {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: 1fr;
+  }
+
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .attendance-btn-group {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+  }
+
+  .att-btn {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.1rem;
   }
 }
 
@@ -129,3 +255,4 @@
     break-inside: avoid;
   }
 }
+

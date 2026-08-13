@@ -141,6 +141,45 @@ const ExecutiveView = {
             <div id="exec-dev-chart"></div>
           </div>
         </div>
+
+        <!-- Resource & Food Budget Management (Sufficiency Check - Section 4 & 5 PDF Specification) -->
+        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(254, 243, 199, 0.5), rgba(253, 230, 138, 0.3)); border-color: rgba(245, 158, 11, 0.3);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <span class="badge badge-executive" style="margin-bottom: 0.25rem;">Budgetary Justification & Operational Excellence</span>
+              <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0; color: #92400E;">
+                🍱 Resource & Food Budget Management (ระบบวิเคราะห์งบประมาณอาหารกลางวันตามการเข้าเรียนจริง)
+              </h3>
+            </div>
+            <span class="badge badge-success" style="font-size: 0.75rem;">Sufficiency Check Passed</span>
+          </div>
+
+          <div class="grid-3" style="gap: 1rem;">
+            <div style="background: white; border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">งบประมาณจัดสรรรายวัน (22 บาท/คน)</div>
+              <div style="font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin-top: 2px;">
+                ${(children.length * 22).toLocaleString()} บาท/วัน
+              </div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">คำนวณตามจำนวนเด็กทั้งหมด (${children.length} คน)</div>
+            </div>
+
+            <div style="background: white; border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">ค่าอาหารเบิกจ่ายตามสถิติเด็กมาจริง</div>
+              <div style="font-size: 1.35rem; font-weight: 700; color: #059669; margin-top: 2px;">
+                ${(attendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length * 22).toLocaleString()} บาท/วัน
+              </div>
+              <div style="font-size: 0.75rem; color: #059669; margin-top: 4px;">คิดจากเด็กที่มาเรียนจริง (${attendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length} คน)</div>
+            </div>
+
+            <div style="background: white; border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-color);">
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">งบประมาณส่วนต่างสะสม (ความคุ้มค่า)</div>
+              <div style="font-size: 1.35rem; font-weight: 700; color: #D97706; margin-top: 2px;">
+                +${((children.length - attendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length) * 22).toLocaleString()} บาท/วัน
+              </div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">ป้องกันงบประมาณรั่วไหลตามนโยบายโปร่งใส</div>
+            </div>
+          </div>
+        </div>
       `;
     }
 

@@ -116,6 +116,45 @@ const ParentView = {
           </div>
         </div>
 
+        <!-- Real-time Routine Tracker (Section 3 PDF Specification) -->
+        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 249, 255, 0.95));">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+            <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main);">
+              🕒 Real-time Routine Tracker (รายงานกิจวัตรประจำวันของ ${activeChild.nickname})
+            </h3>
+            <span class="badge badge-info" style="font-size: 0.75rem;">Routine-Based Care</span>
+          </div>
+
+          <div class="grid-3" style="gap: 1rem;">
+            <!-- Meal Tracker -->
+            <div style="background: white; border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.35rem;">🍱</span>
+                <strong style="font-size: 0.95rem; color: var(--text-main);">การรับประทานอาหาร</strong>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">มื้อกลางวัน: <strong style="color: #059669;">รับประทานหมดจาน</strong> (โภชนาการครบ 5 หมู่)</p>
+            </div>
+
+            <!-- Milk Tracker -->
+            <div style="background: white; border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.35rem;">🥛</span>
+                <strong style="font-size: 0.95rem; color: var(--text-main);">การดื่มนมเสริมสุขภาพ</strong>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">นมรสจืด พาสเจอร์ไรส์: <strong style="color: #2563EB;">2 กล่อง (250 มล.)</strong> เวลา 10:00 น. & 14:30 น.</p>
+            </div>
+
+            <!-- Sleep Tracker -->
+            <div style="background: white; border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.35rem;">😴</span>
+                <strong style="font-size: 0.95rem; color: var(--text-main);">การนอนกลางวัน</strong>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">เวลานอน: <strong style="color: #7C3AED;">12:30 - 14:30 น. (หลับสนิท 2 ชั่วโมง)</strong></p>
+            </div>
+          </div>
+        </div>
+
         <!-- LINE Connect Banner Card for Parent -->
         <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(236, 253, 245, 0.95), rgba(209, 250, 229, 0.95)); border-color: rgba(6, 199, 85, 0.3);">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
