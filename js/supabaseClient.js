@@ -165,7 +165,23 @@ class SupabaseService {
 
     const lineEndpoint = 'https://api.line.me/v2/bot/message/push';
 
-    // 1. Try Supabase Edge Function Relay first (bypasses CORS 100%)
+    // 1. Try Netlify Serverless Function Relay first (bypasses CORS 100% on Netlify)
+    try {
+      const netlifyFnUrl = '/.netlify/functions/line-push';
+      const res = await fetch(netlifyFnUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channelAccessToken, to: toUserIdOrGroupId, messageText })
+      });
+      if (res.ok) {
+        console.log(`⚡ Netlify Function: Real LINE Push sent successfully to ${toUserIdOrGroupId}!`);
+        return true;
+      }
+    } catch (e) {
+      // Fallback to Supabase / CORS Proxies
+    }
+
+    // 2. Try Supabase Edge Function Relay (bypasses CORS 100%)
     if (SUPABASE_CONFIG && SUPABASE_CONFIG.url) {
       try {
         const edgeFnUrl = `${SUPABASE_CONFIG.url}/functions/v1/line-push`;

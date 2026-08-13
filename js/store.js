@@ -237,6 +237,13 @@ class AppStore {
 
   updateAttendance(childId, status, checkedBy = 'ครูผู้ดูแล') {
     const today = this.getTodayBEString();
+    
+    if (status === 'RESET' || status === 'UNCHECKED') {
+      this.data.attendance = this.data.attendance.filter(a => !(a.childId === childId && a.date === today));
+      this.saveData(this.data);
+      return;
+    }
+
     let record = this.data.attendance.find(a => a.childId === childId && a.date === today);
     const now = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
     if (record) {
@@ -264,7 +271,7 @@ class AppStore {
     const child = this.getChildById(childId);
     if (child) {
       const statusText = status === 'PRESENT' ? 'มาเรียน' : status === 'LATE' ? 'มาสาย' : status === 'LEAVE' ? 'แจ้งลา' : 'ขาดเรียน';
-      const targetParentLineId = child.parentLineId || localStorage.getItem('BANGYAI_LINE_TARGET_ID') || 'U97dc0505bb590d70c66d401224a422db';
+      const targetParentLineId = child.parentLineId || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || localStorage.getItem('BANGYAI_LINE_TARGET_ID') || 'U97dc0505bb590d70c66d401224a422db';
       this.sendLineNotification(
         `🟢 เช็กชื่อเข้าเรียนเรียบร้อย`,
         `${child.nickname} (${child.firstName}) ได้บันทึกสถานะ "${statusText}" แล้ว เวลา ${now}`,

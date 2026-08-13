@@ -117,6 +117,9 @@ const TeacherView = {
                   </div>
 
                   <div class="attendance-btn-group">
+                    <button class="att-btn ${!status ? 'selected' : ''}" style="background: ${!status ? '#6B7280' : '#F3F4F6'}; color: ${!status ? '#FFFFFF' : '#4B5563'}; border: 1px solid #D1D5DB;" onclick="TeacherView.handleCheckIn('${child.id}', 'UNCHECKED', '${containerId}')">
+                      ⏳ ยังไม่เช็ก
+                    </button>
                     <button class="att-btn present ${status === 'PRESENT' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'PRESENT', '${containerId}')">
                       ✓ มาเรียน
                     </button>
