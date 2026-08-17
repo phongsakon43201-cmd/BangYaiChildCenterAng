@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Defense Mockup | Bang Yai Child Center</title>
+  <style>
+    :root{--bg:#f6f7fb;--surface:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--blue:#2563eb;--green:#059669;--amber:#d97706;--red:#dc2626;--violet:#7c3aed;--shadow:0 10px 30px rgba(15,23,42,.08)}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,"Noto Sans Thai",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}
+    button,input,select,textarea{font:inherit}.app{min-height:100vh}.topbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:12px 20px}.brand{display:flex;gap:10px;align-items:center}.logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#60a5fa);display:grid;place-items:center;color:#fff;font-size:20px}.badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2ff;color:#3730a3}.demo-badge{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 63px)}.sidebar{background:#fff;border-right:1px solid var(--line);padding:18px 14px}.nav-title{font-size:12px;color:var(--muted);margin:8px 10px}.nav-btn{width:100%;border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:10px;cursor:pointer;margin:3px 0}.nav-btn:hover,.nav-btn.active{background:#eff6ff;color:#1d4ed8;font-weight:700}.main{padding:24px;max-width:1400px;width:100%;margin:0 auto}.hero{background:linear-gradient(135deg,#1d4ed8,#60a5fa);color:#fff;padding:28px;border-radius:20px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:20px;align-items:center}.hero h1{margin:0 0 8px;font-size:30px}.hero p{margin:0;color:#dbeafe;max-width:760px}.role-switch{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.role-btn{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.14);color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}.role-btn.active{background:#fff;color:#1d4ed8;font-weight:800}.grid{display:grid;gap:16px}.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(15,23,42,.04)}.section{margin-top:20px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.section h2,.section h3{margin:0}.kpi{display:flex;gap:12px;align-items:center}.kpi-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#eff6ff}.kpi strong{display:block;font-size:24px}.muted{color:var(--muted);font-size:13px}.btn{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:700}.btn-primary{background:var(--blue);color:white}.btn-success{background:var(--green);color:white}.btn-danger{background:var(--red);color:white}.btn-secondary{background:#f3f4f6;color:#374151}.btn-outline{background:white;border:1px solid var(--line)}.status{padding:4px 9px;border-radius:999px;font-size:12px;font-weight:800;display:inline-block}.pending{background:#fef3c7;color:#92400e}.approved{background:#d1fae5;color:#065f46}.rejected{background:#fee2e2;color:#991b1b}.present{background:#dcfce7;color:#166534}.absent{background:#fee2e2;color:#991b1b}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.table th{font-size:12px;color:var(--muted);background:#f9fafb}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tab{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}.tab.active{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;font-weight:800}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px;background:#fff}.notice{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px;color:#92400e}.flow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.flow-step{background:#fff;border:1px solid var(--line);padding:10px 12px;border-radius:12px;font-size:13px}.arrow{color:#94a3b8}.screen{display:none}.screen.active{display:block}.bar{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden}.bar>span{display:block;height:100%;background:#2563eb}.chart{height:180px;display:flex;align-items:end;gap:10px;padding-top:20px}.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}.chart-bar{width:70%;background:linear-gradient(#60a5fa,#2563eb);border-radius:8px 8px 2px 2px}.mini{font-size:12px;color:var(--muted)}.empty{padding:28px;text-align:center;color:var(--muted)}.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:var(--shadow);display:none;z-index:50}.privacy{font-size:12px;color:#64748b;margin-top:8px}.demo-strip{background:#fff7ed;border-bottom:1px solid #fed7aa;padding:8px 20px;text-align:center;color:#9a3412;font-size:13px;font-weight:700}
+    @media(max-width:980px){.layout{grid-template-columns:1fr}.sidebar{display:none}.grid-4,.grid-3,.grid-2{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.main{padding:16px}}
+    @media(max-width:640px){.grid-4,.grid-3,.grid-2,.form-grid{grid-template-columns:1fr}.topbar{padding:10px 12px}.main{padding:12px}.hero{padding:20px}.hero h1{font-size:24px}.table th,.table td{padding:9px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="demo-strip">ข้อมูลทั้งหมดในหน้านี้เป็นข้อมูลจำลองสำหรับการนำเสนอสอบวิจัย ไม่ใช่ข้อมูลเด็กจริง และไม่ส่งข้อมูลไปยัง Supabase หรือ LINE</div>
+  <header class="topbar">
+    <div class="brand"><div class="logo">🏫</div><div><strong>ศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่</strong><div class="muted">Research Defense Mockup</div></div></div>
+    <span class="badge demo-badge">DEMO MODE</span>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="nav-title">โหมดนำเสนอ</div>
+      <button class="nav-btn active" data-nav="overview">🎯 ภาพรวมการสาธิต</button>
+      <button class="nav-btn" data-role="PARENT">👨‍👩‍👧 ผู้ปกครอง</button>
+      <button class="nav-btn" data-role="TEACHER">👩‍🏫 ครู / ผู้ดูแลเด็ก</button>
+      <button class="nav-btn" data-role="EXECUTIVE">📊 ผู้บริหาร</button>
+      <div class="nav-title" style="margin-top:18px">ประเด็นวิจัย</div>
+      <button class="nav-btn" data-nav="scope">🧩 ขอบเขต 8 โมดูล</button>
+      <button class="nav-btn" data-nav="privacy">🔒 Privacy by Design</button>
+    </aside>
+
+    <main class="main">
+      <section id="overview" class="screen active">
+        <div class="hero">
+          <div><span class="badge" style="background:rgba(255,255,255,.2);color:white">Clickable Prototype</span><h1>Mockup สำหรับสอบหัวข้อวิจัย</h1><p>สาธิตการไหลของข้อมูลจากผู้ปกครอง → ครู → ผู้บริหาร ในระบบเดียว เพื่ออธิบายแนวคิด Single Source of Truth, RBAC และการลดงานซ้ำซ้อน</p>
+            <div class="role-switch"><button class="role-btn" onclick="openRole('PARENT')">เริ่มจากผู้ปกครอง</button><button class="role-btn" onclick="openRole('TEACHER')">มุมมองครู</button><button class="role-btn" onclick="openRole('EXECUTIVE')">มุมมองผู้บริหาร</button></div>
+          </div><div style="font-size:90px">🧒</div>
+        </div>
+        <div class="section card">
+          <div class="section-head"><h2>Demo Story ที่ใช้เล่าต่อกรรมการ</h2><span class="badge">ประมาณ 3–5 นาที</span></div>
+          <div class="flow"><div class="flow-step">1. ผู้ปกครองดูข้อมูลบุตรหลาน</div><span class="arrow">→</span><div class="flow-step">2. ยื่นคำขอลา</div><span class="arrow">→</span><div class="flow-step">3. ครูเห็นคำขอและอนุมัติ</div><span class="arrow">→</span><div class="flow-step">4. สถานะอัปเดตกลับผู้ปกครอง</div><span class="arrow">→</span><div class="flow-step">5. ผู้บริหารเห็นสถิติภาพรวม</div></div>
+        </div>
+        <div class="section grid grid-3">
+          <div class="card"><div class="kpi"><div class="kpi-icon">👨‍👩‍👧</div><div><strong>Parent</strong><div class="muted">ดูเฉพาะข้อมูลบุตรหลาน ยื่นลา ข่าวสาร อาหาร กิจกรรม พัฒนาการ</div></div></div></div>
+          <div class="card"><div class="kpi"><div class="kpi-icon">👩‍🏫</div><div><strong>Teacher</strong><div class="muted">เช็กชื่อ อนุมัติลา บันทึกกิจกรรมและพัฒนาการ</div></div></div></div>
+          <div class="card"><div class="kpi"><div class="kpi-icon">📈</div><div><strong>Executive</strong><div class="muted">ดู Dashboard รายงาน และภาพรวมจากข้อมูลศูนย์กลาง</div></div></div></div>
+        </div>
+      </section>
+
+      <section id="parent" class="screen">
+        <div class="hero" style="background:linear-gradient(135deg,#047857,#34d399)"><div><span class="badge" style="background:rgba(255,255,255,.2);color:white">PARENT ROLE</span><h1>ผู้ปกครอง: นายวิทวัส สุขเสริฐ</h1><p>เข้าถึงเฉพาะข้อมูลของ ด.ช. กวินท์ สุขเสริฐ (น้องวิน) ตามหลัก RBAC และ Data Minimization</p></div><div style="font-size:80px">👨‍👦</div></div>
+        <div class="section grid grid-4">
+          <div class="card kpi"><div class="kpi-icon">✅</div><div><strong id="p-att">มาเรียน</strong><div class="muted">สถานะวันนี้ 08:05 น.</div></div></div>
+          <div class="card kpi"><div class="kpi-icon">📝</div><div><strong id="p-leave-count">0</strong><div class="muted">คำขอลาที่รอดำเนินการ</div></div></div>
+          <div class="card kpi"><div class="kpi-icon">🍱</div><div><strong style="font-size:16px">ข้าวผัดไก่</strong><div class="muted">เมนูอาหารกลางวัน</div></div></div>
+          <div class="card kpi"><div class="kpi-icon">📅</div><div><strong style="font-size:16px">กิจกรรมศิลปะ</strong><div class="muted">กิจกรรมประจำวัน</div></div></div>
+        </div>
+        <div class="section grid grid-2">
+          <div class="card">
+            <div class="section-head"><h3>ข้อมูลบุตรหลาน</h3><span class="badge">เฉพาะบุตรหลานของฉัน</span></div>
+            <p><strong>ด.ช. กวินท์ สุขเสริฐ (น้องวิน)</strong></p><p class="muted">ห้องลูกหมีน่ารัก • อายุ 2 ขวบ 6 เดือน • ครูประจำชั้น: ครูแก้ว</p>
+            <div class="privacy">🔒 หน้านี้ไม่แสดงข้อมูลเด็กคนอื่น เพื่อป้องกัน Cross-account data access</div>
+          </div>
+          <div class="card"><div class="section-head"><h3>พัฒนาการ 4 ด้าน</h3><span class="badge">ไม่ใช่การวินิจฉัยทางการแพทย์</span></div>
+            <div style="display:grid;gap:10px"><div>ร่างกาย <div class="bar"><span style="width:85%"></span></div></div><div>อารมณ์-จิตใจ <div class="bar"><span style="width:80%"></span></div></div><div>สังคม <div class="bar"><span style="width:90%"></span></div></div><div>สติปัญญา <div class="bar"><span style="width:82%"></span></div></div></div>
+          </div>
+        </div>
+        <div class="section card">
+          <div class="tabs"><button class="tab active" onclick="parentTab('leave',this)">📝 แจ้งลา</button><button class="tab" onclick="parentTab('history',this)">📋 ประวัติการเข้าเรียน</button><button class="tab" onclick="parentTab('news',this)">📢 ข่าวสาร</button></div>
+          <div id="parent-leave-tab">
+            <div class="form-grid"><div class="field"><label>ประเภทการลา</label><select id="leave-type"><option>ลาป่วย</option><option>ลากิจ</option></select></div><div class="field"><label>วันที่ลา</label><input id="leave-date" type="date" value="2026-08-18"></div><div class="field" style="grid-column:1/-1"><label>เหตุผล</label><textarea id="leave-reason" rows="3">มีไข้และต้องพักรักษาตัวที่บ้าน</textarea></div></div>
+            <div style="margin-top:12px"><button class="btn btn-primary" onclick="submitLeave()">ส่งคำขอลา</button></div>
+            <div id="parent-leave-result" style="margin-top:14px"></div>
+          </div>
+          <div id="parent-history-tab" style="display:none"><div class="table-wrap"><table class="table"><thead><tr><th>วันที่</th><th>สถานะ</th><th>เวลา</th></tr></thead><tbody><tr><td>17 ส.ค. 2569</td><td><span class="status present">มาเรียน</span></td><td>08:05</td></tr><tr><td>14 ส.ค. 2569</td><td><span class="status present">มาเรียน</span></td><td>07:58</td></tr><tr><td>13 ส.ค. 2569</td><td><span class="status approved">ลา</span></td><td>-</td></tr></tbody></table></div></div>
+          <div id="parent-news-tab" style="display:none"><div class="notice">📢 แจ้งกิจกรรมวันแม่แห่งชาติ และกำหนดการกิจกรรมประจำเดือนสิงหาคม</div></div>
+        </div>
+      </section>
+
+      <section id="teacher" class="screen">
+        <div class="hero" style="background:linear-gradient(135deg,#4338ca,#818cf8)"><div><span class="badge" style="background:rgba(255,255,255,.2);color:white">TEACHER ROLE</span><h1>ครูแก้ว • ห้องลูกหมีน่ารัก</h1><p>จัดการงานประจำวันของห้องที่รับผิดชอบ: เช็กชื่อ อนุมัติคำขอลา บันทึกกิจกรรม และพัฒนาการ</p></div><div style="font-size:80px">👩‍🏫</div></div>
+        <div class="section grid grid-4"><div class="card kpi"><div class="kpi-icon">🧒</div><div><strong>20</strong><div class="muted">เด็กในห้อง</div></div></div><div class="card kpi"><div class="kpi-icon">✅</div><div><strong id="t-present">18</strong><div class="muted">มาเรียน</div></div></div><div class="card kpi"><div class="kpi-icon">📝</div><div><strong id="t-pending">0</strong><div class="muted">คำขอลารออนุมัติ</div></div></div><div class="card kpi"><div class="kpi-icon">📊</div><div><strong>90%</strong><div class="muted">อัตรามาเรียนวันนี้</div></div></div></div>
+        <div class="section card"><div class="tabs"><button class="tab active" onclick="teacherTab('leave',this)">📩 คำขอลา</button><button class="tab" onclick="teacherTab('attendance',this)">📋 เช็กชื่อ</button><button class="tab" onclick="teacherTab('development',this)">📊 พัฒนาการ</button></div>
+          <div id="teacher-leave-tab"><div id="teacher-leave-list" class="empty">ยังไม่มีคำขอลาใหม่จากผู้ปกครอง</div></div>
+          <div id="teacher-attendance-tab" style="display:none"><div class="table-wrap"><table class="table"><thead><tr><th>เด็ก</th><th>สถานะ</th><th>ดำเนินการ</th></tr></thead><tbody><tr><td>น้องวิน (กวินท์)</td><td id="att-status-win"><span class="status present">มาเรียน</span></td><td><button class="btn btn-success" onclick="setAttendance('PRESENT')">มาเรียน</button> <button class="btn btn-danger" onclick="setAttendance('ABSENT')">ขาด</button></td></tr><tr><td>น้องแก้ม (กัญญารัตน์)</td><td><span class="status present">มาเรียน</span></td><td><button class="btn btn-secondary">บันทึกแล้ว</button></td></tr></tbody></table></div></div>
+          <div id="teacher-development-tab" style="display:none"><div class="form-grid"><div class="field"><label>เด็ก</label><select><option>น้องวิน (กวินท์)</option></select></div><div class="field"><label>ด้านพัฒนาการ</label><select><option>สติปัญญา</option><option>ร่างกาย</option><option>อารมณ์-จิตใจ</option><option>สังคม</option></select></div><div class="field"><label>ระดับ</label><select><option>ดี</option><option>ดีมาก</option><option>ตามเกณฑ์</option><option>ควรส่งเสริม</option></select></div><div class="field"><label>วันที่บันทึก</label><input type="date" value="2026-08-17"></div><div class="field" style="grid-column:1/-1"><label>บันทึกจากกิจกรรม</label><textarea rows="3">สามารถจับคู่สีและรูปทรงได้ดี และร่วมกิจกรรมกับเพื่อนได้</textarea></div></div><div style="margin-top:12px"><button class="btn btn-primary" onclick="toast('บันทึกพัฒนาการตัวอย่างแล้ว')">บันทึกพัฒนาการ</button></div></div>
+        </div>
+      </section>
+
+      <section id="executive" class="screen">
+        <div class="hero" style="background:linear-gradient(135deg,#92400e,#f59e0b)"><div><span class="badge" style="background:rgba(255,255,255,.2);color:white">EXECUTIVE ROLE</span><h1>Dashboard ผู้บริหาร</h1><p>ดูข้อมูลภาพรวมจากฐานข้อมูลกลาง โดยไม่ต้องรวบรวมเอกสารและไฟล์จากหลายช่องทาง</p></div><div style="font-size:80px">📊</div></div>
+        <div class="section grid grid-4"><div class="card kpi"><div class="kpi-icon">🧒</div><div><strong>20</strong><div class="muted">เด็กทั้งหมด</div></div></div><div class="card kpi"><div class="kpi-icon">✅</div><div><strong id="e-rate">90%</strong><div class="muted">อัตรามาเรียนวันนี้</div></div></div><div class="card kpi"><div class="kpi-icon">📝</div><div><strong id="e-leave">0</strong><div class="muted">คำขอลารออนุมัติ</div></div></div><div class="card kpi"><div class="kpi-icon">🛡️</div><div><strong id="e-audit">4</strong><div class="muted">เหตุการณ์ Audit วันนี้</div></div></div></div>
+        <div class="section grid grid-2"><div class="card"><div class="section-head"><h3>แนวโน้มอัตราการมาเรียน</h3><span class="badge">รายสัปดาห์</span></div><div class="chart"><div class="chart-col"><div class="chart-bar" style="height:72%"></div><div class="mini">จ</div></div><div class="chart-col"><div class="chart-bar" style="height:88%"></div><div class="mini">อ</div></div><div class="chart-col"><div class="chart-bar" style="height:82%"></div><div class="mini">พ</div></div><div class="chart-col"><div class="chart-bar" style="height:94%"></div><div class="mini">พฤ</div></div><div class="chart-col"><div class="chart-bar" style="height:90%"></div><div class="mini">ศ</div></div></div></div>
+          <div class="card"><div class="section-head"><h3>ภาพรวมพัฒนาการ 4 ด้าน</h3><span class="badge">ระดับศูนย์</span></div><div style="display:grid;gap:12px"><div>ร่างกาย <div class="bar"><span style="width:86%"></span></div></div><div>อารมณ์-จิตใจ <div class="bar"><span style="width:82%"></span></div></div><div>สังคม <div class="bar"><span style="width:88%"></span></div></div><div>สติปัญญา <div class="bar"><span style="width:84%"></span></div></div></div></div></div>
+        <div class="section card"><div class="section-head"><h3>รายงานตามช่วงเวลา</h3><button class="btn btn-secondary" onclick="toast('Mockup: สร้างรายงานประจำเดือนเรียบร้อย')">สร้างรายงานตัวอย่าง</button></div><div class="table-wrap"><table class="table"><thead><tr><th>ตัวชี้วัด</th><th>ผลลัพธ์</th><th>การใช้งาน</th></tr></thead><tbody><tr><td>จำนวนเด็ก</td><td>20 คน</td><td>วางแผนกำลังคนและห้องเรียน</td></tr><tr><td>อัตราการมาเรียน</td><td id="report-rate">90%</td><td>ติดตามการเข้าเรียน</td></tr><tr><td>คำขอลา</td><td id="report-leave">0 รายการค้าง</td><td>ตรวจสอบสถานะย้อนหลัง</td></tr></tbody></table></div></div>
+      </section>
+
+      <section id="scope" class="screen"><div class="hero"><div><h1>ขอบเขตระบบ 8 โมดูล</h1><p>ยึดตาม Proposal และ Implementation Plan ของโครงงาน โดยเน้นเฉพาะฟังก์ชันที่เกี่ยวกับการบริหารจัดการและสื่อสารข้อมูลของศูนย์พัฒนาเด็กเล็ก</p></div><div style="font-size:80px">🧩</div></div><div class="section grid grid-2" id="scope-cards"></div></section>
+      <section id="privacy" class="screen"><div class="hero" style="background:linear-gradient(135deg,#0f172a,#475569)"><div><h1>Privacy by Design & RBAC</h1><p>ออกแบบสิทธิ์ตามหน้าที่ ลดการเปิดเผยข้อมูลเด็กที่ไม่จำเป็น และทำให้ตรวจสอบการใช้งานย้อนหลังได้</p></div><div style="font-size:80px">🔒</div></div><div class="section grid grid-3"><div class="card"><h3>ผู้ปกครอง</h3><p class="muted">เห็นเฉพาะข้อมูลบุตรหลานของตนเอง ไม่เห็นข้อมูลเด็กคนอื่น</p></div><div class="card"><h3>ครู</h3><p class="muted">เข้าถึงเฉพาะเด็กและงานในห้องเรียนที่รับผิดชอบ</p></div><div class="card"><h3>ผู้บริหาร</h3><p class="muted">ดูภาพรวมและรายงานตามหน้าที่ โดยใช้ข้อมูลเท่าที่จำเป็น</p></div></div><div class="section card"><h3>หลักการที่ใช้ในงานวิจัย</h3><p>Data Minimization • Role-Based Access Control • Audit Log • HTTPS • Password Hashing • Input Validation • Backup/Recovery • ป้องกัน Cross-account Data Access</p></div></section>
+    </main>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+  const demoState={leave:null,audit:4,attendance:'PRESENT'};
+  const modules=['ทะเบียนเด็กและผู้ใช้งาน','เช็กชื่อการเข้าเรียน','คำขอแจ้งลาและอนุมัติ','ข่าวสารและประกาศ','รายการอาหารประจำวัน','กิจกรรมประจำวัน','พัฒนาการรายบุคคล 4 ด้าน','Dashboard และรายงาน'];
+  document.getElementById('scope-cards').innerHTML=modules.map((m,i)=>`<div class="card"><span class="badge">0${i+1}</span><h3 style="margin-top:10px">${m}</h3><p class="muted">โมดูลตามขอบเขตการวิจัยและการสาธิตระบบ</p></div>`).join('');
+  document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(btn.dataset.role)openRole(btn.dataset.role);else showScreen(btn.dataset.nav)}));
+  function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}
+  function openRole(role){showScreen(role.toLowerCase());document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.role===role));}
+  function parentTab(name,btn){['leave','history','news'].forEach(t=>document.getElementById('parent-'+t+'-tab').style.display=t===name?'block':'none');btn.parentElement.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
+  function teacherTab(name,btn){['leave','attendance','development'].forEach(t=>document.getElementById('teacher-'+t+'-tab').style.display=t===name?'block':'none');btn.parentElement.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
+  function submitLeave(){const type=document.getElementById('leave-type').value,date=document.getElementById('leave-date').value,reason=document.getElementById('leave-reason').value.trim();if(!reason){toast('กรุณาระบุเหตุผล');return}demoState.leave={type,date,reason,status:'PENDING'};demoState.audit++;renderState();toast('ส่งคำขอลาแล้ว • สถานะ: รอครูอนุมัติ')}
+  function approveLeave(ok){if(!demoState.leave)return;demoState.leave.status=ok?'APPROVED':'REJECTED';demoState.audit++;if(ok)demoState.attendance='LEAVE';renderState();toast(ok?'อนุมัติคำขอลาแล้ว':'ไม่อนุมัติคำขอลา')}
+  function setAttendance(status){demoState.attendance=status;demoState.audit++;renderState();toast('อัปเดตสถานะการเข้าเรียนแล้ว')}
+  function renderState(){const pending=demoState.leave&&demoState.leave.status==='PENDING'?1:0;document.getElementById('p-leave-count').textContent=pending;document.getElementById('t-pending').textContent=pending;document.getElementById('e-leave').textContent=pending;document.getElementById('report-leave').textContent=pending+' รายการค้าง';document.getElementById('e-audit').textContent=demoState.audit;
+    const pr=document.getElementById('parent-leave-result'),tl=document.getElementById('teacher-leave-list');
+    if(demoState.leave){const cls=demoState.leave.status==='PENDING'?'pending':demoState.leave.status==='APPROVED'?'approved':'rejected';const text=demoState.leave.status==='PENDING'?'รอครูอนุมัติ':demoState.leave.status==='APPROVED'?'อนุมัติแล้ว':'ไม่อนุมัติ';pr.innerHTML=`<div class="card" style="box-shadow:none"><strong>คำขอล่าสุด</strong><p>${demoState.leave.type} • ${demoState.leave.date}</p><p class="muted">${demoState.leave.reason}</p><span class="status ${cls}">${text}</span></div>`;tl.innerHTML=`<div class="table-wrap"><table class="table"><thead><tr><th>เด็ก</th><th>ประเภท</th><th>วันที่</th><th>เหตุผล</th><th>สถานะ</th><th>ดำเนินการ</th></tr></thead><tbody><tr><td>น้องวิน</td><td>${demoState.leave.type}</td><td>${demoState.leave.date}</td><td>${demoState.leave.reason}</td><td><span class="status ${cls}">${text}</span></td><td>${demoState.leave.status==='PENDING'?`<button class="btn btn-success" onclick="approveLeave(true)">อนุมัติ</button> <button class="btn btn-danger" onclick="approveLeave(false)">ไม่อนุมัติ</button>`:'ดำเนินการแล้ว'}</td></tr></tbody></table></div>`} else {pr.innerHTML='';tl.className='empty';tl.innerHTML='ยังไม่มีคำขอลาใหม่จากผู้ปกครอง'}
+    const att=demoState.attendance;document.getElementById('p-att').textContent=att==='PRESENT'?'มาเรียน':att==='LEAVE'?'ลา':'ขาดเรียน';document.getElementById('att-status-win').innerHTML=att==='PRESENT'?'<span class="status present">มาเรียน</span>':att==='LEAVE'?'<span class="status approved">ลา</span>':'<span class="status absent">ขาด</span>';const present=att==='PRESENT'?18:17;const rate=Math.round(present/20*100);document.getElementById('t-present').textContent=present;document.getElementById('e-rate').textContent=rate+'%';document.getElementById('report-rate').textContent=rate+'%';}
+  function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>t.style.display='none',2200)}
+  renderState();
+</script>
+</body>
+</html>
