@@ -3,125 +3,391 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1d4ed8">
   <title>Research Defense Mockup | Bang Yai Child Center</title>
-  <style>
-    :root{--bg:#f6f7fb;--surface:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--blue:#2563eb;--green:#059669;--amber:#d97706;--red:#dc2626;--violet:#7c3aed;--shadow:0 10px 30px rgba(15,23,42,.08)}
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,"Noto Sans Thai",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}
-    button,input,select,textarea{font:inherit}.app{min-height:100vh}.topbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:12px 20px}.brand{display:flex;gap:10px;align-items:center}.logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#60a5fa);display:grid;place-items:center;color:#fff;font-size:20px}.badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2ff;color:#3730a3}.demo-badge{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 63px)}.sidebar{background:#fff;border-right:1px solid var(--line);padding:18px 14px}.nav-title{font-size:12px;color:var(--muted);margin:8px 10px}.nav-btn{width:100%;border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:10px;cursor:pointer;margin:3px 0}.nav-btn:hover,.nav-btn.active{background:#eff6ff;color:#1d4ed8;font-weight:700}.main{padding:24px;max-width:1400px;width:100%;margin:0 auto}.hero{background:linear-gradient(135deg,#1d4ed8,#60a5fa);color:#fff;padding:28px;border-radius:20px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:20px;align-items:center}.hero h1{margin:0 0 8px;font-size:30px}.hero p{margin:0;color:#dbeafe;max-width:760px}.role-switch{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.role-btn{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.14);color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}.role-btn.active{background:#fff;color:#1d4ed8;font-weight:800}.grid{display:grid;gap:16px}.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(15,23,42,.04)}.section{margin-top:20px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.section h2,.section h3{margin:0}.kpi{display:flex;gap:12px;align-items:center}.kpi-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#eff6ff}.kpi strong{display:block;font-size:24px}.muted{color:var(--muted);font-size:13px}.btn{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:700}.btn-primary{background:var(--blue);color:white}.btn-success{background:var(--green);color:white}.btn-danger{background:var(--red);color:white}.btn-secondary{background:#f3f4f6;color:#374151}.btn-outline{background:white;border:1px solid var(--line)}.status{padding:4px 9px;border-radius:999px;font-size:12px;font-weight:800;display:inline-block}.pending{background:#fef3c7;color:#92400e}.approved{background:#d1fae5;color:#065f46}.rejected{background:#fee2e2;color:#991b1b}.present{background:#dcfce7;color:#166534}.absent{background:#fee2e2;color:#991b1b}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.table th{font-size:12px;color:var(--muted);background:#f9fafb}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tab{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}.tab.active{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;font-weight:800}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:10px;background:#fff}.notice{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px;color:#92400e}.flow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.flow-step{background:#fff;border:1px solid var(--line);padding:10px 12px;border-radius:12px;font-size:13px}.arrow{color:#94a3b8}.screen{display:none}.screen.active{display:block}.bar{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden}.bar>span{display:block;height:100%;background:#2563eb}.chart{height:180px;display:flex;align-items:end;gap:10px;padding-top:20px}.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}.chart-bar{width:70%;background:linear-gradient(#60a5fa,#2563eb);border-radius:8px 8px 2px 2px}.mini{font-size:12px;color:var(--muted)}.empty{padding:28px;text-align:center;color:var(--muted)}.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:var(--shadow);display:none;z-index:50}.privacy{font-size:12px;color:#64748b;margin-top:8px}.demo-strip{background:#fff7ed;border-bottom:1px solid #fed7aa;padding:8px 20px;text-align:center;color:#9a3412;font-size:13px;font-weight:700}
-    @media(max-width:980px){.layout{grid-template-columns:1fr}.sidebar{display:none}.grid-4,.grid-3,.grid-2{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.main{padding:16px}}
-    @media(max-width:640px){.grid-4,.grid-3,.grid-2,.form-grid{grid-template-columns:1fr}.topbar{padding:10px 12px}.main{padding:12px}.hero{padding:20px}.hero h1{font-size:24px}.table th,.table td{padding:9px}}
-  </style>
+  <link rel="icon" type="image/png" href="./assets/images/logo.png">
+  <link rel="stylesheet" href="./research-demo.css">
 </head>
 <body>
-<div class="app">
-  <div class="demo-strip">ข้อมูลทั้งหมดในหน้านี้เป็นข้อมูลจำลองสำหรับการนำเสนอสอบวิจัย ไม่ใช่ข้อมูลเด็กจริง และไม่ส่งข้อมูลไปยัง Supabase หรือ LINE</div>
+  <div class="demo-strip">
+    <strong>DEMO MODE:</strong> ข้อมูลทั้งหมดเป็นข้อมูลจำลองสำหรับการสอบวิจัย ไม่ใช่ข้อมูลเด็กจริง และหน้านี้ไม่เชื่อม Supabase / LINE
+  </div>
+
   <header class="topbar">
-    <div class="brand"><div class="logo">🏫</div><div><strong>ศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่</strong><div class="muted">Research Defense Mockup</div></div></div>
-    <span class="badge demo-badge">DEMO MODE</span>
+    <button class="icon-button mobile-menu" id="mobile-menu-btn" aria-label="เปิดเมนู">☰</button>
+    <div class="brand">
+      <img src="./assets/images/logo.png" alt="ตราศูนย์พัฒนาเด็กเล็ก" class="brand-logo" onerror="this.style.display='none'">
+      <div>
+        <strong>ศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่</strong>
+        <div class="muted">Research Defense Interactive Mockup</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span class="pill pill-warning">ข้อมูลจำลอง</span>
+      <button class="btn btn-ghost btn-sm" id="reset-demo-btn">↻ รีเซ็ต Demo</button>
+    </div>
   </header>
 
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="nav-title">โหมดนำเสนอ</div>
-      <button class="nav-btn active" data-nav="overview">🎯 ภาพรวมการสาธิต</button>
-      <button class="nav-btn" data-role="PARENT">👨‍👩‍👧 ผู้ปกครอง</button>
-      <button class="nav-btn" data-role="TEACHER">👩‍🏫 ครู / ผู้ดูแลเด็ก</button>
-      <button class="nav-btn" data-role="EXECUTIVE">📊 ผู้บริหาร</button>
-      <div class="nav-title" style="margin-top:18px">ประเด็นวิจัย</div>
-      <button class="nav-btn" data-nav="scope">🧩 ขอบเขต 8 โมดูล</button>
-      <button class="nav-btn" data-nav="privacy">🔒 Privacy by Design</button>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">นำเสนอวิจัย</div>
+        <button class="nav-btn active" data-screen="login">🏠 หน้าเริ่มต้น / Demo Login</button>
+        <button class="nav-btn" data-screen="overview">🎯 ภาพรวมโครงการ</button>
+        <button class="nav-btn" data-screen="asis">🔄 AS-IS → TO-BE</button>
+        <button class="nav-btn" data-screen="objectives">🧭 วัตถุประสงค์ → ฟังก์ชัน</button>
+        <button class="nav-btn" data-screen="architecture">🏗️ สถาปัตยกรรมระบบ</button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">3 บทบาทหลัก (RBAC)</div>
+        <button class="nav-btn" data-role="PARENT">👨‍👩‍👧 ผู้ปกครอง</button>
+        <button class="nav-btn" data-role="TEACHER">👩‍🏫 ครู / ผู้ดูแลเด็ก</button>
+        <button class="nav-btn" data-role="EXECUTIVE">📊 ผู้บริหาร / เทศบาล</button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">ประเด็นปิดการนำเสนอ</div>
+        <button class="nav-btn" data-screen="scope">🧩 ขอบเขต 8 โมดูล</button>
+        <button class="nav-btn" data-screen="privacy">🔒 Privacy by Design</button>
+        <button class="nav-btn" data-screen="kpi">✅ เกณฑ์ความสำเร็จ</button>
+      </div>
+
+      <div class="sidebar-tip">
+        <strong>แนะนำวันสอบ</strong>
+        <p>กด “เริ่ม Guided Demo” แล้วใช้ปุ่ม ถัดไป เพื่อเดิน flow โดยไม่หลงหน้า</p>
+      </div>
     </aside>
 
-    <main class="main">
-      <section id="overview" class="screen active">
-        <div class="hero">
-          <div><span class="badge" style="background:rgba(255,255,255,.2);color:white">Clickable Prototype</span><h1>Mockup สำหรับสอบหัวข้อวิจัย</h1><p>สาธิตการไหลของข้อมูลจากผู้ปกครอง → ครู → ผู้บริหาร ในระบบเดียว เพื่ออธิบายแนวคิด Single Source of Truth, RBAC และการลดงานซ้ำซ้อน</p>
-            <div class="role-switch"><button class="role-btn" onclick="openRole('PARENT')">เริ่มจากผู้ปกครอง</button><button class="role-btn" onclick="openRole('TEACHER')">มุมมองครู</button><button class="role-btn" onclick="openRole('EXECUTIVE')">มุมมองผู้บริหาร</button></div>
-          </div><div style="font-size:90px">🧒</div>
-        </div>
-        <div class="section card">
-          <div class="section-head"><h2>Demo Story ที่ใช้เล่าต่อกรรมการ</h2><span class="badge">ประมาณ 3–5 นาที</span></div>
-          <div class="flow"><div class="flow-step">1. ผู้ปกครองดูข้อมูลบุตรหลาน</div><span class="arrow">→</span><div class="flow-step">2. ยื่นคำขอลา</div><span class="arrow">→</span><div class="flow-step">3. ครูเห็นคำขอและอนุมัติ</div><span class="arrow">→</span><div class="flow-step">4. สถานะอัปเดตกลับผู้ปกครอง</div><span class="arrow">→</span><div class="flow-step">5. ผู้บริหารเห็นสถิติภาพรวม</div></div>
-        </div>
-        <div class="section grid grid-3">
-          <div class="card"><div class="kpi"><div class="kpi-icon">👨‍👩‍👧</div><div><strong>Parent</strong><div class="muted">ดูเฉพาะข้อมูลบุตรหลาน ยื่นลา ข่าวสาร อาหาร กิจกรรม พัฒนาการ</div></div></div></div>
-          <div class="card"><div class="kpi"><div class="kpi-icon">👩‍🏫</div><div><strong>Teacher</strong><div class="muted">เช็กชื่อ อนุมัติลา บันทึกกิจกรรมและพัฒนาการ</div></div></div></div>
-          <div class="card"><div class="kpi"><div class="kpi-icon">📈</div><div><strong>Executive</strong><div class="muted">ดู Dashboard รายงาน และภาพรวมจากข้อมูลศูนย์กลาง</div></div></div></div>
-        </div>
-      </section>
-
-      <section id="parent" class="screen">
-        <div class="hero" style="background:linear-gradient(135deg,#047857,#34d399)"><div><span class="badge" style="background:rgba(255,255,255,.2);color:white">PARENT ROLE</span><h1>ผู้ปกครอง: นายวิทวัส สุขเสริฐ</h1><p>เข้าถึงเฉพาะข้อมูลของ ด.ช. กวินท์ สุขเสริฐ (น้องวิน) ตามหลัก RBAC และ Data Minimization</p></div><div style="font-size:80px">👨‍👦</div></div>
-        <div class="section grid grid-4">
-          <div class="card kpi"><div class="kpi-icon">✅</div><div><strong id="p-att">มาเรียน</strong><div class="muted">สถานะวันนี้ 08:05 น.</div></div></div>
-          <div class="card kpi"><div class="kpi-icon">📝</div><div><strong id="p-leave-count">0</strong><div class="muted">คำขอลาที่รอดำเนินการ</div></div></div>
-          <div class="card kpi"><div class="kpi-icon">🍱</div><div><strong style="font-size:16px">ข้าวผัดไก่</strong><div class="muted">เมนูอาหารกลางวัน</div></div></div>
-          <div class="card kpi"><div class="kpi-icon">📅</div><div><strong style="font-size:16px">กิจกรรมศิลปะ</strong><div class="muted">กิจกรรมประจำวัน</div></div></div>
-        </div>
-        <div class="section grid grid-2">
-          <div class="card">
-            <div class="section-head"><h3>ข้อมูลบุตรหลาน</h3><span class="badge">เฉพาะบุตรหลานของฉัน</span></div>
-            <p><strong>ด.ช. กวินท์ สุขเสริฐ (น้องวิน)</strong></p><p class="muted">ห้องลูกหมีน่ารัก • อายุ 2 ขวบ 6 เดือน • ครูประจำชั้น: ครูแก้ว</p>
-            <div class="privacy">🔒 หน้านี้ไม่แสดงข้อมูลเด็กคนอื่น เพื่อป้องกัน Cross-account data access</div>
+    <main class="main-content">
+      <!-- LOGIN / START -->
+      <section id="screen-login" class="screen active">
+        <div class="hero hero-primary">
+          <div class="hero-content">
+            <span class="eyebrow">RESEARCH DEFENSE MOCKUP</span>
+            <h1>เว็บแอปพลิเคชันเพื่อบริหารจัดการและสื่อสารข้อมูลของศูนย์พัฒนาเด็กเล็ก</h1>
+            <p>สาธิตการทำงานของระบบกลางที่เชื่อมข้อมูลระหว่างผู้ปกครอง ครู/ผู้ดูแลเด็ก และผู้บริหาร ภายใต้แนวคิด Single Source of Truth, RBAC และ Privacy by Design</p>
+            <div class="hero-actions">
+              <button class="btn btn-light btn-lg" id="start-guided-demo">▶ เริ่ม Guided Demo</button>
+              <button class="btn btn-glass btn-lg" data-screen-jump="overview">ดูภาพรวมก่อน</button>
+            </div>
           </div>
-          <div class="card"><div class="section-head"><h3>พัฒนาการ 4 ด้าน</h3><span class="badge">ไม่ใช่การวินิจฉัยทางการแพทย์</span></div>
-            <div style="display:grid;gap:10px"><div>ร่างกาย <div class="bar"><span style="width:85%"></span></div></div><div>อารมณ์-จิตใจ <div class="bar"><span style="width:80%"></span></div></div><div>สังคม <div class="bar"><span style="width:90%"></span></div></div><div>สติปัญญา <div class="bar"><span style="width:82%"></span></div></div></div>
+          <div class="hero-visual" aria-hidden="true">🧒🏻</div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-heading center-heading">
+            <span class="section-kicker">DEMO LOGIN</span>
+            <h2>เลือกบทบาทเพื่อทดลองใช้งาน</h2>
+            <p>ไม่มีการใช้รหัสผ่านจริงใน Mockup เพื่อให้กรรมการเห็น User Flow ได้รวดเร็ว</p>
+          </div>
+
+          <div class="role-card-grid">
+            <article class="role-card parent-card">
+              <div class="role-icon">👨‍👩‍👧</div>
+              <span class="pill pill-parent">01 ผู้ปกครอง</span>
+              <h3>ติดตามข้อมูลบุตรหลาน</h3>
+              <p>ดูการเข้าเรียน ข่าวสาร เมนู พัฒนาการ และส่ง/ติดตามคำขอแจ้งลา</p>
+              <ul class="clean-list">
+                <li>เห็นข้อมูลเฉพาะบุตรหลานของตน</li>
+                <li>ติดตามสถานะคำขอแบบตรวจสอบย้อนหลังได้</li>
+              </ul>
+              <button class="btn btn-parent full" data-role-login="PARENT">ทดลองเป็นผู้ปกครอง</button>
+            </article>
+
+            <article class="role-card teacher-card">
+              <div class="role-icon">👩‍🏫</div>
+              <span class="pill pill-teacher">02 ครู / ผู้ดูแลเด็ก</span>
+              <h3>จัดการงานประจำวัน</h3>
+              <p>เช็กชื่อ อนุมัติการลา บันทึกกิจกรรมและพัฒนาการของเด็กในความรับผิดชอบ</p>
+              <ul class="clean-list">
+                <li>บันทึกข้อมูลในหน้าเดียว ลดงานซ้ำ</li>
+                <li>ข้อมูลเปลี่ยนแล้วสะท้อนไปยังผู้เกี่ยวข้อง</li>
+              </ul>
+              <button class="btn btn-teacher full" data-role-login="TEACHER">ทดลองเป็นครู</button>
+            </article>
+
+            <article class="role-card executive-card">
+              <div class="role-icon">📊</div>
+              <span class="pill pill-executive">03 ผู้บริหาร</span>
+              <h3>ดูภาพรวมเพื่อการตัดสินใจ</h3>
+              <p>ดู KPI สถิติการมาเรียน ภาพรวมพัฒนาการ และรายงานตามช่วงเวลา</p>
+              <ul class="clean-list">
+                <li>ไม่ต้องรวบรวมข้อมูลจากหลายแหล่ง</li>
+                <li>ตรวจสอบ Audit Log ได้ตามหน้าที่</li>
+              </ul>
+              <button class="btn btn-executive full" data-role-login="EXECUTIVE">ทดลองเป็นผู้บริหาร</button>
+            </article>
           </div>
         </div>
-        <div class="section card">
-          <div class="tabs"><button class="tab active" onclick="parentTab('leave',this)">📝 แจ้งลา</button><button class="tab" onclick="parentTab('history',this)">📋 ประวัติการเข้าเรียน</button><button class="tab" onclick="parentTab('news',this)">📢 ข่าวสาร</button></div>
-          <div id="parent-leave-tab">
-            <div class="form-grid"><div class="field"><label>ประเภทการลา</label><select id="leave-type"><option>ลาป่วย</option><option>ลากิจ</option></select></div><div class="field"><label>วันที่ลา</label><input id="leave-date" type="date" value="2026-08-18"></div><div class="field" style="grid-column:1/-1"><label>เหตุผล</label><textarea id="leave-reason" rows="3">มีไข้และต้องพักรักษาตัวที่บ้าน</textarea></div></div>
-            <div style="margin-top:12px"><button class="btn btn-primary" onclick="submitLeave()">ส่งคำขอลา</button></div>
-            <div id="parent-leave-result" style="margin-top:14px"></div>
+
+        <div class="callout info-callout">
+          <div class="callout-icon">💡</div>
+          <div><strong>ประโยคเปิด Demo ที่แนะนำ:</strong> “Mockup นี้ไม่ได้มุ่งแสดงจำนวนหน้าจอ แต่ใช้แสดงการไหลของข้อมูลเดียวกันผ่านผู้ใช้ 3 บทบาท เพื่อให้เห็นว่าระบบช่วยลดข้อมูลกระจัดกระจายและงานซ้ำซ้อนได้อย่างไรครับ”</div>
+        </div>
+      </section>
+
+      <!-- OVERVIEW -->
+      <section id="screen-overview" class="screen">
+        <div class="page-header">
+          <div><span class="section-kicker">PROJECT OVERVIEW</span><h1>ระบบเดียวเชื่อมผู้เกี่ยวข้องทั้งศูนย์</h1><p>เปลี่ยนข้อมูลจากกระดาษ ไฟล์ และแชตหลายช่องทาง ให้เป็นข้อมูลส่วนกลางที่มีสิทธิ์การเข้าถึงชัดเจน</p></div>
+          <button class="btn btn-primary" data-screen-jump="asis">ดูปัญหา AS-IS →</button>
+        </div>
+
+        <div class="grid grid-4 section-block compact-top">
+          <div class="stat-card"><div class="stat-icon">👥</div><div><strong>3</strong><span>บทบาทผู้ใช้</span></div></div>
+          <div class="stat-card"><div class="stat-icon">🧩</div><div><strong>8</strong><span>โมดูลหลัก</span></div></div>
+          <div class="stat-card"><div class="stat-icon">🔐</div><div><strong>RBAC</strong><span>จำกัดสิทธิ์ตามหน้าที่</span></div></div>
+          <div class="stat-card"><div class="stat-icon">🗃️</div><div><strong>1</strong><span>แหล่งข้อมูลกลาง</span></div></div>
+        </div>
+
+        <div class="card section-block">
+          <div class="section-heading"><span class="section-kicker">CORE FLOW</span><h2>ตัวอย่างการไหลของ “คำขอแจ้งลา”</h2></div>
+          <div class="flow-line">
+            <div class="flow-node"><span>1</span><strong>ผู้ปกครองส่งคำขอ</strong><small>วันที่ / ประเภท / เหตุผล</small></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node"><span>2</span><strong>ข้อมูลเข้าสู่ระบบกลาง</strong><small>สถานะ PENDING</small></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node"><span>3</span><strong>ครูตรวจสอบ</strong><small>อนุมัติ / ไม่อนุมัติ</small></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node"><span>4</span><strong>ผู้ปกครองเห็นผล</strong><small>ตรวจสอบย้อนหลังได้</small></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node"><span>5</span><strong>ผู้บริหารเห็นสถิติ</strong><small>ใช้ทำรายงานภาพรวม</small></div>
           </div>
-          <div id="parent-history-tab" style="display:none"><div class="table-wrap"><table class="table"><thead><tr><th>วันที่</th><th>สถานะ</th><th>เวลา</th></tr></thead><tbody><tr><td>17 ส.ค. 2569</td><td><span class="status present">มาเรียน</span></td><td>08:05</td></tr><tr><td>14 ส.ค. 2569</td><td><span class="status present">มาเรียน</span></td><td>07:58</td></tr><tr><td>13 ส.ค. 2569</td><td><span class="status approved">ลา</span></td><td>-</td></tr></tbody></table></div></div>
-          <div id="parent-news-tab" style="display:none"><div class="notice">📢 แจ้งกิจกรรมวันแม่แห่งชาติ และกำหนดการกิจกรรมประจำเดือนสิงหาคม</div></div>
+        </div>
+
+        <div class="grid grid-3 section-block">
+          <div class="card"><span class="pill pill-parent">ผู้ปกครอง</span><h3>เข้าถึงเฉพาะบุตรหลานตนเอง</h3><p class="muted-text">ลดการตกหล่นของข่าวสารและเพิ่มความสะดวกในการติดตามข้อมูลประจำวัน</p></div>
+          <div class="card"><span class="pill pill-teacher">ครู</span><h3>บันทึกครั้งเดียว ใช้ต่อได้หลายส่วน</h3><p class="muted-text">ข้อมูลเช็กชื่อ การลา กิจกรรม และพัฒนาการอยู่ในระบบเดียวกัน</p></div>
+          <div class="card"><span class="pill pill-executive">ผู้บริหาร</span><h3>เห็นภาพรวมโดยไม่รอรวบรวมรายงาน</h3><p class="muted-text">Dashboard และรายงานอ้างอิงข้อมูลจากแหล่งเดียวกัน</p></div>
         </div>
       </section>
 
-      <section id="teacher" class="screen">
-        <div class="hero" style="background:linear-gradient(135deg,#4338ca,#818cf8)"><div><span class="badge" style="background:rgba(255,255,255,.2);color:white">TEACHER ROLE</span><h1>ครูแก้ว • ห้องลูกหมีน่ารัก</h1><p>จัดการงานประจำวันของห้องที่รับผิดชอบ: เช็กชื่อ อนุมัติคำขอลา บันทึกกิจกรรม และพัฒนาการ</p></div><div style="font-size:80px">👩‍🏫</div></div>
-        <div class="section grid grid-4"><div class="card kpi"><div class="kpi-icon">🧒</div><div><strong>20</strong><div class="muted">เด็กในห้อง</div></div></div><div class="card kpi"><div class="kpi-icon">✅</div><div><strong id="t-present">18</strong><div class="muted">มาเรียน</div></div></div><div class="card kpi"><div class="kpi-icon">📝</div><div><strong id="t-pending">0</strong><div class="muted">คำขอลารออนุมัติ</div></div></div><div class="card kpi"><div class="kpi-icon">📊</div><div><strong>90%</strong><div class="muted">อัตรามาเรียนวันนี้</div></div></div></div>
-        <div class="section card"><div class="tabs"><button class="tab active" onclick="teacherTab('leave',this)">📩 คำขอลา</button><button class="tab" onclick="teacherTab('attendance',this)">📋 เช็กชื่อ</button><button class="tab" onclick="teacherTab('development',this)">📊 พัฒนาการ</button></div>
-          <div id="teacher-leave-tab"><div id="teacher-leave-list" class="empty">ยังไม่มีคำขอลาใหม่จากผู้ปกครอง</div></div>
-          <div id="teacher-attendance-tab" style="display:none"><div class="table-wrap"><table class="table"><thead><tr><th>เด็ก</th><th>สถานะ</th><th>ดำเนินการ</th></tr></thead><tbody><tr><td>น้องวิน (กวินท์)</td><td id="att-status-win"><span class="status present">มาเรียน</span></td><td><button class="btn btn-success" onclick="setAttendance('PRESENT')">มาเรียน</button> <button class="btn btn-danger" onclick="setAttendance('ABSENT')">ขาด</button></td></tr><tr><td>น้องแก้ม (กัญญารัตน์)</td><td><span class="status present">มาเรียน</span></td><td><button class="btn btn-secondary">บันทึกแล้ว</button></td></tr></tbody></table></div></div>
-          <div id="teacher-development-tab" style="display:none"><div class="form-grid"><div class="field"><label>เด็ก</label><select><option>น้องวิน (กวินท์)</option></select></div><div class="field"><label>ด้านพัฒนาการ</label><select><option>สติปัญญา</option><option>ร่างกาย</option><option>อารมณ์-จิตใจ</option><option>สังคม</option></select></div><div class="field"><label>ระดับ</label><select><option>ดี</option><option>ดีมาก</option><option>ตามเกณฑ์</option><option>ควรส่งเสริม</option></select></div><div class="field"><label>วันที่บันทึก</label><input type="date" value="2026-08-17"></div><div class="field" style="grid-column:1/-1"><label>บันทึกจากกิจกรรม</label><textarea rows="3">สามารถจับคู่สีและรูปทรงได้ดี และร่วมกิจกรรมกับเพื่อนได้</textarea></div></div><div style="margin-top:12px"><button class="btn btn-primary" onclick="toast('บันทึกพัฒนาการตัวอย่างแล้ว')">บันทึกพัฒนาการ</button></div></div>
+      <!-- AS-IS / TO-BE -->
+      <section id="screen-asis" class="screen">
+        <div class="page-header"><div><span class="section-kicker">PROBLEM → SOLUTION</span><h1>AS-IS → TO-BE</h1><p>อธิบายให้กรรมการเห็นว่า “ระบบนี้ถูกสร้างขึ้นเพื่อแก้ปัญหาอะไร” ก่อนเข้าสู่หน้าจอจริง</p></div></div>
+        <div class="comparison-grid section-block compact-top">
+          <div class="comparison-card asis-card">
+            <div class="comparison-title"><span>AS-IS</span><h2>ก่อนมีระบบ</h2></div>
+            <ul class="problem-list">
+              <li><b>ข้อมูลกระจัดกระจาย</b><span>กระดาษ, Excel/ไฟล์, แชต และการบอกต่อ</span></li>
+              <li><b>บันทึกข้อมูลซ้ำ</b><span>ครูต้องคัดลอก/รวมข้อมูลเพื่อทำสรุป</span></li>
+              <li><b>คำขอลาติดตามยาก</b><span>ไม่เห็นสถานะและประวัติอย่างเป็นระบบ</span></li>
+              <li><b>ผู้ปกครองอาจพลาดข่าวสาร</b><span>ข้อความถูกกลบในหลายช่องทาง</span></li>
+              <li><b>ผู้บริหารเห็นภาพรวมช้า</b><span>ต้องรอรวบรวมข้อมูลจากหลายแหล่ง</span></li>
+            </ul>
+          </div>
+          <div class="comparison-arrow">→</div>
+          <div class="comparison-card tobe-card">
+            <div class="comparison-title"><span>TO-BE</span><h2>หลังมีระบบ</h2></div>
+            <ul class="solution-list">
+              <li><b>ฐานข้อมูลกลาง</b><span>Single Source of Truth</span></li>
+              <li><b>แยกสิทธิ์ตามบทบาท</b><span>Parent / Teacher / Executive</span></li>
+              <li><b>Workflow ชัดเจน</b><span>ส่งคำขอ → ตรวจสอบ → สถานะ → ประวัติ</span></li>
+              <li><b>สื่อสารผ่านหน้าเดียว</b><span>ข่าวสาร กิจกรรม เมนู และข้อมูลเด็ก</span></li>
+              <li><b>Dashboard & Reports</b><span>ข้อมูลพร้อมใช้สำหรับการติดตามและบริหาร</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout success-callout"><div class="callout-icon">✓</div><div><strong>ใจความสำคัญ:</strong> ระบบไม่ได้เพียง “เปลี่ยนกระดาษเป็นเว็บ” แต่เปลี่ยนกระบวนการทำงานให้ข้อมูลถูกบันทึกครั้งเดียว ใช้ร่วมกันตามสิทธิ์ และตรวจสอบย้อนหลังได้</div></div>
+      </section>
+
+      <!-- OBJECTIVES -->
+      <section id="screen-objectives" class="screen">
+        <div class="page-header"><div><span class="section-kicker">RESEARCH TRACEABILITY</span><h1>วัตถุประสงค์วิจัย → สิ่งที่เห็นใน Mockup</h1><p>ใช้หน้านี้ตอบกรรมการเมื่อถามว่า “ฟังก์ชันที่ทำ สอดคล้องกับวัตถุประสงค์อย่างไร”</p></div></div>
+        <div class="objective-stack section-block compact-top">
+          <article class="objective-card"><div class="objective-number">01</div><div><h3>พัฒนาเว็บแอปพลิเคชันสำหรับ 3 บทบาท</h3><p>ผู้ปกครอง ครู/ผู้ดูแลเด็ก และผู้บริหาร ใช้ระบบเดียวกันแต่มีสิทธิ์และหน้าจอแตกต่างกัน</p><div class="chip-row"><span>Parent Dashboard</span><span>Teacher Operations</span><span>Executive Dashboard</span><span>RBAC</span></div></div></article>
+          <article class="objective-card"><div class="objective-number">02</div><div><h3>ประเมินคุณภาพระบบโดยผู้เชี่ยวชาญ</h3><p>ประเมินความครบถ้วน ความถูกต้อง การใช้งาน ประสิทธิภาพ/ความน่าเชื่อถือ และความปลอดภัย</p><div class="chip-row"><span>Functional completeness</span><span>Usability</span><span>Reliability</span><span>Security</span></div></div></article>
+          <article class="objective-card"><div class="objective-number">03</div><div><h3>ประเมินการใช้งานและความพึงพอใจของผู้ใช้</h3><p>ทดสอบภารกิจสำคัญ เช่น เช็กชื่อ ส่งคำขอลา บันทึกพัฒนาการ และดู Dashboard พร้อมประเมินความพึงพอใจ</p><div class="chip-row"><span>Task completion</span><span>Satisfaction ≥ 4.00/5</span><span>User validation</span></div></div></article>
         </div>
       </section>
 
-      <section id="executive" class="screen">
-        <div class="hero" style="background:linear-gradient(135deg,#92400e,#f59e0b)"><div><span class="badge" style="background:rgba(255,255,255,.2);color:white">EXECUTIVE ROLE</span><h1>Dashboard ผู้บริหาร</h1><p>ดูข้อมูลภาพรวมจากฐานข้อมูลกลาง โดยไม่ต้องรวบรวมเอกสารและไฟล์จากหลายช่องทาง</p></div><div style="font-size:80px">📊</div></div>
-        <div class="section grid grid-4"><div class="card kpi"><div class="kpi-icon">🧒</div><div><strong>20</strong><div class="muted">เด็กทั้งหมด</div></div></div><div class="card kpi"><div class="kpi-icon">✅</div><div><strong id="e-rate">90%</strong><div class="muted">อัตรามาเรียนวันนี้</div></div></div><div class="card kpi"><div class="kpi-icon">📝</div><div><strong id="e-leave">0</strong><div class="muted">คำขอลารออนุมัติ</div></div></div><div class="card kpi"><div class="kpi-icon">🛡️</div><div><strong id="e-audit">4</strong><div class="muted">เหตุการณ์ Audit วันนี้</div></div></div></div>
-        <div class="section grid grid-2"><div class="card"><div class="section-head"><h3>แนวโน้มอัตราการมาเรียน</h3><span class="badge">รายสัปดาห์</span></div><div class="chart"><div class="chart-col"><div class="chart-bar" style="height:72%"></div><div class="mini">จ</div></div><div class="chart-col"><div class="chart-bar" style="height:88%"></div><div class="mini">อ</div></div><div class="chart-col"><div class="chart-bar" style="height:82%"></div><div class="mini">พ</div></div><div class="chart-col"><div class="chart-bar" style="height:94%"></div><div class="mini">พฤ</div></div><div class="chart-col"><div class="chart-bar" style="height:90%"></div><div class="mini">ศ</div></div></div></div>
-          <div class="card"><div class="section-head"><h3>ภาพรวมพัฒนาการ 4 ด้าน</h3><span class="badge">ระดับศูนย์</span></div><div style="display:grid;gap:12px"><div>ร่างกาย <div class="bar"><span style="width:86%"></span></div></div><div>อารมณ์-จิตใจ <div class="bar"><span style="width:82%"></span></div></div><div>สังคม <div class="bar"><span style="width:88%"></span></div></div><div>สติปัญญา <div class="bar"><span style="width:84%"></span></div></div></div></div></div>
-        <div class="section card"><div class="section-head"><h3>รายงานตามช่วงเวลา</h3><button class="btn btn-secondary" onclick="toast('Mockup: สร้างรายงานประจำเดือนเรียบร้อย')">สร้างรายงานตัวอย่าง</button></div><div class="table-wrap"><table class="table"><thead><tr><th>ตัวชี้วัด</th><th>ผลลัพธ์</th><th>การใช้งาน</th></tr></thead><tbody><tr><td>จำนวนเด็ก</td><td>20 คน</td><td>วางแผนกำลังคนและห้องเรียน</td></tr><tr><td>อัตราการมาเรียน</td><td id="report-rate">90%</td><td>ติดตามการเข้าเรียน</td></tr><tr><td>คำขอลา</td><td id="report-leave">0 รายการค้าง</td><td>ตรวจสอบสถานะย้อนหลัง</td></tr></tbody></table></div></div>
+      <!-- ARCHITECTURE -->
+      <section id="screen-architecture" class="screen">
+        <div class="page-header"><div><span class="section-kicker">SYSTEM DESIGN</span><h1>สถาปัตยกรรมระบบเป้าหมาย</h1><p>Mockup นี้เน้น User Flow ส่วนระบบ Production พัฒนาตามสถาปัตยกรรม Web Client → REST API → Data Layer → Operations</p></div></div>
+        <div class="architecture-stack section-block compact-top">
+          <div class="arch-layer"><div class="arch-index">1</div><div class="arch-icon">🖥️</div><div><strong>Web Client</strong><p>Next.js + TypeScript, Responsive / Mobile-first, หน้าจอแยกตาม 3 บทบาท</p></div><div class="arch-tags"><span>Parent</span><span>Teacher</span><span>Executive</span></div></div>
+          <div class="arch-connector">↓ HTTPS</div>
+          <div class="arch-layer"><div class="arch-index">2</div><div class="arch-icon">⚙️</div><div><strong>REST API</strong><p>NestJS, Authentication, RBAC, Validation, Business Rules, OpenAPI/Swagger</p></div><div class="arch-tags"><span>Auth</span><span>RBAC</span><span>Validation</span></div></div>
+          <div class="arch-connector">↓ Structured data / files</div>
+          <div class="arch-layer"><div class="arch-index">3</div><div class="arch-icon">🗄️</div><div><strong>Data Layer</strong><p>PostgreSQL สำหรับข้อมูลโครงสร้าง, Object Storage สำหรับไฟล์/รูปภาพ และ Audit Log</p></div><div class="arch-tags"><span>PostgreSQL</span><span>Storage</span><span>Audit Log</span></div></div>
+          <div class="arch-connector">↓ Deployment & monitoring</div>
+          <div class="arch-layer"><div class="arch-index">4</div><div class="arch-icon">🚀</div><div><strong>Operations</strong><p>Docker, CI/CD, Backup & Recovery, Logging/Monitoring และงานออกรายงาน</p></div><div class="arch-tags"><span>Docker</span><span>CI/CD</span><span>Backup</span></div></div>
+        </div>
+        <div class="security-band"><strong>Security Cross-cutting:</strong><span>HTTPS</span><span>Password hashing</span><span>Least privilege</span><span>Input validation</span><span>Audit logging</span><span>Backup/Recovery</span></div>
       </section>
 
-      <section id="scope" class="screen"><div class="hero"><div><h1>ขอบเขตระบบ 8 โมดูล</h1><p>ยึดตาม Proposal และ Implementation Plan ของโครงงาน โดยเน้นเฉพาะฟังก์ชันที่เกี่ยวกับการบริหารจัดการและสื่อสารข้อมูลของศูนย์พัฒนาเด็กเล็ก</p></div><div style="font-size:80px">🧩</div></div><div class="section grid grid-2" id="scope-cards"></div></section>
-      <section id="privacy" class="screen"><div class="hero" style="background:linear-gradient(135deg,#0f172a,#475569)"><div><h1>Privacy by Design & RBAC</h1><p>ออกแบบสิทธิ์ตามหน้าที่ ลดการเปิดเผยข้อมูลเด็กที่ไม่จำเป็น และทำให้ตรวจสอบการใช้งานย้อนหลังได้</p></div><div style="font-size:80px">🔒</div></div><div class="section grid grid-3"><div class="card"><h3>ผู้ปกครอง</h3><p class="muted">เห็นเฉพาะข้อมูลบุตรหลานของตนเอง ไม่เห็นข้อมูลเด็กคนอื่น</p></div><div class="card"><h3>ครู</h3><p class="muted">เข้าถึงเฉพาะเด็กและงานในห้องเรียนที่รับผิดชอบ</p></div><div class="card"><h3>ผู้บริหาร</h3><p class="muted">ดูภาพรวมและรายงานตามหน้าที่ โดยใช้ข้อมูลเท่าที่จำเป็น</p></div></div><div class="section card"><h3>หลักการที่ใช้ในงานวิจัย</h3><p>Data Minimization • Role-Based Access Control • Audit Log • HTTPS • Password Hashing • Input Validation • Backup/Recovery • ป้องกัน Cross-account Data Access</p></div></section>
+      <!-- PARENT -->
+      <section id="screen-parent" class="screen role-screen">
+        <div class="role-header parent-header">
+          <div><span class="pill pill-parent">01 ผู้ปกครอง</span><h1>สวัสดีครับ คุณสมชาย ใจดี</h1><p>แสดงข้อมูลเฉพาะบุตรหลานที่ผูกกับบัญชีนี้</p></div>
+          <div class="child-summary"><div class="avatar">ข</div><div><strong>ด.ญ. กานต์พิชชา ใจดี</strong><span>“น้องข้าวหอม” • อนุบาล 2/1</span></div></div>
+        </div>
+
+        <div class="tabs" id="parent-tabs">
+          <button class="tab active" data-parent-tab="dashboard">ภาพรวม</button>
+          <button class="tab" data-parent-tab="attendance">การเข้าเรียน</button>
+          <button class="tab" data-parent-tab="leave">คำขอแจ้งลา</button>
+          <button class="tab" data-parent-tab="development">พัฒนาการ</button>
+          <button class="tab" data-parent-tab="news">ข่าวสาร / เมนู</button>
+        </div>
+
+        <div id="parent-tab-dashboard" class="role-tab active">
+          <div class="grid grid-4">
+            <div class="stat-card"><div class="stat-icon success-icon">✓</div><div><strong id="parent-today-status">มาเรียน</strong><span id="parent-today-time">08:05 น.</span></div></div>
+            <div class="stat-card"><div class="stat-icon">📝</div><div><strong id="parent-leave-count">1</strong><span>คำขอแจ้งลา</span></div></div>
+            <div class="stat-card"><div class="stat-icon">🍱</div><div><strong class="small-stat">ข้าวต้มไก่</strong><span>เมนูวันนี้</span></div></div>
+            <div class="stat-card"><div class="stat-icon">📅</div><div><strong class="small-stat">กิจกรรมวันแม่</strong><span>กิจกรรมถัดไป</span></div></div>
+          </div>
+
+          <div class="grid grid-2 section-block">
+            <div class="card"><div class="section-heading inline-heading"><div><span class="section-kicker">LATEST LEAVE</span><h3>สถานะคำขอลาล่าสุด</h3></div><button class="btn btn-parent btn-sm" data-parent-tab-jump="leave">+ แจ้งลา</button></div><div id="parent-latest-leave"></div></div>
+            <div class="card"><div class="section-heading"><span class="section-kicker">LATEST UPDATE</span><h3>บันทึกจากครู</h3></div><div class="teacher-note"><div class="note-icon">🌱</div><div><strong>พัฒนาการสัปดาห์นี้</strong><p id="parent-dev-note">สามารถทำกิจกรรมจับคู่สีและรูปทรงได้ดี และร่วมกิจกรรมกับเพื่อนได้เหมาะสม</p></div></div></div>
+          </div>
+
+          <div class="card section-block"><div class="section-heading"><span class="section-kicker">PRIVACY SCOPE</span><h3>ตัวอย่างการจำกัดข้อมูลด้วย RBAC</h3></div><div class="privacy-scope"><span class="lock">🔒</span><div><strong>บัญชีนี้เห็นเฉพาะ “น้องข้าวหอม”</strong><p>ไม่สามารถเปิดข้อมูลเด็กคนอื่นในศูนย์ได้ แม้อยู่ในห้องเรียนเดียวกัน</p></div></div></div>
+        </div>
+
+        <div id="parent-tab-attendance" class="role-tab">
+          <div class="card"><div class="section-heading inline-heading"><div><span class="section-kicker">ATTENDANCE</span><h2>ประวัติการเข้าเรียน</h2></div><span class="pill pill-success">เดือน ส.ค. 2569</span></div>
+            <div class="grid grid-3 mini-kpi-grid"><div class="mini-kpi"><strong>15</strong><span>มาเรียน</span></div><div class="mini-kpi"><strong>1</strong><span>ลา</span></div><div class="mini-kpi"><strong>0</strong><span>ขาด</span></div></div>
+            <div class="table-wrap"><table class="data-table"><thead><tr><th>วันที่</th><th>สถานะ</th><th>เวลา</th><th>ผู้บันทึก</th></tr></thead><tbody id="parent-attendance-table"></tbody></table></div>
+          </div>
+        </div>
+
+        <div id="parent-tab-leave" class="role-tab">
+          <div class="grid grid-2">
+            <div class="card"><div class="section-heading"><span class="section-kicker">NEW REQUEST</span><h2>ส่งคำขอแจ้งลา</h2><p>ตัวอย่าง Workflow ที่ใช้สาธิตการส่งข้อมูลจากผู้ปกครองไปยังครู</p></div>
+              <form id="leave-form" class="form-stack">
+                <div class="field"><label>นักเรียน</label><input value="ด.ญ. กานต์พิชชา ใจดี (น้องข้าวหอม)" disabled></div>
+                <div class="form-grid"><div class="field"><label for="leave-type">ประเภทการลา</label><select id="leave-type"><option>ลาป่วย</option><option>ลากิจ</option></select></div><div class="field"><label for="leave-date">วันที่ลา</label><input id="leave-date" type="date" value="2026-08-18"></div></div>
+                <div class="field"><label for="leave-reason">เหตุผล</label><textarea id="leave-reason" rows="3">มีไข้และต้องพักรักษาตัวที่บ้าน</textarea></div>
+                <div class="field"><label>หลักฐาน (Mockup)</label><div class="upload-box">📎 กดเพื่อเพิ่มรูป/เอกสาร (ไม่อัปโหลดจริง)</div></div>
+                <button type="submit" class="btn btn-parent full">ส่งคำขอแจ้งลา</button>
+              </form>
+            </div>
+            <div class="card"><div class="section-heading"><span class="section-kicker">REQUEST HISTORY</span><h2>ประวัติคำขอ</h2></div><div id="parent-leave-history"></div></div>
+          </div>
+        </div>
+
+        <div id="parent-tab-development" class="role-tab">
+          <div class="grid grid-2">
+            <div class="card"><div class="section-heading"><span class="section-kicker">4 DOMAINS</span><h2>พัฒนาการรายบุคคล</h2><p>เป็นการติดตามจากการสังเกตและกิจกรรม ไม่ใช่การวินิจฉัยทางการแพทย์</p></div><div id="parent-development-bars" class="development-bars"></div></div>
+            <div class="card"><div class="section-heading"><span class="section-kicker">TEACHER RECORD</span><h2>บันทึกล่าสุดจากครู</h2></div><div class="development-note"><span>📝</span><p id="parent-development-detail">สามารถจับคู่สีและรูปทรงได้ดี รอคิวและแบ่งปันอุปกรณ์กับเพื่อนได้</p></div><div class="evidence-placeholder">📷 ภาพกิจกรรมตัวอย่าง (Mockup)</div></div>
+          </div>
+        </div>
+
+        <div id="parent-tab-news" class="role-tab">
+          <div class="grid grid-2"><div class="card"><div class="section-heading"><span class="section-kicker">ANNOUNCEMENTS</span><h2>ประกาศล่าสุด</h2></div><div class="news-list"><article><span class="news-date">17 ส.ค.</span><div><strong>แจ้งเตรียมอุปกรณ์กิจกรรมวันแม่</strong><p>กรุณาเตรียมอุปกรณ์ตามรายการภายในวันพรุ่งนี้</p></div></article><article><span class="news-date">16 ส.ค.</span><div><strong>แจ้งกำหนดตรวจสุขภาพประจำปี</strong><p>โปรดอ่านรายละเอียดและหนังสือยินยอมจากศูนย์</p></div></article></div></div><div class="card"><div class="section-heading"><span class="section-kicker">DAILY MENU</span><h2>รายการอาหารวันนี้</h2></div><div class="meal-list"><div><span>🌤️ เช้า</span><strong>โจ๊กหมูใส่ผัก</strong></div><div><span>🍱 กลางวัน</span><strong>ข้าวต้มไก่ + ไข่ต้ม</strong></div><div><span>🍌 ว่าง</span><strong>กล้วยน้ำว้า + นมจืด</strong></div></div></div></div>
+        </div>
+      </section>
+
+      <!-- TEACHER -->
+      <section id="screen-teacher" class="screen role-screen">
+        <div class="role-header teacher-header"><div><span class="pill pill-teacher">02 ครู / ผู้ดูแลเด็ก</span><h1>สวัสดีค่ะ ครูอรทัย</h1><p>ห้องอนุบาล 2/1 • นักเรียน 24 คน</p></div><div class="role-side-metric"><strong id="teacher-pending-badge">1</strong><span>คำขอลารอตรวจสอบ</span></div></div>
+        <div class="tabs" id="teacher-tabs"><button class="tab active" data-teacher-tab="dashboard">ภาพรวม</button><button class="tab" data-teacher-tab="attendance">เช็กชื่อ</button><button class="tab" data-teacher-tab="leave">อนุมัติการลา</button><button class="tab" data-teacher-tab="development">บันทึกพัฒนาการ</button><button class="tab" data-teacher-tab="activity">กิจกรรม / ข่าว</button></div>
+
+        <div id="teacher-tab-dashboard" class="role-tab active">
+          <div class="grid grid-4"><div class="stat-card"><div class="stat-icon">👧🏻</div><div><strong>24</strong><span>นักเรียนทั้งหมด</span></div></div><div class="stat-card"><div class="stat-icon success-icon">✓</div><div><strong id="teacher-present-count">21</strong><span>มาเรียน</span></div></div><div class="stat-card"><div class="stat-icon warning-icon">🟡</div><div><strong id="teacher-leave-count">2</strong><span>ลา</span></div></div><div class="stat-card"><div class="stat-icon danger-icon">!</div><div><strong id="teacher-absent-count">1</strong><span>ขาด</span></div></div></div>
+          <div class="grid grid-2 section-block"><div class="card"><div class="section-heading inline-heading"><div><span class="section-kicker">ACTION REQUIRED</span><h3>คำขอลารอตรวจสอบ</h3></div><button class="btn btn-teacher btn-sm" data-teacher-tab-jump="leave">เปิดรายการ</button></div><div id="teacher-pending-preview"></div></div><div class="card"><div class="section-heading"><span class="section-kicker">TODAY</span><h3>งานประจำวัน</h3></div><div class="task-list"><div><span>✓</span><p><strong>เช็กชื่อช่วงเช้า</strong><small>21/24 คนบันทึกแล้ว</small></p></div><div><span>○</span><p><strong>บันทึกกิจกรรมประจำวัน</strong><small>รอดำเนินการ</small></p></div><div><span>○</span><p><strong>ประเมินพัฒนาการตามรอบ</strong><small>4 คนวันนี้</small></p></div></div></div></div>
+        </div>
+
+        <div id="teacher-tab-attendance" class="role-tab">
+          <div class="card"><div class="section-heading inline-heading"><div><span class="section-kicker">QUICK ATTENDANCE</span><h2>เช็กชื่อประจำวันที่ 17 สิงหาคม 2569</h2><p>กดสถานะ 1 ครั้ง ระบบจะอัปเดตข้อมูลกลางและหน้าผู้ปกครองใน Mockup ทันที</p></div><span class="pill pill-teacher">อนุบาล 2/1</span></div><div id="teacher-attendance-list" class="attendance-list"></div><div class="attendance-summary"><span>สรุป:</span><strong id="attendance-summary-text">มา 21 • ลา 2 • ขาด 1</strong></div></div>
+        </div>
+
+        <div id="teacher-tab-leave" class="role-tab">
+          <div class="card"><div class="section-heading"><span class="section-kicker">LEAVE APPROVAL WORKFLOW</span><h2>รายการคำขอแจ้งลาจากผู้ปกครอง</h2><p>ใช้หน้านี้เป็นจุดสำคัญในการสาธิตว่า Workflow เชื่อมกันระหว่างบทบาท</p></div><div id="teacher-leave-list"></div></div>
+        </div>
+
+        <div id="teacher-tab-development" class="role-tab">
+          <div class="grid grid-2"><div class="card"><div class="section-heading"><span class="section-kicker">DEVELOPMENT RECORD</span><h2>บันทึกพัฒนาการ 4 ด้าน</h2></div><form id="development-form" class="form-stack"><div class="field"><label>นักเรียน</label><input value="ด.ญ. กานต์พิชชา ใจดี (น้องข้าวหอม)" disabled></div><div id="teacher-dev-inputs" class="dev-inputs"></div><div class="field"><label for="dev-note">บันทึกการสังเกต</label><textarea id="dev-note" rows="4">สามารถจับคู่สีและรูปทรงได้ดี รอคิวและแบ่งปันอุปกรณ์กับเพื่อนได้</textarea></div><button class="btn btn-teacher full" type="submit">💾 บันทึกพัฒนาการ</button></form></div><div class="card"><div class="section-heading"><span class="section-kicker">RESEARCH BOUNDARY</span><h2>ขอบเขตการบันทึก</h2></div><div class="callout info-callout no-margin"><div class="callout-icon">ℹ️</div><div><strong>ไม่ใช่เครื่องมือวินิจฉัยทางการแพทย์</strong><p>ระบบใช้บันทึกผลการสังเกตและกิจกรรมตามกรอบพัฒนาการเด็กปฐมวัย เพื่อให้ครูและผู้ปกครองติดตามแนวโน้มเท่านั้น</p></div></div></div></div>
+        </div>
+
+        <div id="teacher-tab-activity" class="role-tab">
+          <div class="grid grid-2"><div class="card"><div class="section-heading"><span class="section-kicker">DAILY ACTIVITY</span><h2>บันทึกกิจกรรมประจำวัน</h2></div><div class="form-stack"><div class="field"><label>ชื่อกิจกรรม</label><input value="กิจกรรมจับคู่สีและรูปทรง"></div><div class="field"><label>รายละเอียด</label><textarea rows="4">ฝึกการสังเกต การจัดหมวดหมู่ และการทำกิจกรรมร่วมกับเพื่อน</textarea></div><div class="upload-box">📷 เพิ่มภาพกิจกรรม (Mockup)</div><button class="btn btn-teacher">บันทึกกิจกรรม</button></div></div><div class="card"><div class="section-heading"><span class="section-kicker">COMMUNICATION</span><h2>ประกาศข่าวสาร</h2></div><div class="form-stack"><div class="field"><label>หัวข้อ</label><input value="แจ้งเตรียมอุปกรณ์กิจกรรมวันแม่"></div><div class="field"><label>กลุ่มเป้าหมาย</label><select><option>ผู้ปกครองห้องอนุบาล 2/1</option><option>ผู้ปกครองทั้งหมด</option></select></div><button class="btn btn-teacher">เผยแพร่ประกาศ</button></div></div></div>
+        </div>
+      </section>
+
+      <!-- EXECUTIVE -->
+      <section id="screen-executive" class="screen role-screen">
+        <div class="role-header executive-header"><div><span class="pill pill-executive">03 ผู้บริหาร / เทศบาล</span><h1>Executive Dashboard</h1><p>ภาพรวมข้อมูลจากศูนย์เพื่อการติดตามและจัดทำรายงาน</p></div><div class="role-side-metric"><strong id="exec-attendance-rate">88%</strong><span>อัตราการมาเรียนวันนี้</span></div></div>
+        <div class="tabs" id="executive-tabs"><button class="tab active" data-exec-tab="dashboard">Dashboard</button><button class="tab" data-exec-tab="reports">รายงาน</button><button class="tab" data-exec-tab="audit">Audit Log</button></div>
+
+        <div id="exec-tab-dashboard" class="role-tab active">
+          <div class="grid grid-4"><div class="stat-card"><div class="stat-icon">👧🏻</div><div><strong>24</strong><span>เด็กทั้งหมด</span></div></div><div class="stat-card"><div class="stat-icon success-icon">✓</div><div><strong id="exec-present-count">21</strong><span>มาเรียน</span></div></div><div class="stat-card"><div class="stat-icon warning-icon">📝</div><div><strong id="exec-pending-count">1</strong><span>คำขอรอดำเนินการ</span></div></div><div class="stat-card"><div class="stat-icon">🛡️</div><div><strong id="exec-audit-count">6</strong><span>Audit events (Demo)</span></div></div></div>
+          <div class="grid grid-2 section-block"><div class="card"><div class="section-heading"><span class="section-kicker">ATTENDANCE TREND</span><h3>แนวโน้มอัตราการมาเรียน</h3></div><div class="bar-chart" id="attendance-chart"></div></div><div class="card"><div class="section-heading"><span class="section-kicker">DEVELOPMENT OVERVIEW</span><h3>ภาพรวมพัฒนาการ 4 ด้าน</h3></div><div id="exec-development-bars" class="development-bars"></div></div></div>
+          <div class="card section-block"><div class="section-heading"><span class="section-kicker">MANAGEMENT VALUE</span><h3>สิ่งที่ผู้บริหารได้รับ</h3></div><div class="management-value"><div><span>⏱️</span><strong>ลดเวลารวบรวมข้อมูล</strong><p>ไม่ต้องรอรวมไฟล์จากหลายแหล่ง</p></div><div><span>🔎</span><strong>ตรวจสอบย้อนหลัง</strong><p>ทราบว่าใครทำอะไร เมื่อใด</p></div><div><span>📈</span><strong>ข้อมูลพร้อมใช้</strong><p>ดูแนวโน้มและรายงานตามช่วงเวลา</p></div></div></div>
+        </div>
+
+        <div id="exec-tab-reports" class="role-tab">
+          <div class="grid grid-2"><div class="card"><div class="section-heading"><span class="section-kicker">REPORT FILTER</span><h2>สร้างรายงาน</h2></div><form id="report-form" class="form-stack"><div class="form-grid"><div class="field"><label>ตั้งแต่วันที่</label><input type="date" value="2026-08-01"></div><div class="field"><label>ถึงวันที่</label><input type="date" value="2026-08-31"></div></div><div class="field"><label>ประเภทรายงาน</label><select id="report-type"><option>การเข้าเรียน</option><option>คำขอแจ้งลา</option><option>พัฒนาการภาพรวม</option></select></div><button class="btn btn-executive full" type="submit">สร้างตัวอย่างรายงาน</button></form></div><div class="card"><div class="section-heading"><span class="section-kicker">PREVIEW</span><h2>ตัวอย่างผลลัพธ์</h2></div><div id="report-preview" class="report-preview"><div class="empty-state">เลือกเงื่อนไขแล้วกด “สร้างตัวอย่างรายงาน”</div></div></div></div>
+        </div>
+
+        <div id="exec-tab-audit" class="role-tab">
+          <div class="card"><div class="section-heading inline-heading"><div><span class="section-kicker">AUDITABILITY</span><h2>ประวัติการใช้งานระบบ</h2></div><span class="pill pill-success">Who • What • When</span></div><div class="table-wrap"><table class="data-table"><thead><tr><th>เวลา</th><th>ผู้ใช้งาน</th><th>บทบาท</th><th>เหตุการณ์</th><th>รายละเอียด</th></tr></thead><tbody id="audit-table"></tbody></table></div></div>
+        </div>
+      </section>
+
+      <!-- SCOPE -->
+      <section id="screen-scope" class="screen">
+        <div class="page-header"><div><span class="section-kicker">RESEARCH SCOPE</span><h1>8 โมดูลหลักของระบบ</h1><p>แสดงเฉพาะโมดูลที่อยู่ในขอบเขตงานวิจัย เพื่อควบคุม Scope ระหว่างการสอบ</p></div></div>
+        <div class="module-grid section-block compact-top" id="module-grid"></div>
+        <div class="callout warning-callout"><div class="callout-icon">⚠️</div><div><strong>สิ่งที่ไม่ควรขยายระหว่างสอบโดยไม่จำเป็น:</strong> ระบบวินิจฉัยโรค การเงิน/ชำระเงิน การเชื่อมข้อมูลอัตโนมัติระหว่างหน่วยงาน และการใช้งานหลายศูนย์เต็มรูปแบบ เพราะอยู่นอก Pilot Scope</div></div>
+      </section>
+
+      <!-- PRIVACY -->
+      <section id="screen-privacy" class="screen">
+        <div class="page-header"><div><span class="section-kicker">PRIVACY & SECURITY</span><h1>Privacy by Design + Role-Based Access Control</h1><p>ข้อมูลเด็กเป็นข้อมูลส่วนบุคคล จึงออกแบบสิทธิ์และการเก็บข้อมูลตั้งแต่ต้น ไม่ใช่เพิ่มความปลอดภัยภายหลัง</p></div></div>
+        <div class="grid grid-3 section-block compact-top">
+          <div class="privacy-card"><div class="privacy-icon">👨‍👩‍👧</div><span class="pill pill-parent">Parent</span><h3>เห็นเฉพาะบุตรหลานตนเอง</h3><p>ป้องกัน Cross-account child data access และแสดงเฉพาะข้อมูลที่จำเป็นต่อผู้ปกครอง</p></div>
+          <div class="privacy-card"><div class="privacy-icon">👩‍🏫</div><span class="pill pill-teacher">Teacher</span><h3>เห็นเฉพาะห้อง/เด็กที่รับผิดชอบ</h3><p>แก้ไขข้อมูลตามหน้าที่ เช่น เช็กชื่อ การลา กิจกรรม และพัฒนาการ</p></div>
+          <div class="privacy-card"><div class="privacy-icon">📊</div><span class="pill pill-executive">Executive</span><h3>ดูภาพรวมตามหน้าที่</h3><p>ใช้ Dashboard/รายงานและ Audit Log โดยไม่เปิดข้อมูลเกินความจำเป็น</p></div>
+        </div>
+        <div class="security-grid section-block"><div><span>🧹</span><strong>Data Minimization</strong><p>เก็บเท่าที่จำเป็นต่อวัตถุประสงค์</p></div><div><span>🔑</span><strong>Least Privilege</strong><p>ให้สิทธิ์เท่าที่จำเป็นตามบทบาท</p></div><div><span>🔐</span><strong>HTTPS / Password Hashing</strong><p>ป้องกันข้อมูลระหว่างส่งและข้อมูลยืนยันตัวตน</p></div><div><span>📝</span><strong>Audit Log</strong><p>บันทึกการเข้าถึงและการเปลี่ยนแปลงสำคัญ</p></div><div><span>💾</span><strong>Backup & Recovery</strong><p>มีแนวทางสำรองและทดสอบการกู้คืน</p></div><div><span>🛡️</span><strong>Input Validation</strong><p>ตรวจสอบข้อมูลก่อนเข้าสู่ Business Logic</p></div></div>
+      </section>
+
+      <!-- KPI -->
+      <section id="screen-kpi" class="screen">
+        <div class="page-header"><div><span class="section-kicker">SUCCESS CRITERIA</span><h1>เกณฑ์ความสำเร็จที่วัดผลได้</h1><p>ใช้ปิดการนำเสนอให้กรรมการเห็นว่างานไม่ได้จบแค่ “สร้างระบบได้” แต่มีเกณฑ์ประเมินคุณภาพและการใช้งาน</p></div></div>
+        <div class="kpi-list section-block compact-top">
+          <div class="kpi-row"><div class="kpi-circle">≥95%</div><div><strong>Functional Test Pass</strong><p>กรณีทดสอบหลักของ Core Functions ผ่านไม่น้อยกว่า 95%</p></div></div>
+          <div class="kpi-row"><div class="kpi-circle">≥90%</div><div><strong>Task Completion</strong><p>ผู้ใช้ทำภารกิจหลัก เช่น เช็กชื่อ แจ้งลา พัฒนาการ และ Dashboard สำเร็จไม่น้อยกว่า 90%</p></div></div>
+          <div class="kpi-row"><div class="kpi-circle">≥4.00</div><div><strong>User Satisfaction / 5</strong><p>คะแนนความพึงพอใจเฉลี่ยของผู้ปกครอง ครู และผู้บริหาร</p></div></div>
+          <div class="kpi-row"><div class="kpi-circle">P95≤2s</div><div><strong>API Performance</strong><p>เป้าหมายการตอบสนอง API ที่ Percentile 95 ภายใต้ภาระ Pilot</p></div></div>
+          <div class="kpi-row"><div class="kpi-circle">0</div><div><strong>Cross-account Access</strong><p>ต้องไม่มีการเข้าถึงข้อมูลเด็กข้ามบัญชีโดยไม่ได้รับอนุญาต</p></div></div>
+          <div class="kpi-row"><div class="kpi-circle">≥30%</div><div><strong>ลดเวลารวบรวมข้อมูล/ทำรายงาน</strong><p>เปรียบเทียบขั้นตอนการทำงานเดิมกับระบบใหม่</p></div></div>
+        </div>
+        <div class="summary-card"><span>🎓</span><div><strong>ประโยคสรุปงานวิจัย</strong><p>“งานวิจัยนี้มุ่งพัฒนาระบบกลางที่เชื่อมผู้ปกครอง ครู และผู้บริหาร ด้วยสิทธิ์การเข้าถึงที่เหมาะสม ทำให้ข้อมูลติดตามได้ ลดงานซ้ำ และสามารถประเมินผลทั้งด้านคุณภาพระบบและประสบการณ์ผู้ใช้ได้อย่างเป็นรูปธรรมครับ”</p></div></div>
+      </section>
     </main>
   </div>
-</div>
-<div id="toast" class="toast"></div>
-<script>
-  const demoState={leave:null,audit:4,attendance:'PRESENT'};
-  const modules=['ทะเบียนเด็กและผู้ใช้งาน','เช็กชื่อการเข้าเรียน','คำขอแจ้งลาและอนุมัติ','ข่าวสารและประกาศ','รายการอาหารประจำวัน','กิจกรรมประจำวัน','พัฒนาการรายบุคคล 4 ด้าน','Dashboard และรายงาน'];
-  document.getElementById('scope-cards').innerHTML=modules.map((m,i)=>`<div class="card"><span class="badge">0${i+1}</span><h3 style="margin-top:10px">${m}</h3><p class="muted">โมดูลตามขอบเขตการวิจัยและการสาธิตระบบ</p></div>`).join('');
-  document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(btn.dataset.role)openRole(btn.dataset.role);else showScreen(btn.dataset.nav)}));
-  function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}
-  function openRole(role){showScreen(role.toLowerCase());document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.role===role));}
-  function parentTab(name,btn){['leave','history','news'].forEach(t=>document.getElementById('parent-'+t+'-tab').style.display=t===name?'block':'none');btn.parentElement.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
-  function teacherTab(name,btn){['leave','attendance','development'].forEach(t=>document.getElementById('teacher-'+t+'-tab').style.display=t===name?'block':'none');btn.parentElement.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
-  function submitLeave(){const type=document.getElementById('leave-type').value,date=document.getElementById('leave-date').value,reason=document.getElementById('leave-reason').value.trim();if(!reason){toast('กรุณาระบุเหตุผล');return}demoState.leave={type,date,reason,status:'PENDING'};demoState.audit++;renderState();toast('ส่งคำขอลาแล้ว • สถานะ: รอครูอนุมัติ')}
-  function approveLeave(ok){if(!demoState.leave)return;demoState.leave.status=ok?'APPROVED':'REJECTED';demoState.audit++;if(ok)demoState.attendance='LEAVE';renderState();toast(ok?'อนุมัติคำขอลาแล้ว':'ไม่อนุมัติคำขอลา')}
-  function setAttendance(status){demoState.attendance=status;demoState.audit++;renderState();toast('อัปเดตสถานะการเข้าเรียนแล้ว')}
-  function renderState(){const pending=demoState.leave&&demoState.leave.status==='PENDING'?1:0;document.getElementById('p-leave-count').textContent=pending;document.getElementById('t-pending').textContent=pending;document.getElementById('e-leave').textContent=pending;document.getElementById('report-leave').textContent=pending+' รายการค้าง';document.getElementById('e-audit').textContent=demoState.audit;
-    const pr=document.getElementById('parent-leave-result'),tl=document.getElementById('teacher-leave-list');
-    if(demoState.leave){const cls=demoState.leave.status==='PENDING'?'pending':demoState.leave.status==='APPROVED'?'approved':'rejected';const text=demoState.leave.status==='PENDING'?'รอครูอนุมัติ':demoState.leave.status==='APPROVED'?'อนุมัติแล้ว':'ไม่อนุมัติ';pr.innerHTML=`<div class="card" style="box-shadow:none"><strong>คำขอล่าสุด</strong><p>${demoState.leave.type} • ${demoState.leave.date}</p><p class="muted">${demoState.leave.reason}</p><span class="status ${cls}">${text}</span></div>`;tl.innerHTML=`<div class="table-wrap"><table class="table"><thead><tr><th>เด็ก</th><th>ประเภท</th><th>วันที่</th><th>เหตุผล</th><th>สถานะ</th><th>ดำเนินการ</th></tr></thead><tbody><tr><td>น้องวิน</td><td>${demoState.leave.type}</td><td>${demoState.leave.date}</td><td>${demoState.leave.reason}</td><td><span class="status ${cls}">${text}</span></td><td>${demoState.leave.status==='PENDING'?`<button class="btn btn-success" onclick="approveLeave(true)">อนุมัติ</button> <button class="btn btn-danger" onclick="approveLeave(false)">ไม่อนุมัติ</button>`:'ดำเนินการแล้ว'}</td></tr></tbody></table></div>`} else {pr.innerHTML='';tl.className='empty';tl.innerHTML='ยังไม่มีคำขอลาใหม่จากผู้ปกครอง'}
-    const att=demoState.attendance;document.getElementById('p-att').textContent=att==='PRESENT'?'มาเรียน':att==='LEAVE'?'ลา':'ขาดเรียน';document.getElementById('att-status-win').innerHTML=att==='PRESENT'?'<span class="status present">มาเรียน</span>':att==='LEAVE'?'<span class="status approved">ลา</span>':'<span class="status absent">ขาด</span>';const present=att==='PRESENT'?18:17;const rate=Math.round(present/20*100);document.getElementById('t-present').textContent=present;document.getElementById('e-rate').textContent=rate+'%';document.getElementById('report-rate').textContent=rate+'%';}
-  function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>t.style.display='none',2200)}
-  renderState();
-</script>
+
+  <!-- Guided Demo Controller -->
+  <div class="guided-panel" id="guided-panel" aria-live="polite">
+    <div class="guided-progress"><span id="guided-progress-bar"></span></div>
+    <div class="guided-content">
+      <div class="guided-step-label" id="guided-step-label">ขั้นตอน 1/10</div>
+      <strong id="guided-title">เริ่มจากปัญหา</strong>
+      <p id="guided-description">อธิบาย AS-IS ก่อนเข้าสู่หน้าจอของระบบ</p>
+    </div>
+    <div class="guided-actions">
+      <button class="btn btn-ghost btn-sm" id="guided-exit">ออกจาก Guided Demo</button>
+      <button class="btn btn-ghost btn-sm" id="guided-prev">← ก่อนหน้า</button>
+      <button class="btn btn-primary btn-sm" id="guided-next">ถัดไป →</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <div class="modal-backdrop" id="confirm-modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-icon">✅</div>
+      <h3 id="modal-title">ดำเนินการสำเร็จ</h3>
+      <p id="modal-message">ข้อมูล Mockup ถูกอัปเดตแล้ว</p>
+      <button class="btn btn-primary full" id="modal-close">ตกลง</button>
+    </div>
+  </div>
+
+  <script src="./research-demo.js"></script>
 </body>
 </html>
