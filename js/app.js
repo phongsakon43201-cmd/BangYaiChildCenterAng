@@ -48,7 +48,7 @@ class AppController {
       return;
     }
 
-    if (mobileNav) mobileNav.style.display = 'flex';
+    if (mobileNav) mobileNav.style.display = '';
     const roleId = window.authController.currentRole;
     this.renderViewForRole(roleId);
   }

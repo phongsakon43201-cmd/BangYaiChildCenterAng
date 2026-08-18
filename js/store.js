@@ -228,11 +228,7 @@ class AppStore {
 
   getAttendance(date) {
     const targetDate = date || this.getTodayBEString();
-    const filtered = this.data.attendance.filter(a => a.date === targetDate);
-    if (filtered.length === 0 && !date) {
-      return this.data.attendance;
-    }
-    return filtered;
+    return this.data.attendance.filter(a => a.date === targetDate);
   }
 
   updateAttendance(childId, status, checkedBy = 'ครูผู้ดูแล') {

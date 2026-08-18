@@ -234,19 +234,20 @@ const ModalsComponent = {
   },
 
   openConnectLineModal(childId) {
-    const modal = document.getElementById('app-modal');
-    if (!modal) return;
+    const backdrop = document.getElementById('app-modal-backdrop');
+    const content = document.getElementById('app-modal-content');
+    if (!backdrop || !content) return;
 
     const child = window.appStore.getChildById(childId) || window.appStore.getChildren()[0];
     const currentLineId = child.parentLineId || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || 'U97dc0505bb590d70c66d401224a422db';
 
-    modal.innerHTML = `
-      <div class="modal-dialog animate-fade-in" style="max-width: 480px;">
-        <div class="modal-header" style="background: linear-gradient(135deg, #06C755, #05B34C); color: white;">
+    content.innerHTML = `
+      <div>
+        <div class="modal-header" style="background: linear-gradient(135deg, #06C755, #05B34C); color: white; margin: -1.75rem -1.75rem 1.25rem -1.75rem; padding: 1.25rem 1.75rem; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
           <h3 class="modal-title" style="color: white; margin: 0; font-size: 1.15rem;">💬 เชื่อมต่อ LINE รับแจ้งเตือนส่วนบุคคล</h3>
-          <button class="modal-close" style="color: white;" onclick="ModalsComponent.closeModal()">&times;</button>
+          <button class="btn btn-secondary btn-sm" style="color: white; background: transparent; border-color: rgba(255,255,255,0.4);" onclick="ModalsComponent.closeModal()">✕</button>
         </div>
-        <div class="modal-body" style="padding: 1.5rem;">
+        <div style="padding: 0.5rem 0;">
           <div style="text-align: center; margin-bottom: 1.25rem;">
             <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📲</div>
             <h4 style="font-weight: 700; margin-bottom: 0.25rem; font-size: 1.1rem; color: var(--text-main);">รับการแจ้งเตือนของ ${child.nickname} (${child.firstName} ${child.lastName})</h4>
@@ -255,11 +256,11 @@ const ModalsComponent = {
             </p>
           </div>
 
-          <div style="background: var(--bg-neutral); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; text-align: center; border: 1px solid var(--border-color);">
+          <div style="background: var(--bg-app); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; text-align: center; border: 1px solid var(--border-color);">
             <span class="badge badge-line" style="margin-bottom: 0.5rem;">ขั้นตอนที่ 1</span>
             <p style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">แอดเพื่อนกับ LINE Official Account ของศูนย์ฯ</p>
             <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
-              <span style="font-size: 0.85rem; background: white; padding: 0.4rem 0.85rem; border-radius: 6px; border: 1px dashed var(--line-green); font-weight: 700; color: var(--line-green);">
+              <span style="font-size: 0.85rem; background: var(--bg-surface); padding: 0.4rem 0.85rem; border-radius: 6px; border: 1px dashed var(--line-green); font-weight: 700; color: var(--line-green);">
                 @ศูนย์พัฒนาเด็กเล็กเทศบาลเมืองบางใหญ่
               </span>
             </div>
@@ -275,7 +276,7 @@ const ModalsComponent = {
             </div>
 
             <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
-              <button type="button" class="btn btn-neutral" onclick="ModalsComponent.closeModal()">ยกเลิก</button>
+              <button type="button" class="btn btn-secondary" onclick="ModalsComponent.closeModal()">ยกเลิก</button>
               <button type="submit" class="btn btn-success" style="background: #06C755; border-color: #06C755; color: white; font-weight: 700;">
                 💾 บันทึกการเชื่อมต่อ LINE
               </button>
@@ -285,7 +286,7 @@ const ModalsComponent = {
       </div>
     `;
 
-    modal.classList.add('active');
+    backdrop.classList.add('active');
   },
 
   handleConnectLineSubmit(e, childId) {
@@ -304,8 +305,8 @@ const ModalsComponent = {
     this.showToast(`เชื่อมต่อ LINE รับแจ้งเตือนของ ${child ? child.nickname : 'บุตรหลาน'} เรียบร้อยแล้ว!`, 'success');
     this.closeModal();
 
-    if (window.ParentView) {
-      window.ParentView.render('main-content');
+    if (window.appController) {
+      window.appController.refreshCurrentView();
     }
   },
 

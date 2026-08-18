@@ -99,16 +99,21 @@ class SupabaseService {
     const client = this.getClient();
     if (!client) return;
     try {
-      const { error } = await client.from('attendance').upsert({
+      const payload = {
         child_id: attendanceRecord.childId,
         date: attendanceRecord.date || new Date().toISOString().split('T')[0],
         status: attendanceRecord.status,
         check_time: attendanceRecord.checkTime,
         checked_by: attendanceRecord.checkedBy
-      });
-      if (!error) {
-        console.log('⚡ Supabase DB: Attendance synced successfully');
+      };
+
+      const { data } = await client.from('attendance').select('id').eq('child_id', attendanceRecord.childId).eq('date', payload.date).maybeSingle();
+      if (data && data.id) {
+        await client.from('attendance').update(payload).eq('id', data.id);
+      } else {
+        await client.from('attendance').insert(payload);
       }
+      console.log('⚡ Supabase DB: Attendance synced successfully');
     } catch (err) {
       // Local state handles persistence cleanly
     }
@@ -123,7 +128,7 @@ class SupabaseService {
       if (normalizedLeaveType === 'ลากิจ') normalizedLeaveType = 'ลากิจจำเป็น';
       if (normalizedLeaveType === 'อื่นๆ') normalizedLeaveType = 'ลาอื่นๆ';
 
-      const { error } = await client.from('leave_requests').upsert({
+      const payload = {
         child_id: leaveReq.childId,
         leave_type: normalizedLeaveType,
         start_date: leaveReq.startDate,
@@ -131,10 +136,14 @@ class SupabaseService {
         reason: leaveReq.reason,
         status: leaveReq.status || 'PENDING',
         remark: leaveReq.remark || null
-      });
-      if (!error) {
-        console.log('⚡ Supabase DB: Leave Request synced successfully');
+      };
+
+      if (leaveReq.id && leaveReq.id.length > 20 && !leaveReq.id.startsWith('leave-')) {
+        await client.from('leave_requests').update(payload).eq('id', leaveReq.id);
+      } else {
+        await client.from('leave_requests').insert(payload);
       }
+      console.log('⚡ Supabase DB: Leave Request synced successfully');
     } catch (err) {
       // Local state handles persistence cleanly
     }
