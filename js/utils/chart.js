@@ -142,3 +142,4 @@ const ChartUtils = {
 };
 
 window.ChartUtils = ChartUtils;
+window.ChartUtil = ChartUtils;

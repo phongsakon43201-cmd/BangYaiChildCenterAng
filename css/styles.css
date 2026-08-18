@@ -38,6 +38,7 @@
 
   /* Neutral Surface Palette (Light Mode) */
   --bg-app: #F8FAFC;
+  --bg-base: #F8FAFC;
   --bg-surface: #FFFFFF;
   --bg-surface-glass: rgba(255, 255, 255, 0.88);
   --border-color: #E2E8F0;

@@ -40,7 +40,7 @@ const OFFICIAL_ACCOUNTS = {
   'BY-T01': { username: 'BY-T01', email: 'by-t01@bangyai.go.th', pass: 'Kanda@2026', role: 'TEACHER', name: 'นางสาวกานดา ใจดี (ครูแก้ว)', title: 'ครูประจำชั้น (ห้องลูกหมีน่ารัก)', avatar: '👩‍🏫' },
   
   // Parents (20 accounts)
-  'BY-PAR01': { username: 'BY-PAR01', email: 'by-par01@bangyai.go.th', pass: 'Par01@2026', role: 'PARENT', name: 'นายวิทวัส สุขเสริฐ', title: 'ผู้ปกครอง ด.ช. กวินท์ สุขเสริฐ (น้องวิน)', avatar: '👨‍👦', childId: 'STD-01' },
+  'BY-PAR01': { username: 'BY-PAR01', email: 'by-par01@bangyai.go.th', pass: 'Par01@2026', role: 'PARENT', name: 'นายพัชรพล แสนเจริญ', title: 'ผู้ปกครอง ด.ช. ณัฐธีร์ แสนเจริญ (น้องโต้)', avatar: '👨‍👦', childId: 'STD-01' },
   'BY-PAR02': { username: 'BY-PAR02', email: 'by-par02@bangyai.go.th', pass: 'Par02@2026', role: 'PARENT', name: 'นางสมพร โพธิ์ทอง', title: 'ผู้ปกครอง ด.ญ. กัญญารัตน์ โพธิ์ทอง (น้องแก้ม)', avatar: '👩‍👧', childId: 'STD-02' },
   'BY-PAR03': { username: 'BY-PAR03', email: 'by-par03@bangyai.go.th', pass: 'Par03@2026', role: 'PARENT', name: 'นายชาญชัย มงคลดี', title: 'ผู้ปกครอง ด.ช. ชยพล มงคลดี (น้องพอล)', avatar: '👨‍👦', childId: 'STD-03' },
   'BY-PAR04': { username: 'BY-PAR04', email: 'by-par04@bangyai.go.th', pass: 'Par04@2026', role: 'PARENT', name: 'นางสาวนภา วงศ์สว่าง', title: 'ผู้ปกครอง ด.ญ. ณิชาภัทร วงศ์สว่าง (น้องณิชา)', avatar: '👩‍👧', childId: 'STD-04' },

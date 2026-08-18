@@ -170,3 +170,4 @@ const ExportUtils = {
 };
 
 window.ExportUtils = ExportUtils;
+window.ExportUtil = ExportUtils;

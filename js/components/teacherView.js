@@ -97,9 +97,20 @@ const TeacherView = {
         ` : ''}
 
         <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-            <h3 style="font-weight: 700; font-size: 1.1rem;">ระบบเช็กชื่อรายวันประจำวันที่ ${window.appStore.getTodayThaiFormatted()}</h3>
-            <span class="badge badge-line">💬 แจ้งเตือน LINE อัตโนมัติ</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">ระบบเช็กชื่อรายวันประจำวันที่ ${window.appStore.getTodayThaiFormatted()}</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 2px 0 0 0;">บันทึกสถานะการมาเรียนและส่งแจ้งเตือนผ่าน LINE อัตโนมัติ</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+              <button class="btn btn-secondary btn-sm" onclick="TeacherView.exportAttendanceCSV()" style="font-weight: 600; background: #FFF;">
+                📥 ส่งออก Excel (CSV)
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="window.ExportUtils.printAttendanceSheet(window.appStore.getAttendance(), window.appStore.getChildren())" style="font-weight: 600; background: #FFF;">
+                🖨️ พิมพ์ใบเช็กชื่อ
+              </button>
+              <span class="badge badge-line">💬 LINE อัตโนมัติ</span>
+            </div>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
@@ -474,6 +485,39 @@ const TeacherView = {
       window.ModalsComponent.showToast(`บันทึกผลประเมินพัฒนาการของ ${childName} เรียบร้อยแล้ว!`, 'success');
     }
     this.render(containerId);
+  },
+
+  exportAttendanceCSV() {
+    const children = window.appStore.getChildren(this.selectedClassId);
+    const attendance = window.appStore.getAttendance();
+    const today = window.appStore.getTodayBEString();
+    
+    const rows = [
+      ['ศูนย์พัฒนาเด็กเล็กเทศบาลบางใหญ่ จังหวัดนนทบุรี'],
+      [`รายงานการเช็กชื่อเข้าเรียน ประจำวันที่ ${today}`],
+      [''],
+      ['ลำดับ', 'รหัสนักเรียน', 'ชื่อ-นามสกุล', 'ชื่อเล่น', 'สถานะการมาเรียน', 'เวลาเช็กชื่อ', 'ผู้ปกครอง', 'เบอร์ติดต่อ']
+    ];
+
+    children.forEach((c, idx) => {
+      const att = attendance.find(a => a.childId === c.id);
+      const statusText = !att ? 'ยังไม่เช็กชื่อ' : att.status === 'PRESENT' ? 'มาเรียน' : att.status === 'LATE' ? 'มาสาย' : att.status === 'LEAVE' ? 'ลา' : 'ขาด';
+      rows.push([
+        idx + 1,
+        c.id,
+        `${c.firstName} ${c.lastName}`,
+        c.nickname,
+        statusText,
+        att ? att.checkTime : '-',
+        c.parentName,
+        c.parentPhone
+      ]);
+    });
+
+    window.ExportUtils.exportToCSV(`รายงานเช็กชื่อ_${today}.csv`, rows);
+    if (window.ModalsComponent) {
+      window.ModalsComponent.showToast('ส่งออกไฟล์ Excel (CSV) เรียบร้อยแล้ว', 'success');
+    }
   }
 };
 

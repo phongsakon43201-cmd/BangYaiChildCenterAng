@@ -33,7 +33,7 @@ const ParentView = {
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
             <div style="display: flex; align-items: center; gap: 1rem;">
               <div class="student-avatar" style="width: 56px; height: 56px; font-size: 1.5rem; background: var(--role-parent); color: #FFF;">
-                ${activeChild.nickname.charAt(0)}
+                ${activeChild.nickname ? (activeChild.nickname.replace(/^น้อง/, '').charAt(0) || activeChild.nickname.charAt(0)) : '👶'}
               </div>
               <div>
                 <span class="badge badge-parent" style="margin-bottom: 0.25rem;">🔒 ข้อมูลบุตรหลานในความดูแลของคุณ</span>
