@@ -35,12 +35,12 @@ const OFFICIAL_ACCOUNTS = {
   // Executives
   'BY-EXEC01': { username: 'BY-EXEC01', email: 'by-exec01@bangyai.go.th', pass: 'Exec01@2026', role: 'EXECUTIVE', name: 'นายสมศักดิ์ รักดี', title: 'ผู้อำนวยการกองการศึกษา (ผู้บริหารศูนย์ฯ)', avatar: '👨‍💼' },
   'BY-EXEC02': { username: 'BY-EXEC02', email: 'by-exec02@bangyai.go.th', pass: 'Exec02@2026', role: 'EXECUTIVE', name: 'นางสาววิภาดา พรหมณี', title: 'หัวหน้าศูนย์พัฒนาเด็กเล็ก', avatar: '👩‍💼' },
-  
+
   // Teacher
   'BY-T01': { username: 'BY-T01', email: 'by-t01@bangyai.go.th', pass: 'Kanda@2026', role: 'TEACHER', name: 'นางสาวกานดา ใจดี (ครูแก้ว)', title: 'ครูประจำชั้น (ห้องลูกหมีน่ารัก)', avatar: '👩‍🏫' },
-  
+
   // Parents (20 accounts)
-  'BY-PAR01': { username: 'BY-PAR01', email: 'by-par01@bangyai.go.th', pass: 'Par01@2026', role: 'PARENT', name: 'นายพัชรพล แสนเจริญ', title: 'ผู้ปกครอง ด.ช. ณัฐธีร์ แสนเจริญ (น้องโต้)', avatar: '👨‍👦', childId: 'STD-01' },
+  'BY-PAR01': { username: 'BY-PAR01', email: 'by-par01@bangyai.go.th', pass: 'Par01@2026', role: 'PARENT', name: 'นายพัชรพล  เเสนเจริญ', title: 'ผู้ปกครอง ด.ช.  ณัฐธีร์ เเสนเจริญ (น้องโต้)', avatar: '👨‍👦', childId: 'STD-01' },
   'BY-PAR02': { username: 'BY-PAR02', email: 'by-par02@bangyai.go.th', pass: 'Par02@2026', role: 'PARENT', name: 'นางสมพร โพธิ์ทอง', title: 'ผู้ปกครอง ด.ญ. กัญญารัตน์ โพธิ์ทอง (น้องแก้ม)', avatar: '👩‍👧', childId: 'STD-02' },
   'BY-PAR03': { username: 'BY-PAR03', email: 'by-par03@bangyai.go.th', pass: 'Par03@2026', role: 'PARENT', name: 'นายชาญชัย มงคลดี', title: 'ผู้ปกครอง ด.ช. ชยพล มงคลดี (น้องพอล)', avatar: '👨‍👦', childId: 'STD-03' },
   'BY-PAR04': { username: 'BY-PAR04', email: 'by-par04@bangyai.go.th', pass: 'Par04@2026', role: 'PARENT', name: 'นางสาวนภา วงศ์สว่าง', title: 'ผู้ปกครอง ด.ญ. ณิชาภัทร วงศ์สว่าง (น้องณิชา)', avatar: '👩‍👧', childId: 'STD-04' },
@@ -66,7 +66,7 @@ class AuthController {
   constructor() {
     this.isAuthenticated = localStorage.getItem('BANGYAI_IS_AUTHENTICATED') === 'true';
     this.currentRole = localStorage.getItem('BANGYAI_CURRENT_ROLE') || 'PARENT';
-    
+
     let storedUser = null;
     try {
       storedUser = JSON.parse(localStorage.getItem('BANGYAI_CURRENT_USER'));
@@ -74,18 +74,8 @@ class AuthController {
       storedUser = null;
     }
 
-    // Auto-update stored user profile from latest OFFICIAL_ACCOUNTS definition
-    if (storedUser && storedUser.username && OFFICIAL_ACCOUNTS[storedUser.username]) {
-      const latestAcc = OFFICIAL_ACCOUNTS[storedUser.username];
-      storedUser.name = latestAcc.name;
-      storedUser.subtitle = latestAcc.title;
-      storedUser.avatar = latestAcc.avatar;
-      storedUser.childId = latestAcc.childId || storedUser.childId;
-      localStorage.setItem('BANGYAI_CURRENT_USER', JSON.stringify(storedUser));
-    }
-
     this.currentUser = storedUser;
-    
+
     // If not authenticated, force clean state
     if (!this.isAuthenticated || !this.currentUser) {
       this.isAuthenticated = false;
@@ -196,10 +186,8 @@ class AuthController {
     const prevUser = this.currentUser ? this.currentUser.name : 'ผู้ใช้';
     this.isAuthenticated = false;
     this.currentUser = null;
-    this.currentRole = 'PARENT'; // reset to default
     localStorage.setItem('BANGYAI_IS_AUTHENTICATED', 'false');
     localStorage.removeItem('BANGYAI_CURRENT_USER');
-    localStorage.removeItem('BANGYAI_CURRENT_ROLE');
 
     if (window.appStore && typeof window.appStore.addAuditLog === 'function') {
       window.appStore.addAuditLog(
