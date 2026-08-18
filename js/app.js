@@ -25,12 +25,40 @@ class AppController {
       // 4. Initial Render based on current auth state
       this.updateView();
 
-      // 5. Connect Realtime Supabase Database Sync Listener
+      // 5. Initial Cloud Hydration & Realtime Multi-Device Sync
+      if (window.appStore && typeof window.appStore.syncWithCloud === 'function') {
+        window.appStore.syncWithCloud();
+      }
+
+      // 6. Connect Realtime Supabase Database Sync Listener
       if (window.supabaseService && typeof window.supabaseService.subscribeRealtimeDB === 'function') {
         window.supabaseService.subscribeRealtimeDB(() => {
-          this.updateView();
+          if (window.appStore && typeof window.appStore.syncWithCloud === 'function') {
+            window.appStore.syncWithCloud(true);
+          } else {
+            this.updateView();
+          }
         });
       }
+
+      // 7. Background Auto-Sync every 4 seconds for seamless phone <-> PC sync
+      setInterval(() => {
+        if (window.appStore && typeof window.appStore.syncWithCloud === 'function') {
+          window.appStore.syncWithCloud();
+        }
+      }, 4000);
+
+      // 8. Instant Sync when user switches back to tab or device screen
+      window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && window.appStore) {
+          window.appStore.syncWithCloud(true);
+        }
+      });
+      window.addEventListener('focus', () => {
+        if (window.appStore) {
+          window.appStore.syncWithCloud(true);
+        }
+      });
     });
   }
 

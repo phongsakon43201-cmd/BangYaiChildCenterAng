@@ -106,7 +106,7 @@ const TeacherView = {
             ${children.map(child => {
               const att = attendance.find(a => a.childId === child.id);
               const status = att ? att.status : null;
-              const childPendingLeave = pendingLeaves.find(p => p.childId === child.id);
+              const childPendingLeave = pendingLeaves.find(p => p.childId === child.id || (p.childName && (p.childName.includes(child.nickname) || p.childName.includes(child.firstName))));
               
               let statusBadgeHtml = '';
               if (!status) {

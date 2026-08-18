@@ -260,6 +260,64 @@ class SupabaseService {
     console.log('📲 Notification logged to local App Store state for active session.');
     return false;
   }
+  // Supabase Database Sync: Child Profile & Growth Data
+  async syncChildToDB(child) {
+    const client = this.getClient();
+    if (!client) return;
+    try {
+      const payload = {
+        id: child.id,
+        first_name: child.firstName,
+        last_name: child.lastName,
+        nickname: child.nickname,
+        parent_name: child.parentName,
+        parent_phone: child.parentPhone,
+        parent_relation: child.parentRelation,
+        height_cm: child.heightCm,
+        weight_kg: child.weightKg,
+        growth_status: child.growthStatus
+      };
+
+      const { data } = await client.from('children').select('id').eq('id', child.id).maybeSingle();
+      if (data && data.id) {
+        await client.from('children').update(payload).eq('id', child.id);
+      } else {
+        await client.from('children').insert(payload);
+      }
+      console.log(`⚡ Supabase DB: Child (${child.id} ${child.nickname}) synced successfully`);
+    } catch (err) {
+      console.warn('Supabase child sync notice:', err);
+    }
+  }
+
+  // Supabase Database Sync: Development Evaluation
+  async syncDevelopmentRecordToDB(devRec) {
+    const client = this.getClient();
+    if (!client) return;
+    try {
+      const payload = {
+        child_id: devRec.childId,
+        term: devRec.term || '1/2569',
+        physical_score: devRec.physicalScore,
+        emotional_score: devRec.emotionalScore,
+        social_score: devRec.socialScore,
+        intellectual_score: devRec.intellectualScore,
+        evaluator: devRec.evaluator,
+        notes: devRec.notes
+      };
+
+      const { data } = await client.from('development_records').select('id').eq('child_id', devRec.childId).maybeSingle();
+      if (data && data.id) {
+        await client.from('development_records').update(payload).eq('id', data.id);
+      } else {
+        await client.from('development_records').insert(payload);
+      }
+      console.log(`⚡ Supabase DB: Development record for (${devRec.childId}) synced`);
+    } catch (err) {
+      console.warn('Supabase dev record sync notice:', err);
+    }
+  }
+
   // Supabase Database Realtime Channel Listener
   subscribeRealtimeDB(onDatabaseChange) {
     const client = this.getClient();
@@ -286,19 +344,23 @@ class SupabaseService {
     }
   }
 
-  // Supabase Database Fetch All Initial State
-  async fetchAllDBData() {
+  // Supabase Database Fetch All Initial State for Multi-Device Sync
+  async fetchAllCloudData() {
     const client = this.getClient();
     if (!client) return null;
     try {
-      const [leavesRes, attRes, auditRes] = await Promise.all([
+      const [leavesRes, attRes, childrenRes, devRes, auditRes] = await Promise.all([
         client.from('leave_requests').select('*').order('submitted_at', { ascending: false }),
         client.from('attendance').select('*'),
+        client.from('children').select('*'),
+        client.from('development_records').select('*'),
         client.from('audit_logs').select('*').order('created_at', { ascending: false })
       ]);
       return {
         leaveRequests: leavesRes.data || [],
         attendance: attRes.data || [],
+        children: childrenRes.data || [],
+        developmentRecords: devRes.data || [],
         auditLogs: auditRes.data || []
       };
     } catch (err) {

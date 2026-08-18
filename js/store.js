@@ -21,8 +21,8 @@ const INITIAL_SEED_DATA = {
   ],
 
   children: [
-    { id: 'STD-01', classId: 'class-bm', nationalId: '1-1002-00101-01-1', firstName: 'กวินท์', lastName: 'สุขเสริฐ', nickname: 'น้องวิน', gender: 'ชาย', birthDate: '2567-02-10', ageString: '2 ขวบ 6 เดือน', parentName: 'นายวิทวัส สุขเสริฐ', parentPhone: '081-001-0001', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'O', avatarColor: '#4F46E5', heightCm: 92.0, weightKg: 13.5, bmi: 15.9, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR', 'ไข้หวัดใหญ่'], username: 'BY-PAR01', parentLineId: 'U97dc0505bb590d70c66d401224a422db' },
-    { id: 'STD-02', classId: 'class-bm', nationalId: '1-1002-00101-02-2', firstName: 'กัญญารัตน์', lastName: 'โพธิ์ทอง', nickname: 'น้องแก้ม', gender: 'หญิง', birthDate: '2567-01-15', ageString: '2 ขวบ 7 เดือน', parentName: 'นางสมพร โพธิ์ทอง', parentPhone: '081-001-0002', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'A', avatarColor: '#EC4899', heightCm: 90.5, weightKg: 12.8, bmi: 15.6, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR'], username: 'BY-PAR02' },
+    { id: 'STD-01', classId: 'class-bm', nationalId: '1-1002-00101-01-1', firstName: 'ณัฐธีร์', lastName: 'แสนเจริญ', nickname: 'น้องโต้', gender: 'ชาย', birthDate: '2567-02-10', ageString: '2 ขวบ 6 เดือน', parentName: 'นายพัชรพล  เเสนเจริญ', parentPhone: '081-001-0001', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'O', avatarColor: '#4F46E5', heightCm: 92.0, weightKg: 13.5, bmi: 15.9, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR', 'ไข้หวัดใหญ่'], username: 'BY-PAR01', parentLineId: 'U4c8e56010b4418f615ba32341dab6a93' },
+    { id: 'STD-02', classId: 'class-bm', nationalId: '1-1002-00101-02-2', firstName: 'กัญญารัตน์', lastName: 'โพธิ์ทอง', nickname: 'น้องแก้ม', gender: 'หญิง', birthDate: '2567-01-15', ageString: '2 ขวบ 7 เดือน', parentName: 'นางสมพร โพธิ์ทอง', parentPhone: '081-001-0002', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'A', avatarColor: '#EC4899', heightCm: 90.5, weightKg: 12.8, bmi: 15.6, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR'], username: 'BY-PAR02', parentLineId: 'U97dc0505bb590d70c66d401224a422db' },
     { id: 'STD-03', classId: 'class-bm', nationalId: '1-1002-00101-03-3', firstName: 'ชยพล', lastName: 'มงคลดี', nickname: 'น้องพอล', gender: 'ชาย', birthDate: '2567-03-20', ageString: '2 ขวบ 5 เดือน', parentName: 'นายชาญชัย มงคลดี', parentPhone: '081-001-0003', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'B', avatarColor: '#10B981', heightCm: 91.0, weightKg: 13.2, bmi: 15.9, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR03' },
     { id: 'STD-04', classId: 'class-bm', nationalId: '1-1002-00101-04-4', firstName: 'ณิชาภัทร', lastName: 'วงศ์สว่าง', nickname: 'น้องณิชา', gender: 'หญิง', birthDate: '2567-04-12', ageString: '2 ขวบ 4 เดือน', parentName: 'นางสาวนภา วงศ์สว่าง', parentPhone: '081-001-0004', parentRelation: 'มารดา', allergy: 'ไม่มี', bloodType: 'AB', avatarColor: '#F59E0B', heightCm: 89.5, weightKg: 12.5, bmi: 15.6, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR'], username: 'BY-PAR04' },
     { id: 'STD-05', classId: 'class-bm', nationalId: '1-1002-00101-05-5', firstName: 'ธนกฤต', lastName: 'รัตนอุบล', nickname: 'น้องคุณ', gender: 'ชาย', birthDate: '2567-02-28', ageString: '2 ขวบ 6 เดือน', parentName: 'นายธนากร รัตนอุบล', parentPhone: '081-001-0005', parentRelation: 'บิดา', allergy: 'ไม่มี', bloodType: 'O', avatarColor: '#6366F1', heightCm: 93.0, weightKg: 14.0, bmi: 16.2, growthStatus: 'สมส่วนตามเกณฑ์', vaccines: ['BCG', 'MMR', 'ไข้หวัดใหญ่'], username: 'BY-PAR05' },
@@ -168,6 +168,22 @@ class AppStore {
       data = JSON.parse(JSON.stringify(INITIAL_SEED_DATA));
     }
 
+    // Merge latest seed changes for children so code edits take effect immediately
+    if (data.children && INITIAL_SEED_DATA.children) {
+      INITIAL_SEED_DATA.children.forEach(seedChild => {
+        const existingChild = data.children.find(c => c.id === seedChild.id);
+        if (existingChild) {
+          existingChild.firstName = seedChild.firstName;
+          existingChild.lastName = seedChild.lastName;
+          existingChild.nickname = seedChild.nickname;
+          existingChild.parentName = seedChild.parentName;
+          if (seedChild.parentLineId) existingChild.parentLineId = seedChild.parentLineId;
+        } else {
+          data.children.push(seedChild);
+        }
+      });
+    }
+
     // Ensure every child's nickname always starts with 'น้อง'
     if (data.children) {
       data.children.forEach(c => {
@@ -208,6 +224,112 @@ class AppStore {
     }
   }
 
+  async syncWithCloud(forceRerender = false) {
+    if (!window.supabaseService || typeof window.supabaseService.fetchAllCloudData !== 'function') return;
+    try {
+      const cloudData = await window.supabaseService.fetchAllCloudData();
+      if (!cloudData) return;
+
+      let hasChanges = false;
+
+      // 1. Sync Leave Requests from cloud
+      if (cloudData.leaveRequests && Array.isArray(cloudData.leaveRequests) && cloudData.leaveRequests.length > 0) {
+        cloudData.leaveRequests.forEach(cl => {
+          const child = this.getChildById(cl.child_id);
+          const childName = child ? `${child.nickname} (${child.firstName} ${child.lastName})` : 'บุตรหลาน';
+          const parentName = child ? child.parentName : 'ผู้ปกครอง';
+          const mappedLeave = {
+            id: cl.id,
+            childId: cl.child_id,
+            childName: childName,
+            parentName: parentName,
+            leaveType: cl.leave_type,
+            startDate: cl.start_date,
+            endDate: cl.end_date,
+            reason: cl.reason,
+            status: cl.status,
+            remark: cl.remark,
+            submittedAt: cl.submitted_at ? new Date(cl.submitted_at).toLocaleDateString('th-TH') + ' ' + new Date(cl.submitted_at).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.' : '-'
+          };
+
+          const localIdx = this.data.leaveRequests.findIndex(l => l.id === cl.id || (l.childId === cl.child_id && l.startDate === cl.start_date));
+          if (localIdx >= 0) {
+            if (this.data.leaveRequests[localIdx].status !== cl.status) {
+              this.data.leaveRequests[localIdx].status = cl.status;
+              this.data.leaveRequests[localIdx].remark = cl.remark;
+              hasChanges = true;
+            }
+          } else {
+            this.data.leaveRequests.unshift(mappedLeave);
+            hasChanges = true;
+          }
+        });
+      }
+
+      // 2. Sync Attendance from cloud
+      if (cloudData.attendance && Array.isArray(cloudData.attendance) && cloudData.attendance.length > 0) {
+        cloudData.attendance.forEach(ca => {
+          const localIdx = this.data.attendance.findIndex(a => a.childId === ca.child_id && a.date === ca.date);
+          if (localIdx >= 0) {
+            if (this.data.attendance[localIdx].status !== ca.status) {
+              this.data.attendance[localIdx].status = ca.status;
+              this.data.attendance[localIdx].checkTime = ca.check_time;
+              this.data.attendance[localIdx].checkedBy = ca.checked_by;
+              hasChanges = true;
+            }
+          } else {
+            this.data.attendance.push({
+              id: ca.id,
+              childId: ca.child_id,
+              date: ca.date,
+              status: ca.status,
+              checkTime: ca.check_time,
+              checkedBy: ca.checked_by
+            });
+            hasChanges = true;
+          }
+        });
+      }
+
+      // 3. Sync Children profiles (parentName, phone, height, weight)
+      if (cloudData.children && Array.isArray(cloudData.children) && cloudData.children.length > 0) {
+        cloudData.children.forEach(cc => {
+          const localC = this.data.children.find(c => c.id === cc.id);
+          if (localC) {
+            if (cc.parent_name && localC.parentName !== cc.parent_name) { localC.parentName = cc.parent_name; hasChanges = true; }
+            if (cc.parent_phone && localC.parentPhone !== cc.parent_phone) { localC.parentPhone = cc.parent_phone; hasChanges = true; }
+            if (cc.height_cm && localC.heightCm !== Number(cc.height_cm)) { localC.heightCm = Number(cc.height_cm); hasChanges = true; }
+            if (cc.weight_kg && localC.weightKg !== Number(cc.weight_kg)) { localC.weightKg = Number(cc.weight_kg); hasChanges = true; }
+            if (cc.growth_status && localC.growthStatus !== cc.growth_status) { localC.growthStatus = cc.growth_status; hasChanges = true; }
+          }
+        });
+      }
+
+      if (hasChanges) {
+        this.saveData(this.data);
+        if (window.appController) {
+          window.appController.refreshCurrentView();
+        }
+      } else if (forceRerender && window.appController) {
+        window.appController.refreshCurrentView();
+      }
+    } catch (e) {
+      // Background sync notification
+    }
+  }
+
+  formatToBEDate(dateStr) {
+    if (!dateStr) return this.getTodayBEString();
+    if (dateStr.startsWith('25')) return dateStr;
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const beYear = year < 2400 ? year + 543 : year;
+      return `${beYear}-${parts[1]}-${parts[2]}`;
+    }
+    return dateStr;
+  }
+
   getCenterInfo() { return this.data.centerInfo; }
   getClassrooms() { return this.data.classrooms; }
   getChildren(classId = null) {
@@ -218,10 +340,14 @@ class AppStore {
 
   getChildrenForParent(parentUser) {
     if (!parentUser) return [this.data.children[0]];
+    if (parentUser.childId) {
+      const child = this.getChildById(parentUser.childId);
+      if (child) return [child];
+    }
     const parentName = (parentUser.name || '').trim();
-    const matched = this.data.children.filter(c => 
-      c.parentName.includes(parentName) ||
-      (parentUser.username && c.parentName.includes(parentUser.username))
+    const matched = this.data.children.filter(c =>
+      (parentUser.username && c.username === parentUser.username) ||
+      (parentName && c.parentName && c.parentName.includes(parentName))
     );
     return matched.length ? matched : [this.data.children[0]];
   }
@@ -233,7 +359,7 @@ class AppStore {
 
   updateAttendance(childId, status, checkedBy = 'ครูผู้ดูแล', suppressNotification = false) {
     const today = this.getTodayBEString();
-    
+
     if (status === 'RESET' || status === 'UNCHECKED') {
       this.data.attendance = this.data.attendance.filter(a => !(a.childId === childId && a.date === today));
       this.saveData(this.data);
@@ -310,7 +436,7 @@ class AppStore {
     // Send LINE Notification specifically for Leave Request submission (Not check-in notification!)
     const child = this.getChildById(req.childId);
     const targetParentLineId = (child && child.parentLineId) || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || 'U97dc0505bb590d70c66d401224a422db';
-    
+
     this.sendLineNotification(
       `📄 ยื่นคำขอแจ้งลา (${newReq.leaveType}) เรียบร้อย`,
       `คำขอแจ้งลาของ ${newReq.childName} (วันที่ ${newReq.startDate} ถึง ${newReq.endDate})\nเหตุผล: ${newReq.reason}\nสถานะ: ส่งถึงครูประจำชั้นแล้ว (รอครูอนุมัติ)`,

@@ -23,16 +23,30 @@ const ModalsComponent = {
     const content = document.getElementById('app-modal-content');
     if (!backdrop || !content) return;
 
-    const child = window.appStore.getChildById(childId) || { nickname: 'บุตรหลาน', id: childId };
+    let child = window.appStore.getChildById(childId);
+    if (!child) {
+      const currentUser = window.authController ? window.authController.getCurrentUser() : null;
+      if (currentUser && currentUser.childId) {
+        child = window.appStore.getChildById(currentUser.childId);
+      }
+    }
+    if (!child) {
+      child = window.appStore.getChildren()[0];
+    }
     this.activeChildId = child.id;
+
+    // ISO format for HTML5 date input: YYYY-MM-DD
+    const todayIso = new Date().toISOString().split('T')[0];
 
     content.innerHTML = `
       <div class="modal-header">
-        <h3 class="modal-title">📄 ยื่นคำขอแจ้งลาสำหรับ ${child.nickname}</h3>
+        <h3 class="modal-title">📄 ยื่นคำขอแจ้งลาสำหรับ ${child.nickname} (${child.firstName})</h3>
         <button class="btn btn-secondary btn-sm" onclick="ModalsComponent.closeModal()">✕</button>
       </div>
 
       <form onsubmit="ModalsComponent.submitLeaveForm(event)">
+        <input type="hidden" id="modal-leave-child-id" value="${child.id}">
+
         <div class="form-group">
           <label class="form-label">ประเภทการลา</label>
           <select id="modal-leave-type" class="form-control" required>
@@ -45,11 +59,11 @@ const ModalsComponent = {
         <div class="grid-2" style="margin-bottom: 1rem;">
           <div>
             <label class="form-label">ตั้งแต่วันที่</label>
-            <input type="date" id="modal-leave-start" class="form-control" value="${window.appStore ? window.appStore.getTodayBEString() : '2569-08-12'}" required>
+            <input type="date" id="modal-leave-start" class="form-control" value="${todayIso}" required>
           </div>
           <div>
             <label class="form-label">ถึงวันที่</label>
-            <input type="date" id="modal-leave-end" class="form-control" value="${window.appStore ? window.appStore.getTodayBEString() : '2569-08-12'}" required>
+            <input type="date" id="modal-leave-end" class="form-control" value="${todayIso}" required>
           </div>
         </div>
 
@@ -70,14 +84,20 @@ const ModalsComponent = {
 
   submitLeaveForm(e) {
     e.preventDefault();
+    const childIdInput = document.getElementById('modal-leave-child-id');
+    const childId = (childIdInput && childIdInput.value) || this.activeChildId;
     const leaveType = document.getElementById('modal-leave-type').value;
-    const startDate = document.getElementById('modal-leave-start').value;
-    const endDate = document.getElementById('modal-leave-end').value;
+    const rawStart = document.getElementById('modal-leave-start').value;
+    const rawEnd = document.getElementById('modal-leave-end').value;
     const reason = document.getElementById('modal-leave-reason').value;
 
-    const child = window.appStore.getChildById(this.activeChildId) || window.appStore.getChildren()[0];
+    const child = window.appStore.getChildById(childId) || window.appStore.getChildren()[0];
     const currentUser = window.authController.getCurrentUser();
     const parentName = currentUser ? currentUser.name : child.parentName;
+
+    // Convert to Thai BE Date
+    const startDate = window.appStore.formatToBEDate(rawStart);
+    const endDate = window.appStore.formatToBEDate(rawEnd);
 
     window.appStore.addLeaveRequest({
       childId: child.id,
@@ -98,6 +118,106 @@ const ModalsComponent = {
     this.showToast('ส่งคำขอแจ้งลาเรียบร้อยแล้ว! ส่งข้อมูลไปยังครูประจำชั้นแล้ว [สถานะ: รอครูอนุมัติ]', 'success');
     this.closeModal();
 
+    if (window.appController) {
+      window.appController.refreshCurrentView();
+    }
+  },
+
+  openEditParentModal(childId) {
+    const backdrop = document.getElementById('app-modal-backdrop');
+    const content = document.getElementById('app-modal-content');
+    if (!backdrop || !content) return;
+
+    let child = window.appStore.getChildById(childId);
+    if (!child) {
+      const currentUser = window.authController ? window.authController.getCurrentUser() : null;
+      if (currentUser && currentUser.childId) {
+        child = window.appStore.getChildById(currentUser.childId);
+      }
+    }
+    if (!child) child = window.appStore.getChildren()[0];
+
+    const currentUser = window.authController.getCurrentUser();
+    const currentParentName = currentUser ? currentUser.name : child.parentName;
+
+    content.innerHTML = `
+      <div class="modal-header">
+        <h3 class="modal-title">✏️ แก้ไขข้อมูลผู้ปกครอง (${child.nickname})</h3>
+        <button class="btn btn-secondary btn-sm" onclick="ModalsComponent.closeModal()">✕</button>
+      </div>
+
+      <form onsubmit="ModalsComponent.handleEditParentSubmit(event)">
+        <input type="hidden" id="modal-parent-child-id" value="${child.id}">
+
+        <div class="form-group">
+          <label class="form-label">ชื่อ-นามสกุล ผู้ปกครอง</label>
+          <input type="text" id="modal-parent-name" class="form-control" value="${currentParentName}" required placeholder="เช่น นายสมชาย ใจดี">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">เบอร์โทรศัพท์ติดต่อ</label>
+          <input type="tel" id="modal-parent-phone" class="form-control" value="${child.parentPhone || '081-000-0000'}" required placeholder="เช่น 081-234-5678">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ความสัมพันธ์กับเด็ก</label>
+          <select id="modal-parent-relation" class="form-control">
+            <option value="บิดา" ${child.parentRelation === 'บิดา' ? 'selected' : ''}>บิดา (พ่อ)</option>
+            <option value="มารดา" ${child.parentRelation === 'มารดา' ? 'selected' : ''}>มารดา (แม่)</option>
+            <option value="ผู้ปกครอง" ${child.parentRelation === 'ผู้ปกครอง' ? 'selected' : ''}>ผู้ปกครอง / ญาติ</option>
+          </select>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-secondary" onclick="ModalsComponent.closeModal()">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary">💾 บันทึกข้อมูล</button>
+        </div>
+      </form>
+    `;
+
+    backdrop.classList.add('active');
+  },
+
+  handleEditParentSubmit(e) {
+    e.preventDefault();
+    const childId = document.getElementById('modal-parent-child-id').value;
+    const newName = document.getElementById('modal-parent-name').value.trim();
+    const newPhone = document.getElementById('modal-parent-phone').value.trim();
+    const newRelation = document.getElementById('modal-parent-relation').value;
+
+    if (!newName) return;
+
+    // 1. Update in AppStore
+    const child = window.appStore.getChildById(childId);
+    if (child) {
+      child.parentName = newName;
+      child.parentPhone = newPhone;
+      child.parentRelation = newRelation;
+      window.appStore.saveData(window.appStore.data);
+    }
+
+    // 2. Update current authenticated user
+    const currentUser = window.authController.getCurrentUser();
+    if (currentUser) {
+      currentUser.name = newName;
+      localStorage.setItem('BANGYAI_CURRENT_USER', JSON.stringify(currentUser));
+      if (window.OFFICIAL_ACCOUNTS && window.OFFICIAL_ACCOUNTS[currentUser.username]) {
+        window.OFFICIAL_ACCOUNTS[currentUser.username].name = newName;
+      }
+    }
+
+    window.appStore.addAuditLog(
+      newName,
+      'UPDATE_PARENT_INFO',
+      `แก้ไขข้อมูลผู้ปกครองของ ${child ? child.nickname : childId} (ชื่อ: ${newName}, โทร: ${newPhone})`
+    );
+
+    this.showToast('บันทึกข้อมูลผู้ปกครองเรียบร้อยแล้ว!', 'success');
+    this.closeModal();
+
+    if (window.NavbarComponent) {
+      window.NavbarComponent.render('navbar-root');
+    }
     if (window.appController) {
       window.appController.refreshCurrentView();
     }

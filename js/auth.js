@@ -74,6 +74,16 @@ class AuthController {
       storedUser = null;
     }
 
+    // Auto-update stored user profile from latest OFFICIAL_ACCOUNTS definition
+    if (storedUser && storedUser.username && OFFICIAL_ACCOUNTS[storedUser.username]) {
+      const latestAcc = OFFICIAL_ACCOUNTS[storedUser.username];
+      storedUser.name = latestAcc.name;
+      storedUser.subtitle = latestAcc.title;
+      storedUser.avatar = latestAcc.avatar;
+      storedUser.childId = latestAcc.childId || storedUser.childId;
+      localStorage.setItem('BANGYAI_CURRENT_USER', JSON.stringify(storedUser));
+    }
+
     this.currentUser = storedUser;
     
     // If not authenticated, force clean state

@@ -18,7 +18,8 @@ const ParentView = {
     const activeChild = parentChildren.find(c => c.id === this.selectedChildId) || parentChildren[0];
     const attendance = window.appStore.getAttendance();
     const childAtt = attendance.find(a => a.childId === activeChild.id);
-    const leaveReqs = window.appStore.getLeaveRequests().filter(l => l.childId === activeChild.id);
+    const allLeaves = window.appStore.getLeaveRequests();
+    const leaveReqs = allLeaves.filter(l => l.childId === activeChild.id || (l.childName && (l.childName.includes(activeChild.nickname) || l.childName.includes(activeChild.firstName))));
     const meals = window.appStore.getMealPlan();
     const todayMeal = meals[0] || {};
     const announcements = window.appStore.getAnnouncements();
@@ -38,21 +39,24 @@ const ParentView = {
                 <span class="badge badge-parent" style="margin-bottom: 0.25rem;">🔒 ข้อมูลบุตรหลานในความดูแลของคุณ</span>
                 <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0;">${activeChild.firstName} ${activeChild.lastName} (${activeChild.nickname})</h2>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-                  ห้องลูกหมีน่ารัก | อายุ ${activeChild.ageString} | ผู้ปกครอง: ${currentUser ? currentUser.name : activeChild.parentName} (${activeChild.parentRelation})
+                  ห้องลูกหมีน่ารัก | อายุ ${activeChild.ageString} | ผู้ปกครอง: <strong>${currentUser ? currentUser.name : activeChild.parentName}</strong> (${activeChild.parentRelation || 'ผู้ปกครอง'}) | โทร: ${activeChild.parentPhone || '081-000-0000'}
                 </p>
               </div>
             </div>
 
-            <!-- Child Selector dropdown (Scoped strictly to this parent's children only) -->
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <!-- Action Buttons: Edit Parent Info & Child Selector dropdown -->
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+              <button class="btn btn-secondary btn-sm" onclick="ModalsComponent.openEditParentModal('${activeChild.id}')" style="font-weight: 600; background: #FFF; border-color: #D1D5DB;">
+                ✏️ เปลี่ยนชื่อผู้ปกครอง / ข้อมูลติดต่อ
+              </button>
+
               ${parentChildren.length > 1 ? `
-                <label style="font-size: 0.85rem; font-weight: 600;">เลือกบุตรหลาน:</label>
-                <select class="form-control" style="width: auto; min-height: 38px;" onchange="ParentView.selectedChildId = this.value; ParentView.render('${containerId}');">
+                <select class="form-control" style="width: auto; min-height: 38px; font-weight: 600;" onchange="ParentView.selectedChildId = this.value; ParentView.render('${containerId}');">
                   ${parentChildren.map(c => `<option value="${c.id}" ${c.id === activeChild.id ? 'selected' : ''}>${c.nickname} (${c.firstName})</option>`).join('')}
                 </select>
               ` : `
                 <span class="badge badge-success" style="padding: 0.4rem 0.85rem; font-size: 0.85rem; font-weight: 600;">
-                  ✓ แสดงข้อมูลบุตรหลานของคุณเท่านั้น (1 คน)
+                  ✓ บุตรหลาน 1 คน
                 </span>
               `}
             </div>
