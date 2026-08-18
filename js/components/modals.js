@@ -75,12 +75,14 @@ const ModalsComponent = {
     const endDate = document.getElementById('modal-leave-end').value;
     const reason = document.getElementById('modal-leave-reason').value;
 
-    const child = window.appStore.getChildById(this.activeChildId) || { nickname: 'บุตรหลาน', firstName: 'ปัณณธร', parentName: 'ผู้ปกครอง' };
+    const child = window.appStore.getChildById(this.activeChildId) || window.appStore.getChildren()[0];
+    const currentUser = window.authController.getCurrentUser();
+    const parentName = currentUser ? currentUser.name : child.parentName;
 
     window.appStore.addLeaveRequest({
-      childId: this.activeChildId,
-      childName: `${child.nickname} (${child.firstName})`,
-      parentName: child.parentName,
+      childId: child.id,
+      childName: `${child.nickname} (${child.firstName} ${child.lastName})`,
+      parentName: parentName,
       leaveType,
       startDate,
       endDate,
@@ -88,12 +90,12 @@ const ModalsComponent = {
     });
 
     window.appStore.addAuditLog(
-      child.parentName,
+      parentName,
       'SUBMIT_LEAVE',
-      `ยื่นคำขอแจ้งลา (${leaveType}) ให้ ${child.nickname} วันที่ ${startDate}`
+      `ยื่นคำขอแจ้งลา (${leaveType}) ให้ ${child.nickname} (${child.firstName}) วันที่ ${startDate} ถึง ${endDate}`
     );
 
-    this.showToast('ส่งคำขอแจ้งลาเรียบร้อยแล้ว! ระบบได้ส่งข้อมูลและอัปเดตสถานะการเข้าเรียนเรียบร้อย', 'success');
+    this.showToast('ส่งคำขอแจ้งลาเรียบร้อยแล้ว! ส่งข้อมูลไปยังครูประจำชั้นแล้ว [สถานะ: รอครูอนุมัติ]', 'success');
     this.closeModal();
 
     if (window.appController) {

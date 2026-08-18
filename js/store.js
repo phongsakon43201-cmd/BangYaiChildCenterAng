@@ -231,7 +231,7 @@ class AppStore {
     return this.data.attendance.filter(a => a.date === targetDate);
   }
 
-  updateAttendance(childId, status, checkedBy = 'ครูผู้ดูแล') {
+  updateAttendance(childId, status, checkedBy = 'ครูผู้ดูแล', suppressNotification = false) {
     const today = this.getTodayBEString();
     
     if (status === 'RESET' || status === 'UNCHECKED') {
@@ -263,24 +263,40 @@ class AppStore {
       window.supabaseService.syncAttendanceToDB(record);
     }
 
-    // Trigger simulated LINE notification
-    const child = this.getChildById(childId);
-    if (child) {
-      const statusText = status === 'PRESENT' ? 'มาเรียน' : status === 'LATE' ? 'มาสาย' : status === 'LEAVE' ? 'แจ้งลา' : 'ขาดเรียน';
-      const targetParentLineId = child.parentLineId || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || localStorage.getItem('BANGYAI_LINE_TARGET_ID') || 'U97dc0505bb590d70c66d401224a422db';
-      this.sendLineNotification(
-        `🟢 เช็กชื่อเข้าเรียนเรียบร้อย`,
-        `${child.nickname} (${child.firstName}) ได้บันทึกสถานะ "${statusText}" แล้ว เวลา ${now}`,
-        targetParentLineId
-      );
+    // Trigger LINE notification only if not suppressed (e.g. from leave approval)
+    if (!suppressNotification) {
+      const child = this.getChildById(childId);
+      if (child) {
+        let statusText = 'มาเรียน';
+        let statusTitle = '🟢 เช็กชื่อเข้าเรียนเรียบร้อย (มาเรียน)';
+        if (status === 'LATE') {
+          statusText = 'มาสาย';
+          statusTitle = '⏱ บันทึกสถานะการเข้าเรียน (มาสาย)';
+        } else if (status === 'LEAVE') {
+          statusText = 'แจ้งลา';
+          statusTitle = '📄 บันทึกสถานะการเข้าเรียน (แจ้งลา)';
+        } else if (status === 'ABSENT') {
+          statusText = 'ขาดเรียน';
+          statusTitle = '❌ บันทึกสถานะการเข้าเรียน (ขาดเรียน)';
+        }
+
+        const targetParentLineId = child.parentLineId || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || localStorage.getItem('BANGYAI_LINE_TARGET_ID') || 'U97dc0505bb590d70c66d401224a422db';
+        this.sendLineNotification(
+          statusTitle,
+          `${child.nickname} (${child.firstName}) ได้บันทึกสถานะ "${statusText}" แล้ว เวลา ${now} (ผู้บันทึก: ${checkedBy})`,
+          targetParentLineId
+        );
+      }
     }
 
     this.saveData(this.data);
   }
 
-  getLeaveRequests() { return this.data.leaveRequests; }
+  getLeaveRequests() { return this.data.leaveRequests || []; }
 
   addLeaveRequest(req) {
+    if (!this.data.leaveRequests) this.data.leaveRequests = [];
+
     const newReq = {
       id: 'leave-' + Date.now(),
       status: 'PENDING',
@@ -291,8 +307,15 @@ class AppStore {
     };
     this.data.leaveRequests.unshift(newReq);
 
-    // Auto-update today's attendance status to 'LEAVE' so it instantly reflects in attendance stats and UI
-    this.updateAttendance(req.childId, 'LEAVE', 'ระบบ (ผู้ปกครองแจ้งลา)');
+    // Send LINE Notification specifically for Leave Request submission (Not check-in notification!)
+    const child = this.getChildById(req.childId);
+    const targetParentLineId = (child && child.parentLineId) || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || 'U97dc0505bb590d70c66d401224a422db';
+    
+    this.sendLineNotification(
+      `📄 ยื่นคำขอแจ้งลา (${newReq.leaveType}) เรียบร้อย`,
+      `คำขอแจ้งลาของ ${newReq.childName} (วันที่ ${newReq.startDate} ถึง ${newReq.endDate})\nเหตุผล: ${newReq.reason}\nสถานะ: ส่งถึงครูประจำชั้นแล้ว (รอครูอนุมัติ)`,
+      targetParentLineId
+    );
 
     // Async Supabase DB Sync
     if (window.supabaseService) {
@@ -304,25 +327,37 @@ class AppStore {
   }
 
   updateLeaveStatus(leaveId, status, approvedBy, remark) {
+    if (!this.data.leaveRequests) return null;
     const req = this.data.leaveRequests.find(l => l.id === leaveId);
     if (req) {
       req.status = status;
       req.approvedBy = approvedBy;
       req.remark = remark;
 
+      const child = this.getChildById(req.childId);
+      const targetParentLineId = (child && child.parentLineId) || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || 'U97dc0505bb590d70c66d401224a422db';
+
       if (status === 'APPROVED') {
-        this.updateAttendance(req.childId, 'LEAVE', approvedBy);
+        // Teacher approved: update attendance to LEAVE for today
+        this.updateAttendance(req.childId, 'LEAVE', approvedBy, true);
+
+        this.sendLineNotification(
+          `📩 ผลการอนุมัติคำขอแจ้งลา (อนุมัติแล้ว)`,
+          `คำขอแจ้งลา (${req.leaveType}) ของ ${req.childName} วันที่ ${req.startDate} ถึง ${req.endDate} ได้รับการ "อนุมัติเรียบร้อยแล้ว" โดย ${approvedBy}${remark ? `\nหมายเหตุ: ${remark}` : ''}`,
+          targetParentLineId
+        );
+      } else {
+        this.sendLineNotification(
+          `📩 ผลการอนุมัติคำขอแจ้งลา (ไม่อนุมัติ)`,
+          `คำขอแจ้งลา (${req.leaveType}) ของ ${req.childName} "ไม่อนุมัติ" โดย ${approvedBy}${remark ? `\nหมายเหตุ: ${remark}` : ''}`,
+          targetParentLineId
+        );
       }
 
       // Async Supabase DB Sync
       if (window.supabaseService) {
         window.supabaseService.syncLeaveRequestToDB(req);
       }
-
-      this.sendLineNotification(
-        `📩 ผลการอนุมัติคำขอแจ้งลา`,
-        `คำขอแจ้งลาของ ${req.childName} ได้รับการ "${status === 'APPROVED' ? 'อนุมัติเรียบร้อยแล้ว' : 'ไม่อนุมัติ'}" โดย ${approvedBy}`
-      );
 
       this.saveData(this.data);
     }

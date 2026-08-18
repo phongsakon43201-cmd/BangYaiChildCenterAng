@@ -12,6 +12,9 @@ const ParentView = {
 
     const currentUser = window.authController.getCurrentUser();
     const parentChildren = window.appStore.getChildrenForParent(currentUser);
+    if (!parentChildren.some(c => c.id === this.selectedChildId)) {
+      this.selectedChildId = parentChildren[0]?.id || 'STD-01';
+    }
     const activeChild = parentChildren.find(c => c.id === this.selectedChildId) || parentChildren[0];
     const attendance = window.appStore.getAttendance();
     const childAtt = attendance.find(a => a.childId === activeChild.id);

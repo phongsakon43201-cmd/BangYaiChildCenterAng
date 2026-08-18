@@ -53,7 +53,7 @@ const TeacherView = {
             📋 เช็กชื่อการเข้าเรียน (${checkedCount}/${children.length} คน)
           </button>
           <button class="tab-link ${this.currentTab === 'LEAVE_APPROVALS' ? 'active' : ''}" onclick="TeacherView.currentTab = 'LEAVE_APPROVALS'; TeacherView.render('${containerId}');">
-            📩 คำขอแจ้งลา (${pendingLeaves.length})
+            📩 คำขอแจ้งลา ${pendingLeaves.length > 0 ? `<span class="badge" style="background: #F59E0B; color: #FFF; font-weight: 700; padding: 2px 8px; font-size: 0.75rem; margin-left: 4px;">${pendingLeaves.length} รออนุมัติ</span>` : `(${leaveReqs.length})`}
           </button>
           <button class="tab-link ${this.currentTab === 'DEV_EVAL' ? 'active' : ''}" onclick="TeacherView.currentTab = 'DEV_EVAL'; TeacherView.render('${containerId}');">
             📊 ประเมินพัฒนาการ 4 ด้าน
@@ -77,6 +77,25 @@ const TeacherView = {
   renderTabContent(tab, children, attendance, pendingLeaves, containerId) {
     if (tab === 'ATTENDANCE') {
       return `
+        ${pendingLeaves.length > 0 ? `
+          <div class="glass-card" style="margin-bottom: 1.25rem; background: #FFFBEB; border: 1px solid #F59E0B; border-left: 6px solid #D97706; padding: 1rem 1.25rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="font-size: 1.75rem;">🔔</span>
+                <div>
+                  <strong style="color: #92400E; font-size: 1rem;">มีคำขอแจ้งลาจากผู้ปกครองรอการอนุมัติ ${pendingLeaves.length} รายการ</strong>
+                  <p style="font-size: 0.85rem; color: #78350F; margin: 2px 0 0 0;">
+                    ${pendingLeaves.map(p => `<strong>${p.childName}</strong> (${p.leaveType}: ${p.reason})`).join(' | ')}
+                  </p>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-primary" onclick="TeacherView.currentTab = 'LEAVE_APPROVALS'; TeacherView.render('${containerId}');" style="background: #D97706; border-color: #D97706; color: #FFF; font-weight: 700;">
+                👉 ตรวจสอบและอนุมัติ (${pendingLeaves.length})
+              </button>
+            </div>
+          </div>
+        ` : ''}
+
         <div class="glass-card">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
             <h3 style="font-weight: 700; font-size: 1.1rem;">ระบบเช็กชื่อรายวันประจำวันที่ ${window.appStore.getTodayThaiFormatted()}</h3>
@@ -87,6 +106,7 @@ const TeacherView = {
             ${children.map(child => {
               const att = attendance.find(a => a.childId === child.id);
               const status = att ? att.status : null;
+              const childPendingLeave = pendingLeaves.find(p => p.childId === child.id);
               
               let statusBadgeHtml = '';
               if (!status) {
@@ -102,36 +122,53 @@ const TeacherView = {
               }
 
               return `
-                <div class="attendance-card">
-                  <div class="student-info">
-                    <div class="student-avatar" style="background-color: ${child.avatarColor}; color: #FFF;">
-                      ${child.nickname.charAt(0)}
-                    </div>
-                    <div>
-                      <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                        <strong style="font-size: 1rem; color: var(--text-main);">${child.nickname} (${child.firstName} ${child.lastName})</strong>
-                        ${statusBadgeHtml}
+                <div class="attendance-card" style="${childPendingLeave ? 'border-left: 4px solid #F59E0B; background: #FFFDF5;' : ''}">
+                  <div style="width: 100%;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                      <div class="student-info">
+                        <div class="student-avatar" style="background-color: ${child.avatarColor}; color: #FFF;">
+                          ${child.nickname.charAt(0)}
+                        </div>
+                        <div>
+                          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <strong style="font-size: 1rem; color: var(--text-main);">${child.nickname} (${child.firstName} ${child.lastName})</strong>
+                            ${statusBadgeHtml}
+                            ${childPendingLeave ? `<span class="badge badge-warning" style="font-size: 0.75rem; background: #FEF3C7; color: #92400E; border: 1px solid #F59E0B;">📩 ยื่นคำขอ${childPendingLeave.leaveType}</span>` : ''}
+                          </div>
+                          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">ผู้ปกครอง: ${child.parentName} | โทร: ${child.parentPhone}</p>
+                        </div>
                       </div>
-                      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">ผู้ปกครอง: ${child.parentName} | โทร: ${child.parentPhone}</p>
-                    </div>
-                  </div>
 
-                  <div class="attendance-btn-group">
-                    <button class="att-btn ${!status ? 'selected' : ''}" style="background: ${!status ? '#6B7280' : '#F3F4F6'}; color: ${!status ? '#FFFFFF' : '#4B5563'}; border: 1px solid #D1D5DB;" onclick="TeacherView.handleCheckIn('${child.id}', 'UNCHECKED', '${containerId}')">
-                      ⏳ ยังไม่เช็ก
-                    </button>
-                    <button class="att-btn present ${status === 'PRESENT' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'PRESENT', '${containerId}')">
-                      ✓ มาเรียน
-                    </button>
-                    <button class="att-btn late ${status === 'LATE' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'LATE', '${containerId}')">
-                      ⏱ มาสาย
-                    </button>
-                    <button class="att-btn leave ${status === 'LEAVE' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'LEAVE', '${containerId}')">
-                      📄 แจ้งลา
-                    </button>
-                    <button class="att-btn absent ${status === 'ABSENT' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'ABSENT', '${containerId}')">
-                      ✕ ขาดเรียน
-                    </button>
+                      <div class="attendance-btn-group">
+                        <button class="att-btn ${!status ? 'selected' : ''}" style="background: ${!status ? '#6B7280' : '#F3F4F6'}; color: ${!status ? '#FFFFFF' : '#4B5563'}; border: 1px solid #D1D5DB;" onclick="TeacherView.handleCheckIn('${child.id}', 'UNCHECKED', '${containerId}')">
+                          ⏳ ยังไม่เช็ก
+                        </button>
+                        <button class="att-btn present ${status === 'PRESENT' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'PRESENT', '${containerId}')">
+                          ✓ มาเรียน
+                        </button>
+                        <button class="att-btn late ${status === 'LATE' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'LATE', '${containerId}')">
+                          ⏱ มาสาย
+                        </button>
+                        <button class="att-btn leave ${status === 'LEAVE' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'LEAVE', '${containerId}')">
+                          📄 แจ้งลา
+                        </button>
+                        <button class="att-btn absent ${status === 'ABSENT' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'ABSENT', '${containerId}')">
+                          ✕ ขาดเรียน
+                        </button>
+                      </div>
+                    </div>
+
+                    ${childPendingLeave ? `
+                      <div style="margin-top: 0.65rem; background: #FEF3C7; border: 1px dashed #F59E0B; border-radius: 8px; padding: 0.5rem 0.85rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
+                        <div style="font-size: 0.85rem; color: #92400E;">
+                          <strong>📩 คำขอแจ้งลา (${childPendingLeave.leaveType}):</strong> วันที่ ${childPendingLeave.startDate} ถึง ${childPendingLeave.endDate} <span style="color: #78350F;">(เหตุผล: ${childPendingLeave.reason})</span>
+                        </div>
+                        <div style="display: flex; gap: 0.4rem;">
+                          <button class="btn btn-success btn-sm" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; font-weight: 700;" onclick="TeacherView.handleApproveLeave('${childPendingLeave.id}', 'APPROVED', '${containerId}')">✓ อนุมัติการลา</button>
+                          <button class="btn btn-danger btn-sm" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; font-weight: 700;" onclick="TeacherView.handleApproveLeave('${childPendingLeave.id}', 'REJECTED', '${containerId}')">✕ ไม่อนุมัติ</button>
+                        </div>
+                      </div>
+                    ` : ''}
                   </div>
                 </div>
               `;
@@ -142,10 +179,20 @@ const TeacherView = {
     }
 
     if (tab === 'LEAVE_APPROVALS') {
-      const allReqs = window.appStore.getLeaveRequests();
+      const allReqs = [...window.appStore.getLeaveRequests()].sort((a, b) => (a.status === 'PENDING' ? -1 : 1));
       return `
         <div class="glass-card">
-          <h3 style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1.25rem;">รายการคำขอแจ้งลาจากผู้ปกครอง</h3>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <h3 style="font-weight: 700; font-size: 1.15rem; margin: 0;">รายการคำขอแจ้งลาจากผู้ปกครอง</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
+                รอการอนุมัติ: <strong style="color: #D97706;">${pendingLeaves.length} รายการ</strong> | ทั้งหมด: ${allReqs.length} รายการ
+              </p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="TeacherView.render('${containerId}')">
+              🔄 รีเฟรชข้อมูล
+            </button>
+          </div>
           
           <div class="data-table-container">
             <table class="data-table">
@@ -161,26 +208,28 @@ const TeacherView = {
                 </tr>
               </thead>
               <tbody>
-                ${allReqs.map(l => `
-                  <tr>
+                ${allReqs.length > 0 ? allReqs.map(l => `
+                  <tr style="${l.status === 'PENDING' ? 'background-color: #FFFDF5; font-weight: 500;' : ''}">
                     <td><strong>${l.childName}</strong></td>
                     <td>${l.parentName}</td>
                     <td><span class="badge badge-info">${l.leaveType}</span></td>
                     <td>${l.startDate} ถึง ${l.endDate}</td>
                     <td style="max-width: 250px;">${l.reason}</td>
                     <td>
-                      ${l.status === 'APPROVED' ? '<span class="badge badge-success">อนุมัติแล้ว</span>' :
-                        l.status === 'REJECTED' ? '<span class="badge badge-danger">ไม่อนุมัติ</span>' :
-                        '<span class="badge badge-warning">รออนุมัติ</span>'}
+                      ${l.status === 'APPROVED' ? '<span class="badge badge-success">✓ อนุมัติแล้ว</span>' :
+                        l.status === 'REJECTED' ? '<span class="badge badge-danger">✕ ไม่อนุมัติ</span>' :
+                        '<span class="badge badge-warning" style="background: #FEF3C7; color: #92400E; border: 1px solid #F59E0B; font-weight: 700;">⏳ รออนุมัติ</span>'}
                     </td>
                     <td>
                       ${l.status === 'PENDING' ? `
-                        <button class="btn btn-success btn-sm" onclick="TeacherView.handleApproveLeave('${l.id}', 'APPROVED', '${containerId}')">อนุมัติ</button>
-                        <button class="btn btn-danger btn-sm" onclick="TeacherView.handleApproveLeave('${l.id}', 'REJECTED', '${containerId}')">ไม่อนุมัติ</button>
-                      ` : '<span style="font-size: 0.8rem; color: var(--text-subtle);">ดำเนินการแล้ว</span>'}
+                        <div style="display: flex; gap: 0.35rem;">
+                          <button class="btn btn-success btn-sm" style="font-weight: 700; padding: 0.3rem 0.75rem;" onclick="TeacherView.handleApproveLeave('${l.id}', 'APPROVED', '${containerId}')">✓ อนุมัติ</button>
+                          <button class="btn btn-danger btn-sm" style="font-weight: 700; padding: 0.3rem 0.75rem;" onclick="TeacherView.handleApproveLeave('${l.id}', 'REJECTED', '${containerId}')">✕ ไม่อนุมัติ</button>
+                        </div>
+                      ` : `<span style="font-size: 0.8rem; color: var(--text-muted);">${l.approvedBy ? `โดย ${l.approvedBy}` : 'ดำเนินการแล้ว'}</span>`}
                     </td>
                   </tr>
-                `).join('')}
+                `).join('') : '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">ยังไม่มีรายการคำขอแจ้งลาในระบบ</td></tr>'}
               </tbody>
             </table>
           </div>
@@ -349,13 +398,20 @@ const TeacherView = {
 
   handleApproveLeave(leaveId, status, containerId) {
     const teacherName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
-    window.appStore.updateLeaveStatus(leaveId, status, teacherName, status === 'APPROVED' ? 'อนุมัติเรียบร้อยค่ะ' : 'เนื่องจากไม่อยู่ในเงื่อนไขการลา');
+    const updated = window.appStore.updateLeaveStatus(leaveId, status, teacherName, status === 'APPROVED' ? 'อนุมัติเรียบร้อยค่ะ' : 'เนื่องจากไม่อยู่ในเงื่อนไขการลา');
     
     window.appStore.addAuditLog(
       teacherName,
       'APPROVE_LEAVE',
       `ปรับสถานะคำขอแจ้งลา (${leaveId}) เป็น ${status}`
     );
+
+    if (window.ModalsComponent) {
+      window.ModalsComponent.showToast(
+        status === 'APPROVED' ? `อนุมัติคำขอแจ้งลาของ ${updated ? updated.childName : 'เด็ก'} เรียบร้อยแล้ว (อัปเดตสถานะการเข้าเรียนและแจ้ง LINE แล้ว)` : `บันทึกสถานะไม่อนุมัติคำขอแจ้งลาเรียบร้อยแล้ว`,
+        status === 'APPROVED' ? 'success' : 'warning'
+      );
+    }
 
     this.render(containerId);
   },
