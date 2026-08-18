@@ -35,28 +35,14 @@ class AppController {
         window.supabaseService.subscribeRealtimeDB(() => {
           if (window.appStore && typeof window.appStore.syncWithCloud === 'function') {
             window.appStore.syncWithCloud(true);
-          } else {
-            this.updateView();
           }
         });
       }
 
-      // 7. Background Auto-Sync every 4 seconds for seamless phone <-> PC sync
-      setInterval(() => {
-        if (window.appStore && typeof window.appStore.syncWithCloud === 'function') {
-          window.appStore.syncWithCloud();
-        }
-      }, 4000);
-
-      // 8. Instant Sync when user switches back to tab or device screen
+      // 7. Instant Sync when user switches back to tab or device screen
       window.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible' && window.appStore) {
-          window.appStore.syncWithCloud(true);
-        }
-      });
-      window.addEventListener('focus', () => {
-        if (window.appStore) {
-          window.appStore.syncWithCloud(true);
+          window.appStore.syncWithCloud(false);
         }
       });
     });
@@ -93,7 +79,17 @@ class AppController {
   }
 
   refreshCurrentView() {
-    this.updateView();
+    if (this._refreshDebounceTimer) {
+      clearTimeout(this._refreshDebounceTimer);
+    }
+    this._refreshDebounceTimer = setTimeout(() => {
+      // Do not re-render if user is currently filling a modal form
+      const modalBackdrop = document.getElementById('app-modal-backdrop');
+      if (modalBackdrop && modalBackdrop.classList.contains('active')) {
+        return;
+      }
+      this.updateView();
+    }, 150);
   }
 }
 

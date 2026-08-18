@@ -296,10 +296,10 @@ class AppStore {
         cloudData.children.forEach(cc => {
           const localC = this.data.children.find(c => c.id === cc.id);
           if (localC) {
-            if (cc.parent_name && localC.parentName !== cc.parent_name) { localC.parentName = cc.parent_name; hasChanges = true; }
-            if (cc.parent_phone && localC.parentPhone !== cc.parent_phone) { localC.parentPhone = cc.parent_phone; hasChanges = true; }
-            if (cc.height_cm && localC.heightCm !== Number(cc.height_cm)) { localC.heightCm = Number(cc.height_cm); hasChanges = true; }
-            if (cc.weight_kg && localC.weightKg !== Number(cc.weight_kg)) { localC.weightKg = Number(cc.weight_kg); hasChanges = true; }
+            if (cc.parent_name && (localC.parentName || '').trim() !== (cc.parent_name || '').trim()) { localC.parentName = cc.parent_name.trim(); hasChanges = true; }
+            if (cc.parent_phone && (localC.parentPhone || '').trim() !== (cc.parent_phone || '').trim()) { localC.parentPhone = cc.parent_phone.trim(); hasChanges = true; }
+            if (cc.height_cm && Math.abs(Number(localC.heightCm || 0) - Number(cc.height_cm)) > 0.01) { localC.heightCm = Number(cc.height_cm); hasChanges = true; }
+            if (cc.weight_kg && Math.abs(Number(localC.weightKg || 0) - Number(cc.weight_kg)) > 0.01) { localC.weightKg = Number(cc.weight_kg); hasChanges = true; }
             if (cc.growth_status && localC.growthStatus !== cc.growth_status) { localC.growthStatus = cc.growth_status; hasChanges = true; }
           }
         });
@@ -310,8 +310,6 @@ class AppStore {
         if (window.appController) {
           window.appController.refreshCurrentView();
         }
-      } else if (forceRerender && window.appController) {
-        window.appController.refreshCurrentView();
       }
     } catch (e) {
       // Background sync notification
