@@ -269,9 +269,10 @@ class AppStore {
       // 2. Sync Attendance from cloud
       if (cloudData.attendance && Array.isArray(cloudData.attendance) && cloudData.attendance.length > 0) {
         cloudData.attendance.forEach(ca => {
-          const localIdx = this.data.attendance.findIndex(a => a.childId === ca.child_id && a.date === ca.date);
+          const beDate = this.formatToBEDate(ca.date);
+          const localIdx = this.data.attendance.findIndex(a => a.childId === ca.child_id && (a.date === ca.date || a.date === beDate));
           if (localIdx >= 0) {
-            if (this.data.attendance[localIdx].status !== ca.status) {
+            if (this.data.attendance[localIdx].status !== ca.status || this.data.attendance[localIdx].checkTime !== ca.check_time) {
               this.data.attendance[localIdx].status = ca.status;
               this.data.attendance[localIdx].checkTime = ca.check_time;
               this.data.attendance[localIdx].checkedBy = ca.checked_by;

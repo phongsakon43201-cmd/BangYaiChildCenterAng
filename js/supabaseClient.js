@@ -107,15 +107,25 @@ class SupabaseService {
         checked_by: attendanceRecord.checkedBy
       };
 
-      const { data } = await client.from('attendance').select('id').eq('child_id', attendanceRecord.childId).eq('date', payload.date).maybeSingle();
-      if (data && data.id) {
-        await client.from('attendance').update(payload).eq('id', data.id);
+      const { data: existingRows } = await client.from('attendance')
+        .select('id')
+        .eq('child_id', attendanceRecord.childId)
+        .eq('date', payload.date);
+
+      if (existingRows && existingRows.length > 0) {
+        await client.from('attendance').update(payload).eq('id', existingRows[0].id);
+        // Clean up excess duplicates if any exist
+        if (existingRows.length > 1) {
+          for (let i = 1; i < existingRows.length; i++) {
+            await client.from('attendance').delete().eq('id', existingRows[i].id);
+          }
+        }
       } else {
         await client.from('attendance').insert(payload);
       }
       console.log('⚡ Supabase DB: Attendance synced successfully');
     } catch (err) {
-      // Local state handles persistence cleanly
+      console.warn('Supabase Attendance sync notice:', err);
     }
   }
 
@@ -141,11 +151,26 @@ class SupabaseService {
       if (leaveReq.id && leaveReq.id.length > 20 && !leaveReq.id.startsWith('leave-')) {
         await client.from('leave_requests').update(payload).eq('id', leaveReq.id);
       } else {
-        await client.from('leave_requests').insert(payload);
+        const { data: existing } = await client.from('leave_requests')
+          .select('id')
+          .eq('child_id', leaveReq.childId)
+          .eq('start_date', leaveReq.startDate)
+          .eq('reason', leaveReq.reason)
+          .maybeSingle();
+
+        if (existing && existing.id) {
+          await client.from('leave_requests').update(payload).eq('id', existing.id);
+          leaveReq.id = existing.id;
+        } else {
+          const { data: inserted } = await client.from('leave_requests').insert(payload).select('id').maybeSingle();
+          if (inserted && inserted.id) {
+            leaveReq.id = inserted.id;
+          }
+        }
       }
       console.log('⚡ Supabase DB: Leave Request synced successfully');
     } catch (err) {
-      // Local state handles persistence cleanly
+      console.warn('Supabase Leave sync notice:', err);
     }
   }
 
@@ -160,7 +185,7 @@ class SupabaseService {
         details: log.details
       });
     } catch (err) {
-      // Local state handles persistence cleanly
+      console.warn('Supabase Audit Log sync notice:', err);
     }
   }
 
