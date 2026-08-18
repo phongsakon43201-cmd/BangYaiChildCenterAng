@@ -138,7 +138,7 @@ const TeacherView = {
                     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
                       <div class="student-info">
                         <div class="student-avatar" style="background-color: ${child.avatarColor}; color: #FFF;">
-                          ${child.nickname.charAt(0)}
+                          ${child.firstName.charAt(0)}
                         </div>
                         <div>
                           <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
@@ -308,7 +308,7 @@ const TeacherView = {
                 <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; background: var(--bg-surface);">
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                     <strong style="font-size: 1.05rem; color: var(--text-main);">${child.nickname} (${child.firstName} ${child.lastName})</strong>
-                    <button class="btn btn-primary btn-sm" onclick="TeacherView.saveDevEval('${child.id}', '${child.nickname} (${child.firstName})', '${containerId}')">💾 บันทึกผลประเมิน</button>
+                    <button class="btn btn-primary btn-sm" onclick="TeacherView.saveDevEval('${child.id}', '${containerId}')">💾 บันทึกผลประเมิน</button>
                   </div>
 
                   <div class="grid-4" style="margin-bottom: 1rem;">
@@ -429,33 +429,34 @@ const TeacherView = {
 
   saveGrowthData(childId, childNickname, containerId) {
     const teacherName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
-    const child = window.appStore.getChildById(childId);
-    if (child) {
-      const height = parseFloat(document.getElementById(`growth-h-${childId}`).value) || 98.5;
-      const weight = parseFloat(document.getElementById(`growth-w-${childId}`).value) || 15.2;
-      const bmi = parseFloat((weight / ((height / 100) ** 2)).toFixed(1));
-      
-      child.heightCm = height;
-      child.weightKg = weight;
-      child.bmi = bmi;
-      child.growthStatus = document.getElementById(`growth-status-${childId}`).value;
-      window.appStore.saveData(window.appStore.data);
+    const height = parseFloat(document.getElementById(`growth-h-${childId}`).value) || 98.5;
+    const weight = parseFloat(document.getElementById(`growth-w-${childId}`).value) || 15.2;
+    const bmi = parseFloat((weight / ((height / 100) ** 2)).toFixed(1));
+    const growthStatus = document.getElementById(`growth-status-${childId}`).value;
 
-      window.appStore.addAuditLog(
-        teacherName,
-        'SAVE_GROWTH_DATA',
-        `บันทึกข้อมูลการเติบโต (ส่วนสูง ${height} ซม. / น้ำหนัก ${weight} กก. / BMI ${bmi}) ของ ${childNickname}`
-      );
+    window.appStore.updateChild(childId, {
+      heightCm: height,
+      weightKg: weight,
+      bmi: bmi,
+      growthStatus: growthStatus
+    });
 
-      if (window.ModalsComponent) {
-        window.ModalsComponent.showToast(`บันทึกข้อมูลส่วนสูงและน้ำหนักของ ${childNickname} เรียบร้อยแล้ว! (BMI: ${bmi})`, 'success');
-      }
-      this.render(containerId);
+    window.appStore.addAuditLog(
+      teacherName,
+      'SAVE_GROWTH_DATA',
+      `บันทึกข้อมูลการเติบโต (ส่วนสูง ${height} ซม. / น้ำหนัก ${weight} กก. / BMI ${bmi}) ของ ${childNickname}`
+    );
+
+    if (window.ModalsComponent) {
+      window.ModalsComponent.showToast(`บันทึกข้อมูลส่วนสูงและน้ำหนักของ ${childNickname} เรียบร้อยแล้ว! (BMI: ${bmi})`, 'success');
     }
+    this.render(containerId);
   },
 
-  saveDevEval(childId, childName, containerId) {
+  saveDevEval(childId, containerId) {
     const teacherName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
+    const child = window.appStore.getChildById(childId);
+    const childName = child ? `${child.nickname} (${child.firstName})` : childId;
     const physicalScore = parseInt(document.getElementById(`dev-phy-${childId}`).value);
     const emotionalScore = parseInt(document.getElementById(`dev-emo-${childId}`).value);
     const socialScore = parseInt(document.getElementById(`dev-soc-${childId}`).value);

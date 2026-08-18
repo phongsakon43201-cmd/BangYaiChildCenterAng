@@ -171,6 +171,20 @@ const LoginModalComponent = {
     // Official Accounts Auth Verification
     const res = window.authController.login(userInput, password);
     if (res.success) {
+      // Validate role matches the portal
+      const loggedInRole = window.authController.currentRole;
+      if (loggedInRole !== roleId) {
+        // Role mismatch - logout and show error
+        window.authController.logout();
+        const roleNames = { PARENT: 'ผู้ปกครอง', TEACHER: 'ครู / ผู้ดูแลเด็ก', EXECUTIVE: 'ผู้บริหาร / เทศบาล' };
+        if (btn) btn.innerText = `เข้าสู่ระบบ (${roleNames[roleId] || roleId})`;
+        if (window.ModalsComponent) {
+          window.ModalsComponent.showToast(`บัญชีนี้เป็นสิทธิ์ผู้ใช้งานประเภท "${roleNames[loggedInRole] || loggedInRole}" โปรดใช้ประตูสำหรับ "${roleNames[roleId]}" แทน`, 'error');
+        } else {
+          alert(`บัญชีนี้เป็นสิทธิ์ "${roleNames[loggedInRole]}" ไม่ใช่ "${roleNames[roleId]}"`);
+        }
+        return;
+      }
       if (window.ModalsComponent) {
         window.ModalsComponent.showToast(`ยินดีต้อนรับคุณ ${res.user.name} เข้าสู่ระบบ`, 'success');
       }

@@ -1,182 +1,164 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Bang Yai Child Development Center MIS - Executive View Component
-   Executive Dashboard, Analytics Charts, Registry, Audit Log & Report Export
+   Executive Interface: KPI Dashboard, Child Registry, Audit Logs
    ========================================================================== */
 
 const ExecutiveView = {
-  currentTab: 'DASHBOARD', // DASHBOARD, REGISTRY, AUDIT_LOGS
+  currentTab: 'DASHBOARD',
+  showFullNationalId: false,
 
   render(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    const centerInfo = window.appStore.getCenterInfo();
     const children = window.appStore.getChildren();
     const attendance = window.appStore.getAttendance();
-    const presentCount = attendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length;
-    const rate = Math.round((presentCount / (children.length || 1)) * 100);
     const leaveReqs = window.appStore.getLeaveRequests();
+    const devRecs = window.appStore.getDevelopmentRecords();
     const auditLogs = window.appStore.getAuditLogs();
+    const centerInfo = window.appStore.getCenterInfo();
+
+    const presentCount = attendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length;
+    const leaveCount = attendance.filter(a => a.status === 'LEAVE').length;
+    const absentCount = attendance.filter(a => a.status === 'ABSENT').length;
+    const rate = children.length > 0 ? Math.round((presentCount / children.length) * 100) : 0;
 
     container.innerHTML = `
       <div class="animate-fade-in">
-        <!-- Header Banner & Action Buttons -->
-        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(255, 251, 235, 0.95), rgba(254, 243, 199, 0.95)); border-color: rgba(217, 119, 6, 0.25);">
+        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(255, 251, 235, 0.9), rgba(254, 243, 199, 0.9)); border-color: rgba(217, 119, 6, 0.2);">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
             <div>
-              <span class="badge badge-executive" style="margin-bottom: 0.25rem;">ผู้บริหาร / เทศบาลเมืองบางใหญ่</span>
-              <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0;">แดชบอร์ดผู้บริหารและศูนย์ข้อมูลสารสนเทศ (Executive Data Center)</h2>
+              <span class="badge badge-executive" style="margin-bottom: 0.25rem;">มุมมองผู้บริหาร / เทศบาล</span>
+              <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0;">${centerInfo.name}</h2>
               <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-                ${centerInfo.name} | การกำกับดูแลเชิงนโยบายและความมั่นคงปลอดภัย (Single Source of Truth)
+                อ.${centerInfo.district} จ.${centerInfo.province} | ปีการศึกษา ${centerInfo.academicYear} | ภาคเรียนที่ ${centerInfo.term}
               </p>
             </div>
-
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <button class="btn btn-primary" onclick="ExportUtils.printExecutiveReport()" style="background: linear-gradient(135deg, var(--role-executive), #B45309);">
-                🖨️ พิมพ์รายงานผู้บริหาร
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button class="btn btn-primary btn-sm" onclick="window.ExportUtils.printExecutiveReport()" style="font-weight: 600;">
+                🖨️ พิมพ์รายงานสรุปผล
               </button>
-              <button class="btn btn-secondary btn-sm" onclick="ExecutiveView.exportDataCSV()">
-                📥 ส่งออก CSV
+              <button class="btn btn-secondary btn-sm" onclick="ExecutiveView.exportDataCSV()" style="font-weight: 600; background: #FFF;">
+                📥 ส่งออก Excel (CSV)
               </button>
             </div>
           </div>
         </div>
 
-        <!-- KPI Summary Cards -->
-        <div class="grid-4" style="margin-bottom: 1.5rem;">
-          <div class="glass-card stat-card">
-            <div class="stat-icon indigo">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </div>
-            <div>
-              <div class="stat-value">${children.length} คน</div>
-              <div class="stat-label">จำนวนเด็กในศูนย์ทั้งหมด</div>
-            </div>
-          </div>
-
-          <div class="glass-card stat-card">
-            <div class="stat-icon emerald">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            </div>
-            <div>
-              <div class="stat-value" style="color: var(--success-500);">${rate}%</div>
-              <div class="stat-label">อัตราการมาเรียนวันนี้ (${presentCount}/${children.length})</div>
-            </div>
-          </div>
-
-          <div class="glass-card stat-card">
-            <div class="stat-icon amber">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <div>
-              <div class="stat-value">${leaveReqs.filter(l => l.status === 'PENDING').length} รายการ</div>
-              <div class="stat-label">คำขอแจ้งลารออนุมัติ</div>
-            </div>
-          </div>
-
-          <div class="glass-card stat-card">
-            <div class="stat-icon blue">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            </div>
-            <div>
-              <div class="stat-value">${auditLogs.length}</div>
-              <div class="stat-label">Audit Logs ความปลอดภัย</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Executive Navigation Tabs -->
         <div class="view-tabs">
           <button class="tab-link ${this.currentTab === 'DASHBOARD' ? 'active' : ''}" onclick="ExecutiveView.currentTab = 'DASHBOARD'; ExecutiveView.render('${containerId}');">
-            📈 ภาพรวมสถิติ & กราฟพัฒนาการ
+            📊 Dashboard ภาพรวม
           </button>
           <button class="tab-link ${this.currentTab === 'REGISTRY' ? 'active' : ''}" onclick="ExecutiveView.currentTab = 'REGISTRY'; ExecutiveView.render('${containerId}');">
-            👥 ทะเบียนเด็ก & ผู้ปกครอง (${children.length})
+            📋 ทะเบียนนักเรียน (${children.length} คน)
           </button>
           <button class="tab-link ${this.currentTab === 'AUDIT_LOGS' ? 'active' : ''}" onclick="ExecutiveView.currentTab = 'AUDIT_LOGS'; ExecutiveView.render('${containerId}');">
-            🛡️ ประวัติการใช้งาน & Audit Log (${auditLogs.length})
+            🔐 Audit Logs (${auditLogs.length})
           </button>
         </div>
 
-        <!-- Tab Content -->
-        <div id="executive-tab-content">
-          ${this.renderTabContent(this.currentTab, children, attendance, auditLogs, containerId)}
+        <div id="exec-tab-content">
+          ${this.renderTabContent(this.currentTab, children, attendance, leaveReqs, devRecs, auditLogs, centerInfo, containerId, presentCount, leaveCount, absentCount, rate)}
         </div>
       </div>
     `;
 
     if (this.currentTab === 'DASHBOARD') {
       setTimeout(() => {
-        window.ChartUtils.renderDonutChart('exec-donut-chart', rate, 'การมาเรียนวันนี้', '#10B981');
-        window.ChartUtils.renderAttendanceTrend('exec-trend-chart');
-        window.ChartUtils.renderDevelopmentBars('exec-dev-chart', { physical: 4, emotional: 4, social: 3, intellectual: 4 });
+        if (window.ChartUtils) {
+          window.ChartUtils.renderDonutChart('exec-attendance-donut', rate, 'อัตรามาเรียน', '#10B981');
+          window.ChartUtils.renderAttendanceTrend('exec-att-trend');
+        }
       }, 50);
     }
   },
 
-  renderTabContent(tab, children, attendance, auditLogs, containerId) {
+  renderTabContent(tab, children, attendance, leaveReqs, devRecs, auditLogs, centerInfo, containerId, presentCount, leaveCount, absentCount, rate) {
     if (tab === 'DASHBOARD') {
       return `
-        <div class="grid-3" style="margin-bottom: 1.5rem;">
-          <!-- Donut Chart -->
-          <div class="glass-card">
-            <h3 style="font-weight: 700; font-size: 1.05rem; margin-bottom: 1rem; text-align: center;">สัดส่วนการเข้าเรียนประจำวัน</h3>
-            <div id="exec-donut-chart"></div>
-            <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; font-size: 0.8rem;">
-              <span style="color: var(--success-500); font-weight: 600;">● มาเรียน (${attendance.filter(a=>a.status==='PRESENT').length})</span>
-              <span style="color: var(--warning-500); font-weight: 600;">● มาสาย (${attendance.filter(a=>a.status==='LATE').length})</span>
-              <span style="color: var(--info-500); font-weight: 600;">● ลา (${attendance.filter(a=>a.status==='LEAVE').length})</span>
+        <div class="grid-4" style="margin-bottom: 1.5rem;">
+          <div class="glass-card stat-card">
+            <div class="stat-icon indigo">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+              <div class="stat-label">จำนวนนักเรียนทั้งหมด</div>
+              <div class="stat-value">${children.length} คน</div>
+              <div class="stat-label" style="font-size: 0.75rem;">ความจุรองรับ: ${centerInfo.totalCapacity} คน</div>
             </div>
           </div>
-
-          <!-- Weekly Trend Chart -->
-          <div class="glass-card">
-            <h3 style="font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; text-align: center;">แนวโน้มอัตราการมาเรียนสัปดาห์นี้</h3>
-            <div id="exec-trend-chart"></div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon emerald">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div>
+              <div class="stat-label">อัตราการมาเรียนวันนี้</div>
+              <div class="stat-value" style="color: var(--success-500);">${rate}%</div>
+              <div class="stat-label" style="font-size: 0.75rem;">มาเรียน ${presentCount} | ลา ${leaveCount} | ขาด ${absentCount}</div>
+            </div>
           </div>
-
-          <!-- 4 Aspects Overview -->
-          <div class="glass-card">
-            <h3 style="font-weight: 700; font-size: 1.05rem; margin-bottom: 1rem; text-align: center;">ภาพรวมพัฒนาการ 4 ด้านทั้งศูนย์</h3>
-            <div id="exec-dev-chart"></div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon amber">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div>
+              <div class="stat-label">คำขอแจ้งลา (รอดำเนินการ)</div>
+              <div class="stat-value">${leaveReqs.filter(l => l.status === 'PENDING').length} รายการ</div>
+              <div class="stat-label" style="font-size: 0.75rem;">ทั้งหมด: ${leaveReqs.length} รายการ</div>
+            </div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div>
+              <div class="stat-label">บันทึกพัฒนาการครบ</div>
+              <div class="stat-value">${devRecs.length}/${children.length}</div>
+              <div class="stat-label" style="font-size: 0.75rem;">ภาคเรียน ${centerInfo.term}</div>
+            </div>
           </div>
         </div>
 
-        <!-- Resource & Food Budget Management (Sufficiency Check - Section 4 & 5 PDF Specification) -->
-        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(254, 243, 199, 0.5), rgba(253, 230, 138, 0.3)); border-color: rgba(245, 158, 11, 0.3);">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-            <div>
-              <span class="badge badge-executive" style="margin-bottom: 0.25rem;">Budgetary Justification & Operational Excellence</span>
-              <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0; color: #92400E;">
-                🍱 Resource & Food Budget Management (ระบบวิเคราะห์งบประมาณอาหารกลางวันตามการเข้าเรียนจริง)
-              </h3>
-            </div>
-            <span class="badge badge-success" style="font-size: 0.75rem;">Sufficiency Check Passed</span>
+        <div class="grid-2" style="margin-bottom: 1.5rem;">
+          <div class="glass-card">
+            <h3 style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">📊 อัตราการมาเรียนวันนี้</h3>
+            <div id="exec-attendance-donut"></div>
           </div>
+          <div class="glass-card">
+            <h3 style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">📈 แนวโน้มการมาเรียนรายสัปดาห์</h3>
+            <div id="exec-att-trend"></div>
+          </div>
+        </div>
 
-          <div class="grid-3" style="gap: 1rem;">
+        <div class="grid-3" style="margin-bottom: 1.5rem;">
+          <div class="glass-card">
+            <h4 style="font-weight: 700; font-size: 1rem; margin-bottom: 0.75rem; color: var(--text-main);">💰 งบประมาณค่าอาหาร</h4>
             <div style="background: white; border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-color);">
-              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">งบประมาณจัดสรรรายวัน (22 บาท/คน)</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">งบประมาณรายเดือน (22 วัน/เดือน)</div>
               <div style="font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin-top: 2px;">
-                ${(children.length * 22).toLocaleString()} บาท/วัน
+                ${(children.length * 22).toLocaleString()} บาท/เดือน
               </div>
-              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">คำนวณตามจำนวนเด็กทั้งหมด (${children.length} คน)</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">อัตราค่าอาหารต่อคน (${children.length} คน)</div>
             </div>
-
+          </div>
+          <div class="glass-card">
+            <h4 style="font-weight: 700; font-size: 1rem; margin-bottom: 0.75rem; color: var(--text-main);">📏 สรุปการเจริญเติบโตเฉลี่ย</h4>
             <div style="background: white; border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-color);">
-              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">ค่าอาหารเบิกจ่ายตามสถิติเด็กมาจริง</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">การประเมินสุขภาพตามเกณฑ์</div>
               <div style="font-size: 1.35rem; font-weight: 700; color: #059669; margin-top: 2px;">
-                ${(attendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length * 22).toLocaleString()} บาท/วัน
+                ${children.filter(c => c.growthStatus === 'สมส่วนตามเกณฑ์').length}/${children.length} สมส่วน
               </div>
-              <div style="font-size: 0.75rem; color: #059669; margin-top: 4px;">คิดจากเด็กที่มาเรียนจริง (${attendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length} คน)</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">อ้างอิงเกณฑ์กรมอนามัย กระทรวงสาธารณสุข</div>
             </div>
-
+          </div>
+          <div class="glass-card">
+            <h4 style="font-weight: 700; font-size: 1rem; margin-bottom: 0.75rem; color: var(--text-main);">🏫 ข้อมูลศูนย์พัฒนาเด็กเล็ก</h4>
             <div style="background: white; border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-color);">
-              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">งบประมาณส่วนต่างสะสม (ความคุ้มค่า)</div>
-              <div style="font-size: 1.35rem; font-weight: 700; color: #D97706; margin-top: 2px;">
-                +${((children.length - attendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length) * 22).toLocaleString()} บาท/วัน
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">ห้องเรียนปัจจุบัน</div>
+              <div style="font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin-top: 2px;">
+                ${window.appStore.getClassrooms().length} ห้องเรียน
               </div>
-              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">ป้องกันงบประมาณรั่วไหลตามนโยบายโปร่งใส</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">ครูประจำชั้น: ${window.appStore.getClassrooms().map(c => c.teacherName).join(', ')}</div>
             </div>
           </div>
         </div>
@@ -190,19 +172,24 @@ const ExecutiveView = {
         if (showFullId) return idStr;
         return idStr.replace(/^(\d-\d{4}-)\d{5}(-\d{2}-\d)$/, '$1XXXXX$2');
       };
+      const classrooms = window.appStore.getClassrooms();
+      const getClassName = (classId) => {
+        const cls = classrooms.find(c => c.id === classId);
+        return cls ? cls.name : classId || '-';
+      };
 
       return `
         <div class="glass-card">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
             <div>
-              <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">ทะเบียนข้อมูลเด็กปฐมวัยและผู้ปกครอง</h3>
-              <span class="badge badge-success" style="font-size: 0.75rem; margin-top: 4px;">🔒 มาตรฐาน PDPA (Data Minimization)</span>
+              <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">ทะเบียนนักเรียนศูนย์พัฒนาเด็กเล็ก</h3>
+              <span class="badge badge-success" style="font-size: 0.75rem; margin-top: 4px;">ปฏิบัติตามหลัก PDPA (Data Minimization)</span>
             </div>
             <div style="display: flex; align-items: center; gap: 0.75rem;">
               <button class="btn btn-secondary btn-sm" onclick="ExecutiveView.showFullNationalId = !ExecutiveView.showFullNationalId; ExecutiveView.render('${containerId}');">
-                ${showFullId ? '🔒 ซ่อนเลขบัตรประชาชน (PDPA)' : '👁️ แสดงเลขบัตรประชาชนเต็ม'}
+                ${showFullId ? 'ซ่อน เลขบัตรประชาชน (PDPA)' : 'แสดง เลขบัตรประชาชนเต็ม'}
               </button>
-              <input type="text" placeholder="🔍 ค้นหาชื่อเด็ก / ผู้ปกครอง..." class="form-control btn-sm" style="max-width: 240px;" onkeyup="ExecutiveView.filterRegistry(this.value)">
+              <input type="text" placeholder="ค้นหาชื่อนักเรียน / ผู้ปกครอง..." class="form-control btn-sm" style="max-width: 240px;" onkeyup="ExecutiveView.filterRegistry(this.value)">
             </div>
           </div>
 
@@ -216,8 +203,8 @@ const ExecutiveView = {
                   <th>อายุ</th>
                   <th>ห้องเรียน</th>
                   <th>ผู้ปกครอง</th>
-                  <th>เบอร์โทรศัพท์</th>
-                  <th>การแพ้อาหาร</th>
+                  <th>เบอร์โทรศัพท์ติดต่อ</th>
+                  <th>สิ่งที่แพ้อาหาร</th>
                 </tr>
               </thead>
               <tbody>
@@ -227,7 +214,7 @@ const ExecutiveView = {
                     <td><strong>${c.firstName} ${c.lastName} (${c.nickname})</strong></td>
                     <td>${c.gender}</td>
                     <td>${c.ageString}</td>
-                    <td><span class="badge badge-teacher">อนุบาล 1/1</span></td>
+                    <td><span class="badge badge-teacher" style="font-size: 0.75rem; white-space: nowrap;">${getClassName(c.classId)}</span></td>
                     <td>${c.parentName} (${c.parentRelation})</td>
                     <td>${c.parentPhone}</td>
                     <td><strong style="color: ${c.allergy !== 'ไม่มี' ? 'var(--danger-500)' : 'var(--text-muted)'};">${c.allergy}</strong></td>
@@ -245,10 +232,10 @@ const ExecutiveView = {
         <div class="glass-card">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
             <div>
-              <h3 style="font-weight: 700; font-size: 1.1rem;">ประวัติการใช้งานและ Audit Log ระบบ</h3>
-              <p style="font-size: 0.8rem; color: var(--text-muted);">ตามมาตรฐาน พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) & OWASP ASVS</p>
+              <h3 style="font-weight: 700; font-size: 1.1rem;">บันทึกการเข้าถึงระบบ Audit Log ฉบับเต็ม</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted);">ตามข้อกำหนด พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) & OWASP ASVS</p>
             </div>
-            <span class="badge badge-success">ระบบบันทึกแบบ Real-Time</span>
+            <span class="badge badge-success">บันทึกอัตโนมัติ Real-Time</span>
           </div>
 
           <div class="data-table-container">
@@ -256,7 +243,7 @@ const ExecutiveView = {
               <thead>
                 <tr>
                   <th>วัน-เวลา (Timestamp)</th>
-                  <th>ผู้ใช้งาน (User & Role)</th>
+                  <th>ผู้ดำเนินการ (User & Role)</th>
                   <th>การกระทำ (Action Code)</th>
                   <th>รายละเอียด (Log Details)</th>
                 </tr>
@@ -297,7 +284,7 @@ const ExecutiveView = {
     const showFullId = this.showFullNationalId || false;
     const maskId = (idStr) => (showFullId ? idStr : (idStr || '').replace(/^(\d-\d{4}-)\d{5}(-\d{2}-\d)$/, '$1XXXXX$2'));
     const rows = [
-      ['เลขประจำตัวประชาชน (PDPA)', 'ชื่อ', 'นามสกุล', 'ชื่อเล่น', 'เพศ', 'อายุ', 'ผู้ปกครอง', 'เบอร์โทรศัพท์', 'ประวัติการแพ้อาหาร'],
+      ['เลขประจำตัวประชาชน (PDPA)', 'ชื่อ', 'นามสกุล', 'ชื่อเล่น', 'เพศ', 'อายุ', 'ผู้ปกครอง', 'เบอร์โทรศัพท์ติดต่อ', 'สิ่งที่แพ้อาหาร'],
       ...children.map(c => [maskId(c.nationalId), c.firstName, c.lastName, c.nickname, c.gender, c.ageString, c.parentName, c.parentPhone, c.allergy])
     ];
     window.ExportUtils.exportToCSV('BangYai_Child_Center_Registry_2569.csv', rows);

@@ -246,6 +246,7 @@ a:hover {
 .badge-parent { background-color: var(--role-parent-bg); color: var(--role-parent); border: 1px solid rgba(5, 150, 105, 0.2); }
 .badge-teacher { background-color: var(--role-teacher-bg); color: var(--role-teacher); border: 1px solid rgba(79, 70, 229, 0.2); }
 .badge-executive { background-color: var(--role-executive-bg); color: var(--role-executive); border: 1px solid rgba(217, 119, 6, 0.2); }
+.badge-secondary { background-color: #F1F5F9; color: #64748B; border: 1px solid #E2E8F0; }
 
 /* Buttons */
 .btn {

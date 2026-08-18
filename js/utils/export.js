@@ -166,6 +166,103 @@ const ExportUtils = {
       link.click();
       document.body.removeChild(link);
     }
+  },
+  // Print Attendance Sheet for Teacher
+  printAttendanceSheet(attendance, children) {
+    const center = window.appStore ? window.appStore.getCenterInfo() : { name: 'ศูนย์พัฒนาเด็กเล็กเทศบาลบางใหญ่', academicYear: '2569' };
+    const today = window.appStore ? window.appStore.getTodayBEString() : new Date().toLocaleDateString('th-TH');
+    const todayFormatted = window.appStore ? window.appStore.getTodayThaiFormatted() : today;
+
+    const statusText = (status) => {
+      if (!status) return 'ยังไม่เช็กชื่อ';
+      if (status === 'PRESENT') return 'มาเรียน';
+      if (status === 'LATE') return 'มาสาย';
+      if (status === 'LEAVE') return 'ลา';
+      if (status === 'ABSENT') return 'ขาดเรียน';
+      return status;
+    };
+
+    const windowPrint = window.open('', '', 'width=900,height=700');
+    windowPrint.document.write(`
+      <!DOCTYPE html>
+      <html lang="th">
+      <head>
+        <title>ใบเช็กชื่อ - ${center.name}</title>
+        <style>
+          body { font-family: 'Sarabun', 'Prompt', sans-serif; padding: 1.5rem; color: #111827; }
+          .header { text-align: center; border-bottom: 2px solid #374151; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+          .header h1 { margin: 0; font-size: 1.4rem; color: #1E3A8A; }
+          .header p { margin: 0.25rem 0 0 0; color: #4B5563; font-size: 0.9rem; }
+          table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+          th, td { border: 1px solid #D1D5DB; padding: 8px 10px; text-align: left; }
+          th { background-color: #DBEAFE; font-weight: bold; text-align: center; }
+          td.center { text-align: center; }
+          .status-present { color: #059669; font-weight: bold; }
+          .status-late { color: #D97706; font-weight: bold; }
+          .status-leave { color: #3B82F6; font-weight: bold; }
+          .status-absent { color: #EF4444; font-weight: bold; }
+          .status-unchecked { color: #6B7280; }
+          .footer { margin-top: 2rem; display: flex; justify-content: flex-end; font-size: 0.85rem; color: #6B7280; }
+          .sign-area { margin-top: 3rem; display: flex; justify-content: flex-end; }
+          .sign-box { text-align: center; }
+          .sign-line { border-top: 1px solid #374151; width: 200px; margin: 0.5rem auto; }
+          @media print { body { padding: 0; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>บันทึกการเช็กชื่อเข้าเรียนรายวัน</h1>
+          <p>${center.name} เทศบาลเมืองบางใหญ่ จังหวัดนนทบุรี</p>
+          <p>ปีการศึกษา ${center.academicYear} | วันที่: ${todayFormatted}</p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ลำดับ</th>
+              <th>รหัสนักเรียน</th>
+              <th>ชื่อ - นามสกุล</th>
+              <th>ชื่อเล่น</th>
+              <th>สถานะการมาเรียน</th>
+              <th>เวลาเช็กชื่อ</th>
+              <th>ผู้ปกครอง</th>
+              <th>เบอร์โทร</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(children || []).map((c, idx) => {
+              const att = (attendance || []).find(a => a.childId === c.id);
+              const s = att ? att.status : null;
+              const cls = !s ? 'status-unchecked' : s === 'PRESENT' ? 'status-present' : s === 'LATE' ? 'status-late' : s === 'LEAVE' ? 'status-leave' : 'status-absent';
+              return `
+                <tr>
+                  <td class="center">${idx + 1}</td>
+                  <td class="center">${c.id}</td>
+                  <td>${c.firstName} ${c.lastName}</td>
+                  <td class="center">${c.nickname}</td>
+                  <td class="center ${cls}">${statusText(s)}</td>
+                  <td class="center">${att ? att.checkTime : '-'}</td>
+                  <td>${c.parentName}</td>
+                  <td>${c.parentPhone}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+
+        <div class="sign-area">
+          <div class="sign-box">
+            <div class="sign-line"></div>
+            <p>( ครูประจำชั้น )</p>
+            <p>วันที่ ......... / ......... / .........</p>
+          </div>
+        </div>
+
+        <script>window.onload = function() { window.print(); }</script>
+      </body>
+      </html>
+    `);
+    windowPrint.document.close();
   }
 };
 

@@ -196,8 +196,10 @@ class AuthController {
     const prevUser = this.currentUser ? this.currentUser.name : 'ผู้ใช้';
     this.isAuthenticated = false;
     this.currentUser = null;
+    this.currentRole = 'PARENT'; // reset to default
     localStorage.setItem('BANGYAI_IS_AUTHENTICATED', 'false');
     localStorage.removeItem('BANGYAI_CURRENT_USER');
+    localStorage.removeItem('BANGYAI_CURRENT_ROLE');
 
     if (window.appStore && typeof window.appStore.addAuditLog === 'function') {
       window.appStore.addAuditLog(

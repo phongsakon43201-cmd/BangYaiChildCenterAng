@@ -194,6 +194,19 @@ const ParentLandingComponent = {
     // Local Verification with Official Accounts
     const res = window.authController.login(userInput, password);
     if (res.success) {
+      // Validate role is PARENT for this portal
+      const loggedInRole = window.authController.currentRole;
+      if (loggedInRole !== 'PARENT') {
+        window.authController.logout();
+        if (btn) btn.innerText = 'เข้าสู่ระบบผู้ปกครอง';
+        const roleNames = { TEACHER: 'ครู / ผู้ดูแลเด็ก', EXECUTIVE: 'ผู้บริหาร / เทศบาล' };
+        if (window.ModalsComponent) {
+          window.ModalsComponent.showToast(`บัญชีนี้เป็นสิทธิ์ "${roleNames[loggedInRole] || loggedInRole}" โปรดกดปุ่ม "เข้าสู่ระบบ${roleNames[loggedInRole] || loggedInRole}" ด้านล่างแทน`, 'error');
+        } else {
+          alert(`บัญชีนี้เป็นสิทธิ์ "${roleNames[loggedInRole]}" ไม่ใช่ผู้ปกครอง`);
+        }
+        return;
+      }
       if (window.ModalsComponent) {
         window.ModalsComponent.showToast(`ยินดีต้อนรับคุณ ${res.user.name} เข้าสู่ระบบ`, 'success');
       }

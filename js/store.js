@@ -102,7 +102,7 @@ const INITIAL_SEED_DATA = {
     {
       id: 'dev-1',
       childId: 'STD-01',
-      childName: 'น้องวิน (ด.ช. กวินท์ สุขเสริฐ)',
+      childName: 'น้องโต้ (ด.ช. ณัฐธีร์ แสนเจริญ)',
       term: '1/2569',
       evalDate: '2569-08-05',
       physicalScore: 4,
@@ -110,7 +110,7 @@ const INITIAL_SEED_DATA = {
       socialScore: 3,
       intellectualScore: 4,
       evaluator: 'นางสาวกานดา ใจดี (ครูแก้ว)',
-      notes: 'เด็กมีความคล่องแคล่วในการเคลื่อนไหว ร่าเริงแจ่มใส'
+      notes: 'เด็กมีความคล่องแคล่วในการเคลื่อนไหว ร่าเริงแจ่มใส มีมนุษยสัมพันธ์ดี'
     }
   ],
 
@@ -119,7 +119,7 @@ const INITIAL_SEED_DATA = {
       id: 'line-1',
       timestamp: '07:45 น.',
       title: '🟢 เช็กชื่อเข้าเรียนเรียบร้อย',
-      message: 'น้องวิน (ด.ช. กวินท์) ได้มาถึงศูนย์พัฒนาเด็กเล็กเทศบาลบางใหญ่ แล้ว เวลา 07:45 น. (เช็กชื่อโดย ครูแก้ว)'
+      message: 'น้องโต้ (ด.ช. ณัฐธีร์) ได้มาถึงศูนย์พัฒนาเด็กเล็กเทศบาลบางใหญ่ แล้ว เวลา 07:45 น. (เช็กชื่อโดย ครูแก้ว)'
     }
   ],
 
@@ -306,7 +306,39 @@ class AppStore {
         });
       }
 
-      if (hasChanges) {
+      // 4. Sync Development Records from cloud
+      if (cloudData.developmentRecords && Array.isArray(cloudData.developmentRecords) && cloudData.developmentRecords.length > 0) {
+        cloudData.developmentRecords.forEach(cdr => {
+          const child = this.getChildById(cdr.child_id);
+          const childName = child ? `${child.nickname} (${child.firstName} ${child.lastName})` : 'เด็กในระบบ';
+          const localIdx = this.data.developmentRecords.findIndex(d => d.childId === cdr.child_id && d.term === (cdr.term || '1/2569'));
+          const mappedRec = {
+            id: cdr.id,
+            childId: cdr.child_id,
+            childName: childName,
+            term: cdr.term || '1/2569',
+            evalDate: cdr.eval_date || this.getTodayBEString(),
+            physicalScore: cdr.physical_score,
+            emotionalScore: cdr.emotional_score,
+            socialScore: cdr.social_score,
+            intellectualScore: cdr.intellectual_score,
+            evaluator: cdr.evaluator,
+            notes: cdr.notes
+          };
+          if (localIdx >= 0) {
+            const localRec = this.data.developmentRecords[localIdx];
+            if (localRec.physicalScore !== cdr.physical_score || localRec.emotionalScore !== cdr.emotional_score) {
+              this.data.developmentRecords[localIdx] = { ...localRec, ...mappedRec };
+              hasChanges = true;
+            }
+          } else {
+            this.data.developmentRecords.push(mappedRec);
+            hasChanges = true;
+          }
+        });
+      }
+
+      if (hasChanges || forceRerender) {
         this.saveData(this.data);
         if (window.appController) {
           window.appController.refreshCurrentView();
@@ -336,6 +368,19 @@ class AppStore {
     return this.data.children.filter(c => c.classId === classId);
   }
   getChildById(id) { return this.data.children.find(c => c.id === id); }
+
+  updateChild(id, updates) {
+    const child = this.getChildById(id);
+    if (!child) return null;
+    Object.assign(child, updates);
+    this.saveData(this.data);
+
+    // Async Supabase DB Sync
+    if (window.supabaseService && typeof window.supabaseService.syncChildToDB === 'function') {
+      window.supabaseService.syncChildToDB(child);
+    }
+    return child;
+  }
 
   getChildrenForParent(parentUser) {
     if (!parentUser) return [this.data.children[0]];
@@ -522,12 +567,21 @@ class AppStore {
   getDevelopmentRecords() { return this.data.developmentRecords; }
 
   saveDevelopmentRecord(rec) {
-    const existing = this.data.developmentRecords.find(d => d.childId === rec.childId);
+    const existing = this.data.developmentRecords.find(d => d.childId === rec.childId && d.term === (rec.term || '1/2569'));
+    let savedRec;
     if (existing) {
       Object.assign(existing, rec);
+      savedRec = existing;
     } else {
-      this.data.developmentRecords.push({ id: 'dev-' + Date.now(), ...rec });
+      savedRec = { id: 'dev-' + Date.now(), ...rec };
+      this.data.developmentRecords.push(savedRec);
     }
+
+    // Async Supabase DB Sync
+    if (window.supabaseService) {
+      window.supabaseService.syncDevelopmentRecordToDB(savedRec);
+    }
+
     this.saveData(this.data);
   }
 

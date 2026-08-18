@@ -187,14 +187,12 @@ const ModalsComponent = {
 
     if (!newName) return;
 
-    // 1. Update in AppStore
-    const child = window.appStore.getChildById(childId);
-    if (child) {
-      child.parentName = newName;
-      child.parentPhone = newPhone;
-      child.parentRelation = newRelation;
-      window.appStore.saveData(window.appStore.data);
-    }
+    // 1. Update in AppStore & Supabase DB
+    const child = window.appStore.updateChild(childId, {
+      parentName: newName,
+      parentPhone: newPhone,
+      parentRelation: newRelation
+    });
 
     // 2. Update current authenticated user
     const currentUser = window.authController.getCurrentUser();
