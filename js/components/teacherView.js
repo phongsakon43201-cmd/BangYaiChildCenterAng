@@ -7,61 +7,65 @@ const TeacherView = {
   selectedClassId: 'class-bm',
   currentTab: 'ATTENDANCE', // ATTENDANCE, LEAVE_APPROVALS, DEV_EVAL, GROWTH_RECORD, ACTIVITIES
 
-  render(containerId) {
+  switchTab(tabId, containerId = 'main-view-root') {
+    this.currentTab = tabId;
+    this.render(containerId);
+  },
+
+  render(containerId = 'main-view-root') {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     const classrooms = window.appStore.getClassrooms();
-    const activeClass = classrooms.find(c => c.id === this.selectedClassId) || classrooms[0];
-    const children = window.appStore.getChildren(this.selectedClassId);
-    const attendance = window.appStore.getAttendance();
-    const leaveReqs = window.appStore.getLeaveRequests();
+    const activeClass = classrooms.find(c => c.id === this.selectedClassId) || classrooms[0] || { name: 'ห้อง "ลูกหมีน่ารัก"', teacherName: 'นางสาวกานดา ใจดี (ครูแก้ว)' };
+    const children = window.appStore.getChildren(this.selectedClassId) || [];
+    const attendance = window.appStore.getAttendance() || [];
+    const leaveReqs = window.appStore.getLeaveRequests() || [];
     const pendingLeaves = leaveReqs.filter(l => l.status === 'PENDING');
 
     const classAtts = attendance.filter(a => children.some(c => c.id === a.childId));
     const checkedCount = classAtts.length;
     const presentCount = classAtts.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length;
-    const rate = checkedCount > 0 ? Math.round((presentCount / (checkedCount || 1)) * 100) : 0;
 
     container.innerHTML = `
       <div class="animate-fade-in">
         <!-- Header Banner & Class Selector -->
-        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(238, 242, 255, 0.9), rgba(224, 231, 255, 0.9)); border-color: rgba(79, 70, 229, 0.2);">
+        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(238, 242, 255, 0.95), rgba(224, 231, 255, 0.95)); border-color: rgba(79, 70, 229, 0.25);">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
             <div>
-              <span class="badge badge-teacher" style="margin-bottom: 0.25rem;">มุมมองครู / ผู้ดูแลเด็ก</span>
+              <span class="badge badge-teacher" style="margin-bottom: 0.25rem;">👩‍🏫 มุมมองครู / ผู้ดูแลเด็ก</span>
               <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0;">${activeClass.name}</h2>
               <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-                ครูประจำชั้น: <strong>${activeClass.teacherName}</strong> | เช็กชื่อแล้ว: <strong>${checkedCount}/${children.length} คน</strong>
+                ครูประจำชั้น: <strong>${activeClass.teacherName}</strong> | เช็กชื่อแล้ว: <strong style="color: var(--primary-600);">${checkedCount}/${children.length} คน</strong>
               </p>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <select class="form-control" style="width: auto; min-height: 38px; font-weight: 600;" onchange="TeacherView.selectedClassId = this.value; TeacherView.render('${containerId}');">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+              <select class="form-control" style="width: auto; min-height: 38px; font-weight: 600; background: #FFF;" onchange="window.TeacherView.selectedClassId = this.value; window.TeacherView.render('${containerId}');">
                 ${classrooms.map(c => `<option value="${c.id}" ${c.id === activeClass.id ? 'selected' : ''}>${c.name}</option>`).join('')}
               </select>
-              <button class="btn btn-primary btn-sm" onclick="ModalsComponent.openAnnouncementModal()">
-                + ประกาศใหม่
+              <button type="button" class="btn btn-primary btn-sm" onclick="window.ModalsComponent.openAnnouncementModal()">
+                📢 + ประกาศใหม่
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Sub Tabs for Teacher -->
+        <!-- Sub Tabs for Teacher (5 Tabs) -->
         <div class="view-tabs">
-          <button class="tab-link ${this.currentTab === 'ATTENDANCE' ? 'active' : ''}" onclick="TeacherView.currentTab = 'ATTENDANCE'; TeacherView.render('${containerId}');">
+          <button type="button" class="tab-link ${this.currentTab === 'ATTENDANCE' ? 'active' : ''}" onclick="window.TeacherView.switchTab('ATTENDANCE', '${containerId}')">
             📋 เช็กชื่อการเข้าเรียน (${checkedCount}/${children.length} คน)
           </button>
-          <button class="tab-link ${this.currentTab === 'LEAVE_APPROVALS' ? 'active' : ''}" onclick="TeacherView.currentTab = 'LEAVE_APPROVALS'; TeacherView.render('${containerId}');">
+          <button type="button" class="tab-link ${this.currentTab === 'LEAVE_APPROVALS' ? 'active' : ''}" onclick="window.TeacherView.switchTab('LEAVE_APPROVALS', '${containerId}')">
             📩 คำขอแจ้งลา ${pendingLeaves.length > 0 ? `<span class="badge" style="background: #F59E0B; color: #FFF; font-weight: 700; padding: 2px 8px; font-size: 0.75rem; margin-left: 4px;">${pendingLeaves.length} รออนุมัติ</span>` : `(${leaveReqs.length})`}
           </button>
-          <button class="tab-link ${this.currentTab === 'DEV_EVAL' ? 'active' : ''}" onclick="TeacherView.currentTab = 'DEV_EVAL'; TeacherView.render('${containerId}');">
+          <button type="button" class="tab-link ${this.currentTab === 'DEV_EVAL' ? 'active' : ''}" onclick="window.TeacherView.switchTab('DEV_EVAL', '${containerId}')">
             📊 ประเมินพัฒนาการ 4 ด้าน
           </button>
-          <button class="tab-link ${this.currentTab === 'GROWTH_RECORD' ? 'active' : ''}" onclick="TeacherView.currentTab = 'GROWTH_RECORD'; TeacherView.render('${containerId}');">
+          <button type="button" class="tab-link ${this.currentTab === 'GROWTH_RECORD' ? 'active' : ''}" onclick="window.TeacherView.switchTab('GROWTH_RECORD', '${containerId}')">
             ⚖️ บันทึกส่วนสูง / น้ำหนัก / วัคซีน
           </button>
-          <button class="tab-link ${this.currentTab === 'ACTIVITIES' ? 'active' : ''}" onclick="TeacherView.currentTab = 'ACTIVITIES'; TeacherView.render('${containerId}');">
+          <button type="button" class="tab-link ${this.currentTab === 'ACTIVITIES' ? 'active' : ''}" onclick="window.TeacherView.switchTab('ACTIVITIES', '${containerId}')">
             🎨 บันทึกกิจกรรมประจำวัน
           </button>
         </div>
@@ -89,7 +93,7 @@ const TeacherView = {
                   </p>
                 </div>
               </div>
-              <button class="btn btn-sm btn-primary" onclick="TeacherView.currentTab = 'LEAVE_APPROVALS'; TeacherView.render('${containerId}');" style="background: #D97706; border-color: #D97706; color: #FFF; font-weight: 700;">
+              <button type="button" class="btn btn-sm btn-primary" onclick="window.TeacherView.switchTab('LEAVE_APPROVALS', '${containerId}')" style="background: #D97706; border-color: #D97706; color: #FFF; font-weight: 700;">
                 👉 ตรวจสอบและอนุมัติ (${pendingLeaves.length})
               </button>
             </div>
@@ -103,10 +107,10 @@ const TeacherView = {
               <p style="font-size: 0.85rem; color: var(--text-muted); margin: 2px 0 0 0;">บันทึกสถานะการมาเรียนและส่งแจ้งเตือนผ่าน LINE อัตโนมัติ</p>
             </div>
             <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-              <button class="btn btn-secondary btn-sm" onclick="TeacherView.exportAttendanceCSV()" style="font-weight: 600; background: #FFF;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="window.TeacherView.exportAttendanceCSV()" style="font-weight: 600; background: #FFF;">
                 📥 ส่งออก Excel (CSV)
               </button>
-              <button class="btn btn-secondary btn-sm" onclick="window.ExportUtils.printAttendanceSheet(window.appStore.getAttendance(), window.appStore.getChildren())" style="font-weight: 600; background: #FFF;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="window.ExportUtils.printAttendanceSheet(window.appStore.getAttendance(), window.appStore.getChildren())" style="font-weight: 600; background: #FFF;">
                 🖨️ พิมพ์ใบเช็กชื่อ
               </button>
               <span class="badge badge-line">💬 LINE อัตโนมัติ</span>
@@ -137,8 +141,8 @@ const TeacherView = {
                   <div style="width: 100%;">
                     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
                       <div class="student-info">
-                        <div class="student-avatar" style="background-color: ${child.avatarColor}; color: #FFF;">
-                          ${child.firstName.charAt(0)}
+                        <div class="student-avatar" style="background-color: ${child.avatarColor || '#4F46E5'}; color: #FFF;">
+                          ${(child.nickname ? child.nickname.replace(/^น้อง/, '').charAt(0) : child.firstName.charAt(0)) || '👶'}
                         </div>
                         <div>
                           <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
@@ -151,19 +155,19 @@ const TeacherView = {
                       </div>
 
                       <div class="attendance-btn-group">
-                        <button class="att-btn ${!status ? 'selected' : ''}" style="background: ${!status ? '#6B7280' : '#F3F4F6'}; color: ${!status ? '#FFFFFF' : '#4B5563'}; border: 1px solid #D1D5DB;" onclick="TeacherView.handleCheckIn('${child.id}', 'UNCHECKED', '${containerId}')">
+                        <button type="button" class="att-btn ${!status ? 'selected' : ''}" style="background: ${!status ? '#6B7280' : '#F3F4F6'}; color: ${!status ? '#FFFFFF' : '#4B5563'}; border: 1px solid #D1D5DB;" onclick="window.TeacherView.handleCheckIn('${child.id}', 'UNCHECKED', '${containerId}')">
                           ⏳ ยังไม่เช็ก
                         </button>
-                        <button class="att-btn present ${status === 'PRESENT' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'PRESENT', '${containerId}')">
+                        <button type="button" class="att-btn present ${status === 'PRESENT' ? 'selected' : ''}" onclick="window.TeacherView.handleCheckIn('${child.id}', 'PRESENT', '${containerId}')">
                           ✓ มาเรียน
                         </button>
-                        <button class="att-btn late ${status === 'LATE' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'LATE', '${containerId}')">
+                        <button type="button" class="att-btn late ${status === 'LATE' ? 'selected' : ''}" onclick="window.TeacherView.handleCheckIn('${child.id}', 'LATE', '${containerId}')">
                           ⏱ มาสาย
                         </button>
-                        <button class="att-btn leave ${status === 'LEAVE' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'LEAVE', '${containerId}')">
+                        <button type="button" class="att-btn leave ${status === 'LEAVE' ? 'selected' : ''}" onclick="window.TeacherView.handleCheckIn('${child.id}', 'LEAVE', '${containerId}')">
                           📄 แจ้งลา
                         </button>
-                        <button class="att-btn absent ${status === 'ABSENT' ? 'selected' : ''}" onclick="TeacherView.handleCheckIn('${child.id}', 'ABSENT', '${containerId}')">
+                        <button type="button" class="att-btn absent ${status === 'ABSENT' ? 'selected' : ''}" onclick="window.TeacherView.handleCheckIn('${child.id}', 'ABSENT', '${containerId}')">
                           ✕ ขาดเรียน
                         </button>
                       </div>
@@ -175,8 +179,8 @@ const TeacherView = {
                           <strong>📩 คำขอแจ้งลา (${childPendingLeave.leaveType}):</strong> วันที่ ${childPendingLeave.startDate} ถึง ${childPendingLeave.endDate} <span style="color: #78350F;">(เหตุผล: ${childPendingLeave.reason})</span>
                         </div>
                         <div style="display: flex; gap: 0.4rem;">
-                          <button class="btn btn-success btn-sm" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; font-weight: 700;" onclick="TeacherView.handleApproveLeave('${childPendingLeave.id}', 'APPROVED', '${containerId}')">✓ อนุมัติการลา</button>
-                          <button class="btn btn-danger btn-sm" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; font-weight: 700;" onclick="TeacherView.handleApproveLeave('${childPendingLeave.id}', 'REJECTED', '${containerId}')">✕ ไม่อนุมัติ</button>
+                          <button type="button" class="btn btn-success btn-sm" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; font-weight: 700;" onclick="window.TeacherView.handleApproveLeave('${childPendingLeave.id}', 'APPROVED', '${containerId}')">✓ อนุมัติการลา</button>
+                          <button type="button" class="btn btn-danger btn-sm" style="padding: 0.25rem 0.75rem; font-size: 0.8rem; font-weight: 700;" onclick="window.TeacherView.handleApproveLeave('${childPendingLeave.id}', 'REJECTED', '${containerId}')">✕ ไม่อนุมัติ</button>
                         </div>
                       </div>
                     ` : ''}
@@ -200,7 +204,7 @@ const TeacherView = {
                 รอการอนุมัติ: <strong style="color: #D97706;">${pendingLeaves.length} รายการ</strong> | ทั้งหมด: ${allReqs.length} รายการ
               </p>
             </div>
-            <button class="btn btn-secondary btn-sm" onclick="TeacherView.render('${containerId}')">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window.TeacherView.render('${containerId}')">
               🔄 รีเฟรชข้อมูล
             </button>
           </div>
@@ -234,8 +238,8 @@ const TeacherView = {
                     <td>
                       ${l.status === 'PENDING' ? `
                         <div style="display: flex; gap: 0.35rem;">
-                          <button class="btn btn-success btn-sm" style="font-weight: 700; padding: 0.3rem 0.75rem;" onclick="TeacherView.handleApproveLeave('${l.id}', 'APPROVED', '${containerId}')">✓ อนุมัติ</button>
-                          <button class="btn btn-danger btn-sm" style="font-weight: 700; padding: 0.3rem 0.75rem;" onclick="TeacherView.handleApproveLeave('${l.id}', 'REJECTED', '${containerId}')">✕ ไม่อนุมัติ</button>
+                          <button type="button" class="btn btn-success btn-sm" style="font-weight: 700; padding: 0.3rem 0.75rem;" onclick="window.TeacherView.handleApproveLeave('${l.id}', 'APPROVED', '${containerId}')">✓ อนุมัติ</button>
+                          <button type="button" class="btn btn-danger btn-sm" style="font-weight: 700; padding: 0.3rem 0.75rem;" onclick="window.TeacherView.handleApproveLeave('${l.id}', 'REJECTED', '${containerId}')">✕ ไม่อนุมัติ</button>
                         </div>
                       ` : `<span style="font-size: 0.8rem; color: var(--text-muted);">${l.approvedBy ? `โดย ${l.approvedBy}` : 'ดำเนินการแล้ว'}</span>`}
                     </td>
@@ -251,34 +255,37 @@ const TeacherView = {
     if (tab === 'GROWTH_RECORD') {
       return `
         <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-            <h3 style="font-weight: 700; font-size: 1.1rem;">บันทึกส่วนสูง น้ำหนัก และประวัติวัคซีนเด็กปฐมวัย</h3>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">บันทึกส่วนสูง น้ำหนัก และประวัติวัคซีนเด็กปฐมวัย</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 2px 0 0 0;">คำนวณค่าดัชนีมวลกาย (BMI) และสถานะการเติบโตตามเกณฑ์กรมอนามัย</p>
+            </div>
             <span class="badge badge-success">ตามเกณฑ์กรมอนามัย</span>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 1rem;">
             ${children.map(child => `
               <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem; background: var(--bg-surface);">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-                  <strong>${child.nickname} (${child.firstName} ${child.lastName})</strong>
-                  <button class="btn btn-primary btn-sm" onclick="TeacherView.saveGrowthData('${child.id}', '${child.nickname}', '${containerId}')">💾 บันทึกการเติบโต</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                  <strong style="font-size: 1rem; color: var(--text-main);">${child.nickname} (${child.firstName} ${child.lastName})</strong>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="window.TeacherView.saveGrowthData('${child.id}', '${containerId}')">💾 บันทึกการเติบโต</button>
                 </div>
 
                 <div class="grid-3">
                   <div>
                     <label class="form-label" style="font-size: 0.8rem;">ส่วนสูง (ซม.)</label>
-                    <input type="number" step="0.1" id="growth-h-${child.id}" class="form-control btn-sm" value="${child.heightCm || 98.5}">
+                    <input type="number" step="0.1" id="growth-h-${child.id}" class="form-control btn-sm" value="${child.heightCm || 92.0}">
                   </div>
                   <div>
                     <label class="form-label" style="font-size: 0.8rem;">น้ำหนัก (กก.)</label>
-                    <input type="number" step="0.1" id="growth-w-${child.id}" class="form-control btn-sm" value="${child.weightKg || 15.2}">
+                    <input type="number" step="0.1" id="growth-w-${child.id}" class="form-control btn-sm" value="${child.weightKg || 13.5}">
                   </div>
                   <div>
                     <label class="form-label" style="font-size: 0.8rem;">การประเมินการเติบโต</label>
                     <select id="growth-status-${child.id}" class="form-control btn-sm">
-                      <option value="สมส่วนตามเกณฑ์" ${child.growthStatus === 'สมส่วนตามเกณฑ์' ? 'selected' : ''}>สมส่วนตามเกณฑ์</option>
-                      <option value="ท้วม/เริ่มอ้วน" ${child.growthStatus === 'ท้วม/เริ่มอ้วน' ? 'selected' : ''}>ท้วม/เริ่มอ้วน</option>
-                      <option value="ค่อนข้างผอม" ${child.growthStatus === 'ค่อนข้างผอม' ? 'selected' : ''}>ค่อนข้างผอม</option>
+                      <option value="สมส่วนตามเกณฑ์" ${(child.growthStatus || '') === 'สมส่วนตามเกณฑ์' ? 'selected' : ''}>สมส่วนตามเกณฑ์</option>
+                      <option value="ท้วม/เริ่มอ้วน" ${(child.growthStatus || '') === 'ท้วม/เริ่มอ้วน' ? 'selected' : ''}>ท้วม/เริ่มอ้วน</option>
+                      <option value="ค่อนข้างผอม" ${(child.growthStatus || '') === 'ค่อนข้างผอม' ? 'selected' : ''}>ค่อนข้างผอม</option>
                     </select>
                   </div>
                 </div>
@@ -306,9 +313,9 @@ const TeacherView = {
               const rec = devRecs.find(d => d.childId === child.id) || { physicalScore: 4, emotionalScore: 4, socialScore: 3, intellectualScore: 4, notes: '' };
               return `
                 <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; background: var(--bg-surface);">
-                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
                     <strong style="font-size: 1.05rem; color: var(--text-main);">${child.nickname} (${child.firstName} ${child.lastName})</strong>
-                    <button class="btn btn-primary btn-sm" onclick="TeacherView.saveDevEval('${child.id}', '${containerId}')">💾 บันทึกผลประเมิน</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="window.TeacherView.saveDevEval('${child.id}', '${containerId}')">💾 บันทึกผลประเมิน</button>
                   </div>
 
                   <div class="grid-4" style="margin-bottom: 1rem;">
@@ -366,22 +373,22 @@ const TeacherView = {
     }
 
     if (tab === 'ACTIVITIES') {
-      const activities = window.appStore.getActivities();
+      const activities = window.appStore.getActivities() || [];
       return `
         <div class="glass-card">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-            <h3 style="font-weight: 700; font-size: 1.1rem;">บันทึกภาพและกิจกรรมประจำวัน</h3>
-            <button class="btn btn-primary btn-sm" onclick="ModalsComponent.openActivityModal()">+ เพิ่มกิจกรรมใหม่</button>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+            <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">บันทึกภาพและกิจกรรมประจำวัน</h3>
+            <button type="button" class="btn btn-primary btn-sm" onclick="window.ModalsComponent.openActivityModal()">+ เพิ่มกิจกรรมใหม่</button>
           </div>
 
           <div class="grid-2">
             ${activities.map(act => `
               <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; background: var(--bg-surface);">
-                <img src="${act.image}" alt="Activity" style="width: 100%; height: 180px; object-fit: cover;">
+                <img src="${act.image || './assets/images/banner.png'}" alt="Activity" style="width: 100%; height: 180px; object-fit: cover;" onerror="this.src='./assets/images/banner.png'">
                 <div style="padding: 1rem;">
-                  <span class="badge badge-info" style="margin-bottom: 0.35rem;">${act.date}</span>
+                  <span class="badge badge-info" style="margin-bottom: 0.35rem;">${act.date || window.appStore.getTodayBEString()}</span>
                   <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem;">${act.title}</h4>
-                  <p style="font-size: 0.85rem; color: var(--text-muted);">${act.description}</p>
+                  <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">${act.description || ''}</p>
                 </div>
               </div>
             `).join('')}
@@ -398,11 +405,26 @@ const TeacherView = {
     const child = window.appStore.getChildById(childId);
     window.appStore.updateAttendance(childId, status, teacherName);
     
+    const statusLabels = {
+      PRESENT: 'มาเรียน',
+      LATE: 'มาสาย',
+      LEAVE: 'แจ้งลา',
+      ABSENT: 'ขาดเรียน',
+      UNCHECKED: 'ยังไม่เช็กชื่อ'
+    };
+
     window.appStore.addAuditLog(
       teacherName,
       'UPDATE_ATTENDANCE',
-      `เช็กชื่อ ${child ? child.nickname : childId} เป็นสถานะ ${status}`
+      `เช็กชื่อ ${child ? child.nickname : childId} เป็นสถานะ ${statusLabels[status] || status}`
     );
+
+    if (window.ModalsComponent) {
+      window.ModalsComponent.showToast(
+        `บันทึกสถานะ "${statusLabels[status] || status}" ของ ${child ? child.nickname : 'เด็ก'} เรียบร้อยแล้ว`,
+        status === 'PRESENT' ? 'success' : status === 'LATE' ? 'warning' : status === 'ABSENT' ? 'error' : 'info'
+      );
+    }
 
     this.render(containerId);
   },
@@ -427,12 +449,19 @@ const TeacherView = {
     this.render(containerId);
   },
 
-  saveGrowthData(childId, childNickname, containerId) {
+  saveGrowthData(childId, containerId) {
     const teacherName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
-    const height = parseFloat(document.getElementById(`growth-h-${childId}`).value) || 98.5;
-    const weight = parseFloat(document.getElementById(`growth-w-${childId}`).value) || 15.2;
+    const child = window.appStore.getChildById(childId);
+    const childNickname = child ? child.nickname : 'เด็ก';
+
+    const hElem = document.getElementById(`growth-h-${childId}`);
+    const wElem = document.getElementById(`growth-w-${childId}`);
+    const statusElem = document.getElementById(`growth-status-${childId}`);
+
+    const height = hElem ? (parseFloat(hElem.value) || 92.0) : 92.0;
+    const weight = wElem ? (parseFloat(wElem.value) || 13.5) : 13.5;
     const bmi = parseFloat((weight / ((height / 100) ** 2)).toFixed(1));
-    const growthStatus = document.getElementById(`growth-status-${childId}`).value;
+    const growthStatus = statusElem ? statusElem.value : 'สมส่วนตามเกณฑ์';
 
     window.appStore.updateChild(childId, {
       heightCm: height,
@@ -456,12 +485,19 @@ const TeacherView = {
   saveDevEval(childId, containerId) {
     const teacherName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
     const child = window.appStore.getChildById(childId);
-    const childName = child ? `${child.nickname} (${child.firstName})` : childId;
-    const physicalScore = parseInt(document.getElementById(`dev-phy-${childId}`).value);
-    const emotionalScore = parseInt(document.getElementById(`dev-emo-${childId}`).value);
-    const socialScore = parseInt(document.getElementById(`dev-soc-${childId}`).value);
-    const intellectualScore = parseInt(document.getElementById(`dev-int-${childId}`).value);
-    const notes = document.getElementById(`dev-notes-${childId}`).value;
+    const childName = child ? `${child.nickname} (${child.firstName} ${child.lastName})` : childId;
+
+    const phyElem = document.getElementById(`dev-phy-${childId}`);
+    const emoElem = document.getElementById(`dev-emo-${childId}`);
+    const socElem = document.getElementById(`dev-soc-${childId}`);
+    const intElem = document.getElementById(`dev-int-${childId}`);
+    const notesElem = document.getElementById(`dev-notes-${childId}`);
+
+    const physicalScore = phyElem ? parseInt(phyElem.value, 10) : 4;
+    const emotionalScore = emoElem ? parseInt(emoElem.value, 10) : 4;
+    const socialScore = socElem ? parseInt(socElem.value, 10) : 3;
+    const intellectualScore = intElem ? parseInt(intElem.value, 10) : 4;
+    const notes = notesElem ? notesElem.value.trim() : 'เด็กมีความสนใจใฝ่รู้ การเคลื่อนไหวปกติ มีมนุษยสัมพันธ์ดี';
 
     window.appStore.saveDevelopmentRecord({
       childId,
@@ -489,8 +525,8 @@ const TeacherView = {
   },
 
   exportAttendanceCSV() {
-    const children = window.appStore.getChildren(this.selectedClassId);
-    const attendance = window.appStore.getAttendance();
+    const children = window.appStore.getChildren(this.selectedClassId) || [];
+    const attendance = window.appStore.getAttendance() || [];
     const today = window.appStore.getTodayBEString();
     
     const rows = [
@@ -509,7 +545,7 @@ const TeacherView = {
         `${c.firstName} ${c.lastName}`,
         c.nickname,
         statusText,
-        att ? att.checkTime : '-',
+        att ? (att.checkTime || '-') : '-',
         c.parentName,
         c.parentPhone
       ]);

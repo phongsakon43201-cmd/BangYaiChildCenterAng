@@ -4,7 +4,7 @@
    ========================================================================== */
 
 const ParentLandingComponent = {
-  render(containerId) {
+  render(containerId = 'main-view-root') {
     const container = document.getElementById(containerId);
     if (!container) return;
 
@@ -31,7 +31,7 @@ const ParentLandingComponent = {
             <a href="#parent-login-box" class="btn" style="background: #FFF; color: #1D4ED8; font-weight: 700; padding: 0.85rem 2rem; border-radius: var(--radius-md); font-size: 1rem; box-shadow: 0 4px 14px rgba(0,0,0,0.15); text-decoration: none;">
               🔑 เข้าสู่ระบบผู้ปกครอง
             </a>
-            <button onclick="ParentLandingComponent.scrollToFeatures()" class="btn" style="background: rgba(255, 255, 255, 0.15); color: #FFF; border: 1px solid rgba(255,255,255,0.4); font-weight: 600; padding: 0.85rem 1.75rem; border-radius: var(--radius-md); font-size: 1rem;">
+            <button type="button" onclick="window.ParentLandingComponent.scrollToFeatures()" class="btn" style="background: rgba(255, 255, 255, 0.15); color: #FFF; border: 1px solid rgba(255,255,255,0.4); font-weight: 600; padding: 0.85rem 1.75rem; border-radius: var(--radius-md); font-size: 1rem;">
               📖 ดูฟังก์ชันและคู่มือใช้งาน
             </button>
           </div>
@@ -40,7 +40,7 @@ const ParentLandingComponent = {
         <!-- 2 Columns Grid: Parent Features (Left) + Parent Login Box (Right) -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem; align-items: start; margin-bottom: 3rem;">
           
-          <!-- Column Left: 5 Main Features for Parents (ตรงตามรูปภาพ 01 ผู้ปกครอง) -->
+          <!-- Column Left: 5 Main Features for Parents -->
           <div id="parent-features-section">
             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
               <span style="font-size: 1.8rem; font-weight: 800; color: #2563EB;">01</span>
@@ -123,15 +123,15 @@ const ParentLandingComponent = {
               </p>
             </div>
 
-            <form onsubmit="ParentLandingComponent.handleParentLogin(event)">
+            <form onsubmit="window.ParentLandingComponent.handleParentLogin(event)">
               <div class="form-group">
                 <label class="form-label" for="parent-email">ชื่อผู้ใช้ (Username) หรือ อีเมล</label>
-                <input type="text" id="parent-email" class="form-control" placeholder="" required>
+                <input type="text" id="parent-email" class="form-control" placeholder="เช่น BY-PAR01 หรือ by-par01@bangyai.go.th" required autocomplete="username">
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="parent-password">รหัสผ่าน (Password)</label>
-                <input type="password" id="parent-password" class="form-control" placeholder="" required>
+                <input type="password" id="parent-password" class="form-control" placeholder="ระบุรหัสผ่าน..." required autocomplete="current-password">
               </div>
 
               <button type="submit" id="btn-parent-login" class="btn" style="width: 100%; background: #2563EB; color: #FFF; padding: 0.85rem; font-size: 1rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; border: none; box-shadow: 0 4px 14px rgba(37,99,235,0.3); margin-top: 0.5rem;">

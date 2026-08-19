@@ -6,30 +6,53 @@
 const ParentView = {
   selectedChildId: 'STD-01',
 
-  render(containerId) {
+  selectChild(childId, containerId = 'main-view-root') {
+    this.selectedChildId = childId;
+    this.render(containerId);
+  },
+
+  render(containerId = 'main-view-root') {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     const currentUser = window.authController.getCurrentUser();
-    const parentChildren = window.appStore.getChildrenForParent(currentUser);
-    if (!parentChildren.some(c => c.id === this.selectedChildId)) {
-      this.selectedChildId = parentChildren[0]?.id || 'STD-01';
+    const parentChildren = window.appStore.getChildrenForParent(currentUser) || [];
+    
+    if (parentChildren.length > 0 && !parentChildren.some(c => c.id === this.selectedChildId)) {
+      this.selectedChildId = parentChildren[0].id;
     }
-    const activeChild = parentChildren.find(c => c.id === this.selectedChildId) || parentChildren[0];
-    const attendance = window.appStore.getAttendance();
+
+    const fallbackChild = (window.appStore.getChildren() && window.appStore.getChildren()[0]) || {
+      id: 'STD-01',
+      firstName: 'ณัฐธีร์',
+      lastName: 'แสนเจริญ',
+      nickname: 'น้องโต้',
+      ageString: '2 ขวบ 6 เดือน',
+      parentName: 'นายพัชรพล แสนเจริญ',
+      parentRelation: 'บิดา',
+      parentPhone: '081-001-0001',
+      allergy: 'ไม่มี',
+      heightCm: 92.0,
+      weightKg: 13.5,
+      growthStatus: 'สมส่วนตามเกณฑ์',
+      vaccines: ['BCG', 'คอกรน-บาดพยัก-โปลิโอ', 'MMR', 'ไข้หวัดใหญ่']
+    };
+
+    const activeChild = parentChildren.find(c => c.id === this.selectedChildId) || parentChildren[0] || fallbackChild;
+    const attendance = window.appStore.getAttendance() || [];
     const childAtt = attendance.find(a => a.childId === activeChild.id);
-    const allLeaves = window.appStore.getLeaveRequests();
+    const allLeaves = window.appStore.getLeaveRequests() || [];
     const leaveReqs = allLeaves.filter(l => l.childId === activeChild.id || (l.childName && (l.childName.includes(activeChild.nickname) || l.childName.includes(activeChild.firstName))));
-    const meals = window.appStore.getMealPlan();
+    const meals = window.appStore.getMealPlan() || [];
     const todayMeal = meals[0] || {};
-    const announcements = window.appStore.getAnnouncements();
-    const devRec = window.appStore.getDevelopmentRecords().find(d => d.childId === activeChild.id);
-    const lineNotifs = window.appStore.getLineNotifications();
+    const announcements = window.appStore.getAnnouncements() || [];
+    const devRec = (window.appStore.getDevelopmentRecords() || []).find(d => d.childId === activeChild.id);
+    const lineNotifs = window.appStore.getLineNotifications() || [];
 
     container.innerHTML = `
       <div class="animate-fade-in">
         <!-- Top Banner & Child Scope -->
-        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(236, 253, 245, 0.9), rgba(209, 250, 229, 0.9)); border-color: rgba(16, 185, 129, 0.2);">
+        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(236, 253, 245, 0.95), rgba(209, 250, 229, 0.95)); border-color: rgba(16, 185, 129, 0.25);">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
             <div style="display: flex; align-items: center; gap: 1rem;">
               <div class="student-avatar" style="width: 56px; height: 56px; font-size: 1.5rem; background: var(--role-parent); color: #FFF;">
@@ -39,19 +62,19 @@ const ParentView = {
                 <span class="badge badge-parent" style="margin-bottom: 0.25rem;">🔒 ข้อมูลบุตรหลานในความดูแลของคุณ</span>
                 <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0;">${activeChild.firstName} ${activeChild.lastName} (${activeChild.nickname})</h2>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-                  ห้องลูกหมีน่ารัก | อายุ ${activeChild.ageString} | ผู้ปกครอง: <strong>${currentUser ? currentUser.name : activeChild.parentName}</strong> (${activeChild.parentRelation || 'ผู้ปกครอง'}) | โทร: ${activeChild.parentPhone || '081-000-0000'}
+                  ห้องลูกหมีน่ารัก | อายุ ${activeChild.ageString || '2 ขวบ 6 เดือน'} | ผู้ปกครอง: <strong>${currentUser ? currentUser.name : (activeChild.parentName || 'ผู้ปกครอง')}</strong> (${activeChild.parentRelation || 'ผู้ปกครอง'}) | โทร: ${activeChild.parentPhone || '081-000-0000'}
                 </p>
               </div>
             </div>
 
             <!-- Action Buttons: Edit Parent Info & Child Selector dropdown -->
             <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-              <button class="btn btn-secondary btn-sm" onclick="ModalsComponent.openEditParentModal('${activeChild.id}')" style="font-weight: 600; background: #FFF; border-color: #D1D5DB;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="window.ModalsComponent.openEditParentModal('${activeChild.id}')" style="font-weight: 600; background: #FFF; border-color: #D1D5DB;">
                 ✏️ เปลี่ยนชื่อผู้ปกครอง / ข้อมูลติดต่อ
               </button>
 
               ${parentChildren.length > 1 ? `
-                <select class="form-control" style="width: auto; min-height: 38px; font-weight: 600;" onchange="ParentView.selectedChildId = this.value; ParentView.render('${containerId}');">
+                <select class="form-control" style="width: auto; min-height: 38px; font-weight: 600; background: #FFF;" onchange="window.ParentView.selectChild(this.value, '${containerId}')">
                   ${parentChildren.map(c => `<option value="${c.id}" ${c.id === activeChild.id ? 'selected' : ''}>${c.nickname} (${c.firstName})</option>`).join('')}
                 </select>
               ` : `
@@ -78,9 +101,9 @@ const ParentView = {
                   childAtt.status === 'LATE' ? `<span style="color: var(--warning-500);">มาสาย (${childAtt.checkTime || '08:15 น.'})</span>` :
                   childAtt.status === 'LEAVE' ? `<span style="color: var(--info-500);">แจ้งลา (${childAtt.checkTime || '-'})</span>` :
                   '<span style="color: var(--danger-500);">ขาดเรียน</span>'
-                ) : 'รอครูเช็กชื่อ'}
+                ) : '<span style="color: var(--text-muted);">รอครูเช็กชื่อ</span>'}
               </div>
-              <div class="stat-label" style="font-size: 0.75rem;">ผู้เช็กชื่อ: ${childAtt ? childAtt.checkedBy : '-'}</div>
+              <div class="stat-label" style="font-size: 0.75rem;">ผู้เช็กชื่อ: ${childAtt ? (childAtt.checkedBy || 'ครูประจำชั้น') : '-'}</div>
             </div>
           </div>
 
@@ -92,7 +115,7 @@ const ParentView = {
             <div>
               <div class="stat-label">ส่วนสูง / น้ำหนัก / BMI</div>
               <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);">
-                ${activeChild.heightCm || 98.5} ซม. | ${activeChild.weightKg || 15.2} กก.
+                ${activeChild.heightCm || 92.0} ซม. | ${activeChild.weightKg || 13.5} กก.
               </div>
               <div class="stat-label" style="font-size: 0.75rem;"><span class="badge badge-success" style="padding: 1px 6px; font-size: 0.7rem;">${activeChild.growthStatus || 'สมส่วนตามเกณฑ์'}</span></div>
             </div>
@@ -106,9 +129,9 @@ const ParentView = {
             <div>
               <div class="stat-label">เมนูอาหารกลางวันวันนี้</div>
               <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-main); line-height: 1.3;">
-                ${todayMeal.lunch || 'ข้าวสวย + ต้มจืดฟักใส่ไก่'}
+                ${todayMeal.lunch || 'ข้าวสวย + ต้มจืดฟักใส่ไก่ + ผัดบล็อคโคลี่หมูสับ'}
               </div>
-              <div class="stat-label" style="font-size: 0.75rem;">แพ้อาหาร: <strong style="color: var(--danger-500);">${activeChild.allergy}</strong></div>
+              <div class="stat-label" style="font-size: 0.75rem;">แพ้อาหาร: <strong style="color: var(--danger-500);">${activeChild.allergy || 'ไม่มี'}</strong></div>
             </div>
           </div>
 
@@ -117,13 +140,13 @@ const ParentView = {
             <div>
               <div class="stat-label">คำขอแจ้งลา</div>
               <div class="stat-value" style="font-size: 1.2rem;">${leaveReqs.length} รายการ</div>
-              <div class="stat-label" style="font-size: 0.75rem;">${leaveReqs.find(l => l.status === 'PENDING') ? '<span style="color: var(--warning-500);">รอครูอนุมัติ</span>' : 'ไม่มีค้าง'}</div>
+              <div class="stat-label" style="font-size: 0.75rem;">${leaveReqs.find(l => l.status === 'PENDING') ? '<span style="color: var(--warning-500); font-weight: 700;">⏳ รอครูอนุมัติ</span>' : 'ไม่มีค้าง'}</div>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="ModalsComponent.openLeaveModal('${activeChild.id}')">+ แจ้งลา</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="window.ModalsComponent.openLeaveModal('${activeChild.id}')">+ แจ้งลา</button>
           </div>
         </div>
 
-        <!-- Real-time Routine Tracker (Section 3 PDF Specification) -->
+        <!-- Real-time Routine Tracker -->
         <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 249, 255, 0.95));">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
             <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main);">
@@ -174,11 +197,11 @@ const ParentView = {
                 <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0; color: #065F46;">เชื่อมต่อ LINE รับแจ้งเตือนส่วนบุคคลของ ${activeChild.nickname}</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
                   รับแจ้งเตือนเมื่อ ${activeChild.nickname} เดินทางถึงศูนย์ฯ (มา/สาย/ลา) และผลอนุมัติใบลาตรงเข้า LINE ส่วนตัวของคุณทันที
-                  ${activeChild.parentLineId ? `<strong style="color: #059669;">(เชื่อมต่อแล้ว: ${activeChild.parentLineId})</strong>` : ''}
+                  ${activeChild.parentLineId ? `<strong style="color: #059669;"> (เชื่อมต่อแล้ว: ${activeChild.parentLineId})</strong>` : ''}
                 </p>
               </div>
             </div>
-            <button class="btn btn-success" style="background: #06C755; border-color: #06C755; color: white; font-weight: 700;" onclick="ModalsComponent.openConnectLineModal('${activeChild.id}')">
+            <button type="button" class="btn btn-success" style="background: #06C755; border-color: #06C755; color: white; font-weight: 700;" onclick="window.ModalsComponent.openConnectLineModal('${activeChild.id}')">
               📱 เชื่อมต่อ LINE ส่วนตัว
             </button>
           </div>
@@ -226,7 +249,7 @@ const ParentView = {
             </div>
 
             <div style="background: var(--bg-app); padding: 0.85rem; border-radius: var(--radius-md); font-size: 0.85rem; color: var(--text-muted); border-left: 3px solid var(--primary-600); margin-top: 1rem;">
-              <strong>ข้อสังเกตจากครูผู้ดูแล (${devRec ? devRec.evaluator : 'ครูวิภาดา'}):</strong><br>
+              <strong>ข้อสังเกตจากครูผู้ดูแล (${devRec ? devRec.evaluator : 'นางสาวกานดา ใจดี (ครูแก้ว)'}):</strong><br>
               "${devRec ? devRec.notes : 'เด็กมีพัฒนาการสมวัยดีเยี่ยม ร่าเริง สื่อสารชัดเจน เข้ากับเพื่อนได้ดี'}"
             </div>
           </div>
@@ -241,7 +264,7 @@ const ParentView = {
             <div style="margin-bottom: 1rem;">
               <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">รายการวัคซีนที่ได้รับแล้วตามเกณฑ์กรมอนามัย:</label>
               <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
-                ${(activeChild.vaccines || ['BCG', 'MMR', 'คอกรน-โปลิโอ']).map(v => `<span class="badge badge-success">✓ ${v}</span>`).join('')}
+                ${(activeChild.vaccines || ['BCG', 'MMR', 'คอกรน-บาดพยัก-โปลิโอ']).map(v => `<span class="badge badge-success">✓ ${v}</span>`).join('')}
               </div>
             </div>
 
@@ -281,9 +304,9 @@ const ParentView = {
                     <td>${l.startDate} ถึง ${l.endDate}</td>
                     <td>${l.reason}</td>
                     <td>
-                      ${l.status === 'APPROVED' ? '<span class="badge badge-success">อนุมัติแล้ว</span>' :
-                        l.status === 'REJECTED' ? '<span class="badge badge-danger">ไม่อนุมัติ</span>' :
-                        '<span class="badge badge-warning">รออนุมัติ</span>'}
+                      ${l.status === 'APPROVED' ? '<span class="badge badge-success">✓ อนุมัติแล้ว</span>' :
+                        l.status === 'REJECTED' ? '<span class="badge badge-danger">✕ ไม่อนุมัติ</span>' :
+                        '<span class="badge badge-warning" style="background: #FEF3C7; color: #92400E; border: 1px solid #F59E0B; font-weight: 700;">⏳ รออนุมัติ</span>'}
                     </td>
                     <td>${l.remark || '-'}</td>
                   </tr>
@@ -297,8 +320,10 @@ const ParentView = {
 
     // Render Charts
     setTimeout(() => {
-      window.ChartUtils.renderRadarChart('parent-radar-chart', devRec || { physicalScore: 4, emotionalScore: 4, socialScore: 3, intellectualScore: 4 });
-      window.ChartUtils.renderDevelopmentBars('parent-dev-bars', devRec || { physicalScore: 4, emotionalScore: 4, socialScore: 3, intellectualScore: 4 });
+      if (window.ChartUtils) {
+        window.ChartUtils.renderRadarChart('parent-radar-chart', devRec || { physicalScore: 4, emotionalScore: 4, socialScore: 3, intellectualScore: 4 });
+        window.ChartUtils.renderDevelopmentBars('parent-dev-bars', devRec || { physicalScore: 4, emotionalScore: 4, socialScore: 3, intellectualScore: 4 });
+      }
     }, 50);
   }
 };

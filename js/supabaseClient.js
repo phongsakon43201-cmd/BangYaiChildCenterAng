@@ -97,11 +97,11 @@ class SupabaseService {
   // Supabase Database Sync: Attendance
   async syncAttendanceToDB(attendanceRecord) {
     const client = this.getClient();
-    if (!client) return;
+    if (!client || !attendanceRecord) return;
     try {
       const payload = {
         child_id: attendanceRecord.childId,
-        date: attendanceRecord.date || new Date().toISOString().split('T')[0],
+        date: attendanceRecord.date,
         status: attendanceRecord.status,
         check_time: attendanceRecord.checkTime,
         checked_by: attendanceRecord.checkedBy
@@ -114,7 +114,6 @@ class SupabaseService {
 
       if (existingRows && existingRows.length > 0) {
         await client.from('attendance').update(payload).eq('id', existingRows[0].id);
-        // Clean up excess duplicates if any exist
         if (existingRows.length > 1) {
           for (let i = 1; i < existingRows.length; i++) {
             await client.from('attendance').delete().eq('id', existingRows[i].id);
@@ -132,23 +131,22 @@ class SupabaseService {
   // Supabase Database Sync: Leave Request
   async syncLeaveRequestToDB(leaveReq) {
     const client = this.getClient();
-    if (!client) return;
+    if (!client || !leaveReq) return;
     try {
-      let normalizedLeaveType = leaveReq.leaveType || 'ลาป่วย';
-      if (normalizedLeaveType === 'ลากิจ') normalizedLeaveType = 'ลากิจจำเป็น';
-      if (normalizedLeaveType === 'อื่นๆ') normalizedLeaveType = 'ลาอื่นๆ';
-
       const payload = {
         child_id: leaveReq.childId,
-        leave_type: normalizedLeaveType,
+        child_name: leaveReq.childName,
+        parent_name: leaveReq.parentName,
+        leave_type: leaveReq.leaveType,
         start_date: leaveReq.startDate,
         end_date: leaveReq.endDate,
         reason: leaveReq.reason,
         status: leaveReq.status || 'PENDING',
-        remark: leaveReq.remark || null
+        remark: leaveReq.remark || null,
+        approved_by: leaveReq.approvedBy || null
       };
 
-      if (leaveReq.id && leaveReq.id.length > 20 && !leaveReq.id.startsWith('leave-')) {
+      if (leaveReq.id && leaveReq.id.length > 10 && !leaveReq.id.startsWith('leave-')) {
         await client.from('leave_requests').update(payload).eq('id', leaveReq.id);
       } else {
         const { data: existing } = await client.from('leave_requests')
@@ -174,121 +172,10 @@ class SupabaseService {
     }
   }
 
-  // Supabase Database Sync: Audit Log
-  async syncAuditLogToDB(log) {
-    const client = this.getClient();
-    if (!client) return;
-    try {
-      await client.from('audit_logs').insert({
-        user_name: log.user,
-        action: log.action,
-        details: log.details
-      });
-    } catch (err) {
-      console.warn('Supabase Audit Log sync notice:', err);
-    }
-  }
-
-  // LINE Messaging API Helper (Modern Replacement for Deprecated LINE Notify)
-  async sendLineMessagingAPI(channelAccessToken, toUserIdOrGroupId, messageText) {
-    if (!channelAccessToken || !toUserIdOrGroupId) return false;
-    const payload = {
-      to: toUserIdOrGroupId,
-      messages: [{ type: 'text', text: messageText }]
-    };
-
-    const lineEndpoint = 'https://api.line.me/v2/bot/message/push';
-
-    // 1. Try Netlify Serverless Function Relay first (bypasses CORS 100% on Netlify)
-    try {
-      const netlifyFnUrl = '/.netlify/functions/line-push';
-      const res = await fetch(netlifyFnUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channelAccessToken, to: toUserIdOrGroupId, messageText })
-      });
-      if (res.ok) {
-        console.log(`⚡ Netlify Function: Real LINE Push sent successfully to ${toUserIdOrGroupId}!`);
-        return true;
-      }
-    } catch (e) {
-      // Fallback to Supabase / CORS Proxies
-    }
-
-    // 2. Try Supabase Edge Function Relay (bypasses CORS 100%)
-    if (SUPABASE_CONFIG && SUPABASE_CONFIG.url) {
-      try {
-        const edgeFnUrl = `${SUPABASE_CONFIG.url}/functions/v1/line-push`;
-        const res = await fetch(edgeFnUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
-          },
-          body: JSON.stringify({ channelAccessToken, to: toUserIdOrGroupId, messageText })
-        });
-        if (res.ok) {
-          console.log(`⚡ Supabase Edge Function: Real LINE Push sent to ${toUserIdOrGroupId}!`);
-          return true;
-        }
-      } catch (e) {
-        // Fallback to CORS proxies
-      }
-    }
-
-    // 2. Fallback to CORS Proxy endpoints for client-side browser fetch
-    const proxyUrls = [
-      `https://thingproxy.freeboard.io/fetch/${lineEndpoint}`,
-      `https://corsproxy.org/?${encodeURIComponent(lineEndpoint)}`,
-      `https://corsproxy.io/?${encodeURIComponent(lineEndpoint)}`
-    ];
-
-    // Try direct fetch (if server environment)
-    try {
-      const res = await fetch(lineEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${channelAccessToken}`
-        },
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) {
-        console.log(`📲 Real LINE Messaging API Push sent successfully to ${toUserIdOrGroupId}!`);
-        return true;
-      }
-    } catch (e) {
-      // CORS block on direct fetch is expected in browser, continue to proxies
-    }
-
-    // Try CORS proxy endpoints
-    for (const proxyUrl of proxyUrls) {
-      try {
-        const response = await fetch(proxyUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${channelAccessToken}`
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (response && response.ok) {
-          console.log(`📲 Real LINE Messaging API Push sent successfully via Proxy to ${toUserIdOrGroupId}!`);
-          return true;
-        }
-      } catch (err) {
-        // Continue to next proxy
-      }
-    }
-
-    console.log('📲 Notification logged to local App Store state for active session.');
-    return false;
-  }
   // Supabase Database Sync: Child Profile & Growth Data
   async syncChildToDB(child) {
     const client = this.getClient();
-    if (!client) return;
+    if (!client || !child) return;
     try {
       const payload = {
         id: child.id,
@@ -300,7 +187,9 @@ class SupabaseService {
         parent_relation: child.parentRelation,
         height_cm: child.heightCm,
         weight_kg: child.weightKg,
-        growth_status: child.growthStatus
+        bmi: child.bmi,
+        growth_status: child.growthStatus,
+        parent_line_id: child.parentLineId
       };
 
       const { data } = await client.from('children').select('id').eq('id', child.id).maybeSingle();
@@ -318,11 +207,13 @@ class SupabaseService {
   // Supabase Database Sync: Development Evaluation
   async syncDevelopmentRecordToDB(devRec) {
     const client = this.getClient();
-    if (!client) return;
+    if (!client || !devRec) return;
     try {
       const payload = {
         child_id: devRec.childId,
+        child_name: devRec.childName,
         term: devRec.term || '1/2569',
+        eval_date: devRec.evalDate,
         physical_score: devRec.physicalScore,
         emotional_score: devRec.emotionalScore,
         social_score: devRec.socialScore,
@@ -331,7 +222,7 @@ class SupabaseService {
         notes: devRec.notes
       };
 
-      const { data } = await client.from('development_records').select('id').eq('child_id', devRec.childId).maybeSingle();
+      const { data } = await client.from('development_records').select('id').eq('child_id', devRec.childId).eq('term', payload.term).maybeSingle();
       if (data && data.id) {
         await client.from('development_records').update(payload).eq('id', data.id);
       } else {
@@ -341,6 +232,135 @@ class SupabaseService {
     } catch (err) {
       console.warn('Supabase dev record sync notice:', err);
     }
+  }
+
+  // Supabase Database Sync: Announcement
+  async syncAnnouncementToDB(ann) {
+    const client = this.getClient();
+    if (!client || !ann) return;
+    try {
+      await client.from('announcements').insert({
+        title: ann.title,
+        content: ann.content,
+        target_class: ann.targetClass || 'ALL',
+        author: ann.author,
+        pinned: ann.pinned || false
+      });
+      console.log('⚡ Supabase DB: Announcement synced');
+    } catch (err) {
+      console.warn('Supabase Announcement sync notice:', err);
+    }
+  }
+
+  // Supabase Database Sync: Activity
+  async syncActivityToDB(act) {
+    const client = this.getClient();
+    if (!client || !act) return;
+    try {
+      await client.from('activities').insert({
+        title: act.title,
+        description: act.description,
+        class_id: act.classId || 'class-bm',
+        date: act.date,
+        image: act.image || './assets/images/banner.png'
+      });
+      console.log('⚡ Supabase DB: Activity synced');
+    } catch (err) {
+      console.warn('Supabase Activity sync notice:', err);
+    }
+  }
+
+  // Supabase Database Sync: Audit Log
+  async syncAuditLogToDB(log) {
+    const client = this.getClient();
+    if (!client || !log) return;
+    try {
+      await client.from('audit_logs').insert({
+        user_name: log.user,
+        action: log.action,
+        details: log.details
+      });
+    } catch (err) {
+      console.warn('Supabase Audit Log sync notice:', err);
+    }
+  }
+
+  // LINE Messaging API Helper
+  async sendLineMessagingAPI(channelAccessToken, toUserIdOrGroupId, messageText) {
+    if (!channelAccessToken || !toUserIdOrGroupId) return false;
+    const payload = {
+      to: toUserIdOrGroupId,
+      messages: [{ type: 'text', text: messageText }]
+    };
+
+    const lineEndpoint = 'https://api.line.me/v2/bot/message/push';
+
+    // 1. Try Netlify Serverless Function Relay first
+    try {
+      const netlifyFnUrl = '/.netlify/functions/line-push';
+      const res = await fetch(netlifyFnUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channelAccessToken, to: toUserIdOrGroupId, messageText })
+      });
+      if (res.ok) {
+        console.log(`⚡ Netlify Function: Real LINE Push sent successfully to ${toUserIdOrGroupId}!`);
+        return true;
+      }
+    } catch (e) {
+      // Fallback
+    }
+
+    // 2. Try Supabase Edge Function Relay
+    if (SUPABASE_CONFIG && SUPABASE_CONFIG.url) {
+      try {
+        const edgeFnUrl = `${SUPABASE_CONFIG.url}/functions/v1/line-push`;
+        const res = await fetch(edgeFnUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+          },
+          body: JSON.stringify({ channelAccessToken, to: toUserIdOrGroupId, messageText })
+        });
+        if (res.ok) {
+          console.log(`⚡ Supabase Edge Function: Real LINE Push sent to ${toUserIdOrGroupId}!`);
+          return true;
+        }
+      } catch (e) {
+        // Fallback
+      }
+    }
+
+    // 3. Fallback to CORS Proxies
+    const proxyUrls = [
+      `https://thingproxy.freeboard.io/fetch/${lineEndpoint}`,
+      `https://corsproxy.org/?${encodeURIComponent(lineEndpoint)}`,
+      `https://corsproxy.io/?${encodeURIComponent(lineEndpoint)}`
+    ];
+
+    for (const proxyUrl of proxyUrls) {
+      try {
+        const response = await fetch(proxyUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${channelAccessToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response && response.ok) {
+          console.log(`📲 Real LINE Messaging API Push sent successfully via Proxy to ${toUserIdOrGroupId}!`);
+          return true;
+        }
+      } catch (err) {
+        // Continue
+      }
+    }
+
+    console.log('📲 Notification logged to local App Store state.');
+    return false;
   }
 
   // Supabase Database Realtime Channel Listener
@@ -374,11 +394,13 @@ class SupabaseService {
     const client = this.getClient();
     if (!client) return null;
     try {
-      const [leavesRes, attRes, childrenRes, devRes, auditRes] = await Promise.all([
+      const [leavesRes, attRes, childrenRes, devRes, annRes, actRes, auditRes] = await Promise.all([
         client.from('leave_requests').select('*').order('submitted_at', { ascending: false }),
         client.from('attendance').select('*'),
         client.from('children').select('*'),
         client.from('development_records').select('*'),
+        client.from('announcements').select('*').order('created_at', { ascending: false }),
+        client.from('activities').select('*').order('created_at', { ascending: false }),
         client.from('audit_logs').select('*').order('created_at', { ascending: false })
       ]);
       return {
@@ -386,6 +408,8 @@ class SupabaseService {
         attendance: attRes.data || [],
         children: childrenRes.data || [],
         developmentRecords: devRes.data || [],
+        announcements: annRes.data || [],
+        activities: actRes.data || [],
         auditLogs: auditRes.data || []
       };
     } catch (err) {

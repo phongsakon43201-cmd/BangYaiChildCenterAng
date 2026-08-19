@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    Bang Yai Child Development Center MIS - Executive View Component
    Executive Interface: KPI Dashboard, Child Registry, Audit Logs
    ========================================================================== */
@@ -7,16 +7,16 @@ const ExecutiveView = {
   currentTab: 'DASHBOARD',
   showFullNationalId: false,
 
-  render(containerId) {
+  render(containerId = 'main-view-root') {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    const children = window.appStore.getChildren();
-    const attendance = window.appStore.getAttendance();
-    const leaveReqs = window.appStore.getLeaveRequests();
-    const devRecs = window.appStore.getDevelopmentRecords();
-    const auditLogs = window.appStore.getAuditLogs();
-    const centerInfo = window.appStore.getCenterInfo();
+    const children = window.appStore.getChildren() || [];
+    const attendance = window.appStore.getAttendance() || [];
+    const leaveReqs = window.appStore.getLeaveRequests() || [];
+    const devRecs = window.appStore.getDevelopmentRecords() || [];
+    const auditLogs = window.appStore.getAuditLogs() || [];
+    const centerInfo = window.appStore.getCenterInfo() || {};
 
     const presentCount = attendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length;
     const leaveCount = attendance.filter(a => a.status === 'LEAVE').length;
@@ -25,20 +25,20 @@ const ExecutiveView = {
 
     container.innerHTML = `
       <div class="animate-fade-in">
-        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(255, 251, 235, 0.9), rgba(254, 243, 199, 0.9)); border-color: rgba(217, 119, 6, 0.2);">
+        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(255, 251, 235, 0.95), rgba(254, 243, 199, 0.95)); border-color: rgba(217, 119, 6, 0.25);">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
             <div>
-              <span class="badge badge-executive" style="margin-bottom: 0.25rem;">มุมมองผู้บริหาร / เทศบาล</span>
+              <span class="badge badge-executive" style="margin-bottom: 0.25rem;">👨‍💼 มุมมองผู้บริหาร / เทศบาล</span>
               <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0;">${centerInfo.name}</h2>
               <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
                 อ.${centerInfo.district} จ.${centerInfo.province} | ปีการศึกษา ${centerInfo.academicYear} | ภาคเรียนที่ ${centerInfo.term}
               </p>
             </div>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button class="btn btn-primary btn-sm" onclick="window.ExportUtils.printExecutiveReport()" style="font-weight: 600;">
+              <button type="button" class="btn btn-primary btn-sm" onclick="window.ExportUtils.printExecutiveReport()" style="font-weight: 600;">
                 🖨️ พิมพ์รายงานสรุปผล
               </button>
-              <button class="btn btn-secondary btn-sm" onclick="ExecutiveView.exportDataCSV()" style="font-weight: 600; background: #FFF;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="window.ExecutiveView.exportDataCSV()" style="font-weight: 600; background: #FFF;">
                 📥 ส่งออก Excel (CSV)
               </button>
             </div>
@@ -46,13 +46,13 @@ const ExecutiveView = {
         </div>
 
         <div class="view-tabs">
-          <button class="tab-link ${this.currentTab === 'DASHBOARD' ? 'active' : ''}" onclick="ExecutiveView.currentTab = 'DASHBOARD'; ExecutiveView.render('${containerId}');">
+          <button type="button" class="tab-link ${this.currentTab === 'DASHBOARD' ? 'active' : ''}" onclick="window.ExecutiveView.currentTab = 'DASHBOARD'; window.ExecutiveView.render('${containerId}');">
             📊 Dashboard ภาพรวม
           </button>
-          <button class="tab-link ${this.currentTab === 'REGISTRY' ? 'active' : ''}" onclick="ExecutiveView.currentTab = 'REGISTRY'; ExecutiveView.render('${containerId}');">
+          <button type="button" class="tab-link ${this.currentTab === 'REGISTRY' ? 'active' : ''}" onclick="window.ExecutiveView.currentTab = 'REGISTRY'; window.ExecutiveView.render('${containerId}');">
             📋 ทะเบียนนักเรียน (${children.length} คน)
           </button>
-          <button class="tab-link ${this.currentTab === 'AUDIT_LOGS' ? 'active' : ''}" onclick="ExecutiveView.currentTab = 'AUDIT_LOGS'; ExecutiveView.render('${containerId}');">
+          <button type="button" class="tab-link ${this.currentTab === 'AUDIT_LOGS' ? 'active' : ''}" onclick="window.ExecutiveView.currentTab = 'AUDIT_LOGS'; window.ExecutiveView.render('${containerId}');">
             🔐 Audit Logs (${auditLogs.length})
           </button>
         </div>
@@ -84,7 +84,7 @@ const ExecutiveView = {
             <div>
               <div class="stat-label">จำนวนนักเรียนทั้งหมด</div>
               <div class="stat-value">${children.length} คน</div>
-              <div class="stat-label" style="font-size: 0.75rem;">ความจุรองรับ: ${centerInfo.totalCapacity} คน</div>
+              <div class="stat-label" style="font-size: 0.75rem;">ความจุรองรับ: ${centerInfo.totalCapacity || 20} คน</div>
             </div>
           </div>
           <div class="glass-card stat-card">
@@ -136,9 +136,9 @@ const ExecutiveView = {
             <div style="background: white; border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-color);">
               <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">งบประมาณรายเดือน (22 วัน/เดือน)</div>
               <div style="font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin-top: 2px;">
-                ${(children.length * 22).toLocaleString()} บาท/เดือน
+                ${(children.length * 22 * 40).toLocaleString()} บาท/เดือน
               </div>
-              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">อัตราค่าอาหารต่อคน (${children.length} คน)</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">อัตราค่าอาหาร 40 บาท/คน/วัน (${children.length} คน)</div>
             </div>
           </div>
           <div class="glass-card">
@@ -185,11 +185,11 @@ const ExecutiveView = {
               <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">ทะเบียนนักเรียนศูนย์พัฒนาเด็กเล็ก</h3>
               <span class="badge badge-success" style="font-size: 0.75rem; margin-top: 4px;">ปฏิบัติตามหลัก PDPA (Data Minimization)</span>
             </div>
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <button class="btn btn-secondary btn-sm" onclick="ExecutiveView.showFullNationalId = !ExecutiveView.showFullNationalId; ExecutiveView.render('${containerId}');">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="window.ExecutiveView.showFullNationalId = !window.ExecutiveView.showFullNationalId; window.ExecutiveView.render('${containerId}');">
                 ${showFullId ? 'ซ่อน เลขบัตรประชาชน (PDPA)' : 'แสดง เลขบัตรประชาชนเต็ม'}
               </button>
-              <input type="text" placeholder="ค้นหาชื่อนักเรียน / ผู้ปกครอง..." class="form-control btn-sm" style="max-width: 240px;" onkeyup="ExecutiveView.filterRegistry(this.value)">
+              <input type="text" placeholder="ค้นหาชื่อนักเรียน / ผู้ปกครอง..." class="form-control btn-sm" style="max-width: 240px;" onkeyup="window.ExecutiveView.filterRegistry(this.value)">
             </div>
           </div>
 
@@ -215,7 +215,7 @@ const ExecutiveView = {
                     <td>${c.gender}</td>
                     <td>${c.ageString}</td>
                     <td><span class="badge badge-teacher" style="font-size: 0.75rem; white-space: nowrap;">${getClassName(c.classId)}</span></td>
-                    <td>${c.parentName} (${c.parentRelation})</td>
+                    <td>${c.parentName} (${c.parentRelation || 'ผู้ปกครอง'})</td>
                     <td>${c.parentPhone}</td>
                     <td><strong style="color: ${c.allergy !== 'ไม่มี' ? 'var(--danger-500)' : 'var(--text-muted)'};">${c.allergy}</strong></td>
                   </tr>
@@ -232,8 +232,8 @@ const ExecutiveView = {
         <div class="glass-card">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
             <div>
-              <h3 style="font-weight: 700; font-size: 1.1rem;">บันทึกการเข้าถึงระบบ Audit Log ฉบับเต็ม</h3>
-              <p style="font-size: 0.8rem; color: var(--text-muted);">ตามข้อกำหนด พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) & OWASP ASVS</p>
+              <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">บันทึกการเข้าถึงระบบ Audit Log ฉบับเต็ม</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">ตามข้อกำหนด พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) & OWASP ASVS</p>
             </div>
             <span class="badge badge-success">บันทึกอัตโนมัติ Real-Time</span>
           </div>
@@ -280,7 +280,7 @@ const ExecutiveView = {
   },
 
   exportDataCSV() {
-    const children = window.appStore.getChildren();
+    const children = window.appStore.getChildren() || [];
     const showFullId = this.showFullNationalId || false;
     const maskId = (idStr) => (showFullId ? idStr : (idStr || '').replace(/^(\d-\d{4}-)\d{5}(-\d{2}-\d)$/, '$1XXXXX$2'));
     const rows = [
@@ -288,6 +288,9 @@ const ExecutiveView = {
       ...children.map(c => [maskId(c.nationalId), c.firstName, c.lastName, c.nickname, c.gender, c.ageString, c.parentName, c.parentPhone, c.allergy])
     ];
     window.ExportUtils.exportToCSV('BangYai_Child_Center_Registry_2569.csv', rows);
+    if (window.ModalsComponent) {
+      window.ModalsComponent.showToast('ส่งออกไฟล์ Excel (CSV) เรียบร้อยแล้ว', 'success');
+    }
   }
 };
 

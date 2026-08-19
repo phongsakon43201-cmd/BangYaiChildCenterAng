@@ -7,7 +7,7 @@
 const LoginModalComponent = {
   currentPortal: 'PARENT',
 
-  render(containerId, portalRole = 'PARENT') {
+  render(containerId = 'main-view-root', portalRole = 'PARENT') {
     this.currentPortal = portalRole;
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -35,7 +35,7 @@ const LoginModalComponent = {
         accentColor: '#10B981',
         btnBg: '#059669',
         icon: '👩‍🏫',
-        usernamePlaceholder: '',
+        usernamePlaceholder: 'เช่น BY-T01 หรือ by-t01@bangyai.go.th',
         desc: 'สำหรับบันทึกการเช็กชื่อ อนุมัติคำขอแจ้งลา ประเมินพัฒนาการ และเผยแพร่ข่าวสาร',
         items: ['เช็กชื่อและบันทึกสถานะ', 'ตอบรับคำขอแจ้งลา', 'บันทึกพัฒนาการ 4 ด้าน', 'เผยแพร่ข่าวสารประจำชั้น', 'สื่อสารกับผู้ปกครอง']
       },
@@ -46,7 +46,7 @@ const LoginModalComponent = {
         accentColor: '#8B5CF6',
         btnBg: '#7C3AED',
         icon: '👨‍💼',
-        usernamePlaceholder: '',
+        usernamePlaceholder: 'เช่น BY-EXEC01 หรือ by-exec01@bangyai.go.th',
         desc: 'สำหรับตรวจสอบแดชบอร์ดภาพรวม สถิติการมาเรียน การเติบโต และรายงานเชิงนโยบาย',
         items: ['Dashboard จำนวนเด็กและห้อง', 'สถิติอัตราการมาเรียน', 'ภาพรวมพัฒนาการเด็ก', 'ข่าวสารกิจกรรมภาพรวม', 'ออกรายงานและ Audit Logs']
       }
@@ -57,7 +57,7 @@ const LoginModalComponent = {
       accentColor: '#3B82F6',
       btnBg: '#2563EB',
       icon: '👩‍👦',
-      usernamePlaceholder: '',
+      usernamePlaceholder: 'เช่น BY-PAR01 หรือ by-par01@bangyai.go.th',
       desc: 'สำหรับติดตามประวัติการมาเรียน บันทึกพัฒนาการ และยื่นคำขอแจ้งลาบุตรหลาน',
       items: ['ประวัติและการมาเรียน', 'ข่าวสาร • กิจกรรม • อาหาร', 'บันทึกพัฒนาการ', 'ส่งและติดตามคำขอแจ้งลา', 'รับข้อมูลหรือติดต่อครู']
     };
@@ -67,13 +67,13 @@ const LoginModalComponent = {
         
         <!-- Portal Selector Navigation Tabs -->
         <div style="display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
-          <button onclick="LoginModalComponent.showPortalModal('PARENT')" class="btn" style="padding: 0.65rem 1.25rem; border-radius: var(--radius-full); font-weight: 600; border: 1px solid var(--border-color); ${roleId === 'PARENT' ? 'background: #3B82F6; color: #FFF; border-color: #3B82F6;' : 'background: var(--bg-surface); color: var(--text-muted);'}">
+          <button type="button" onclick="window.LoginModalComponent.showPortalModal('PARENT')" class="btn" style="padding: 0.65rem 1.25rem; border-radius: var(--radius-full); font-weight: 600; border: 1px solid var(--border-color); ${roleId === 'PARENT' ? 'background: #3B82F6; color: #FFF; border-color: #3B82F6;' : 'background: var(--bg-surface); color: var(--text-muted);'}">
             👩‍👦 01 ระบบผู้ปกครอง
           </button>
-          <button onclick="LoginModalComponent.showPortalModal('TEACHER')" class="btn" style="padding: 0.65rem 1.25rem; border-radius: var(--radius-full); font-weight: 600; border: 1px solid var(--border-color); ${roleId === 'TEACHER' ? 'background: #10B981; color: #FFF; border-color: #10B981;' : 'background: var(--bg-surface); color: var(--text-muted);'}">
+          <button type="button" onclick="window.LoginModalComponent.showPortalModal('TEACHER')" class="btn" style="padding: 0.65rem 1.25rem; border-radius: var(--radius-full); font-weight: 600; border: 1px solid var(--border-color); ${roleId === 'TEACHER' ? 'background: #10B981; color: #FFF; border-color: #10B981;' : 'background: var(--bg-surface); color: var(--text-muted);'}">
             👩‍🏫 02 ระบบครูประจำชั้น
           </button>
-          <button onclick="LoginModalComponent.showPortalModal('EXECUTIVE')" class="btn" style="padding: 0.65rem 1.25rem; border-radius: var(--radius-full); font-weight: 600; border: 1px solid var(--border-color); ${roleId === 'EXECUTIVE' ? 'background: #8B5CF6; color: #FFF; border-color: #8B5CF6;' : 'background: var(--bg-surface); color: var(--text-muted);'}">
+          <button type="button" onclick="window.LoginModalComponent.showPortalModal('EXECUTIVE')" class="btn" style="padding: 0.65rem 1.25rem; border-radius: var(--radius-full); font-weight: 600; border: 1px solid var(--border-color); ${roleId === 'EXECUTIVE' ? 'background: #8B5CF6; color: #FFF; border-color: #8B5CF6;' : 'background: var(--bg-surface); color: var(--text-muted);'}">
             👨‍💼 03 ระบบผู้บริหาร / เทศบาล
           </button>
         </div>
@@ -117,18 +117,18 @@ const LoginModalComponent = {
               <h3 style="font-size: 1.35rem; font-weight: 800; margin-top: 0.5rem; color: var(--text-main);">เข้าสู่ระบบ (${roleInfo.badge})</h3>
             </div>
 
-            <form onsubmit="LoginModalComponent.handlePortalSubmit(event, '${roleId}')">
+            <form onsubmit="window.LoginModalComponent.handlePortalSubmit(event, '${roleId}')">
               <div class="form-group">
-                <label class="form-label">ชื่อผู้ใช้ (Username) หรือ อีเมล</label>
-                <input type="text" id="portal-email" class="form-control" placeholder="${roleInfo.usernamePlaceholder}" required>
+                <label class="form-label" for="portal-email">ชื่อผู้ใช้ (Username) หรือ อีเมล</label>
+                <input type="text" id="portal-email" class="form-control" placeholder="${roleInfo.usernamePlaceholder}" required autocomplete="username">
               </div>
 
               <div class="form-group">
-                <label class="form-label">รหัสผ่าน (Password)</label>
-                <input type="password" id="portal-password" class="form-control" placeholder="" required>
+                <label class="form-label" for="portal-password">รหัสผ่าน (Password)</label>
+                <input type="password" id="portal-password" class="form-control" placeholder="ระบุรหัสผ่าน..." required autocomplete="current-password">
               </div>
 
-              <button type="submit" id="btn-portal-submit" class="btn" style="width: 100%; background: ${roleInfo.btnBg}; color: #FFF; padding: 0.85rem; font-size: 1rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; border: none; box-shadow: 0 4px 14px ${roleInfo.accentColor}40;">
+              <button type="submit" id="btn-portal-submit" class="btn" style="width: 100%; background: ${roleInfo.btnBg}; color: #FFF; padding: 0.85rem; font-size: 1rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; border: none; box-shadow: 0 4px 14px ${roleInfo.accentColor}40; margin-top: 0.5rem;">
                 เข้าสู่ระบบ (${roleInfo.badge})
               </button>
             </form>

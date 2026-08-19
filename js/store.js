@@ -51,7 +51,7 @@ const INITIAL_SEED_DATA = {
     {
       id: 'leave-1',
       childId: 'STD-03',
-      childName: 'พอล (ด.ช. ชยพล มงคลดี)',
+      childName: 'น้องพอล (ด.ช. ชยพล มงคลดี)',
       parentName: 'นายชาญชัย มงคลดี',
       leaveType: 'ลาป่วย',
       startDate: '2569-08-10',
@@ -93,7 +93,7 @@ const INITIAL_SEED_DATA = {
       title: 'กิจกรรมศิลปะสร้างสรรค์ "ระบายสีภาพในฝัน"',
       classId: 'class-bm',
       date: '2569-08-10',
-      description: 'เด็กๆ ห้องลูกหมีน่ารัก ร่วมกันใช้นิ้วมือและสีน้ำระบายสีอย่างสนุกสนาน',
+      description: 'เด็กๆ ห้องลูกหมีน่ารัก ร่วมกันใช้นิ้วมือและสีน้ำระบายสีอย่างสนุกสนาน ช่วยฝึกกล้ามเนื้อมัดเล็กและจินตนาการ',
       image: './assets/images/banner.png'
     }
   ],
@@ -236,27 +236,29 @@ class AppStore {
       if (cloudData.leaveRequests && Array.isArray(cloudData.leaveRequests) && cloudData.leaveRequests.length > 0) {
         cloudData.leaveRequests.forEach(cl => {
           const child = this.getChildById(cl.child_id);
-          const childName = child ? `${child.nickname} (${child.firstName} ${child.lastName})` : 'บุตรหลาน';
-          const parentName = child ? child.parentName : 'ผู้ปกครอง';
+          const childName = cl.child_name || (child ? `${child.nickname} (${child.firstName} ${child.lastName})` : 'บุตรหลาน');
+          const parentName = cl.parent_name || (child ? child.parentName : 'ผู้ปกครอง');
           const mappedLeave = {
             id: cl.id,
             childId: cl.child_id,
             childName: childName,
             parentName: parentName,
             leaveType: cl.leave_type,
-            startDate: cl.start_date,
-            endDate: cl.end_date,
+            startDate: this.formatToBEDate(cl.start_date),
+            endDate: this.formatToBEDate(cl.end_date),
             reason: cl.reason,
             status: cl.status,
             remark: cl.remark,
+            approvedBy: cl.approved_by,
             submittedAt: cl.submitted_at ? new Date(cl.submitted_at).toLocaleDateString('th-TH') + ' ' + new Date(cl.submitted_at).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.' : '-'
           };
 
-          const localIdx = this.data.leaveRequests.findIndex(l => l.id === cl.id || (l.childId === cl.child_id && l.startDate === cl.start_date));
+          const localIdx = this.data.leaveRequests.findIndex(l => l.id === cl.id || (l.childId === cl.child_id && (l.startDate === cl.start_date || l.startDate === mappedLeave.startDate)));
           if (localIdx >= 0) {
-            if (this.data.leaveRequests[localIdx].status !== cl.status) {
+            if (this.data.leaveRequests[localIdx].status !== cl.status || this.data.leaveRequests[localIdx].remark !== cl.remark) {
               this.data.leaveRequests[localIdx].status = cl.status;
               this.data.leaveRequests[localIdx].remark = cl.remark;
+              this.data.leaveRequests[localIdx].approvedBy = cl.approved_by;
               hasChanges = true;
             }
           } else {
@@ -276,13 +278,14 @@ class AppStore {
               this.data.attendance[localIdx].status = ca.status;
               this.data.attendance[localIdx].checkTime = ca.check_time;
               this.data.attendance[localIdx].checkedBy = ca.checked_by;
+              this.data.attendance[localIdx].date = beDate; // Keep BE format normalized
               hasChanges = true;
             }
           } else {
             this.data.attendance.push({
               id: ca.id,
               childId: ca.child_id,
-              date: ca.date,
+              date: beDate,
               status: ca.status,
               checkTime: ca.check_time,
               checkedBy: ca.checked_by
@@ -292,7 +295,7 @@ class AppStore {
         });
       }
 
-      // 3. Sync Children profiles (parentName, phone, height, weight)
+      // 3. Sync Children profiles
       if (cloudData.children && Array.isArray(cloudData.children) && cloudData.children.length > 0) {
         cloudData.children.forEach(cc => {
           const localC = this.data.children.find(c => c.id === cc.id);
@@ -302,6 +305,7 @@ class AppStore {
             if (cc.height_cm && Math.abs(Number(localC.heightCm || 0) - Number(cc.height_cm)) > 0.01) { localC.heightCm = Number(cc.height_cm); hasChanges = true; }
             if (cc.weight_kg && Math.abs(Number(localC.weightKg || 0) - Number(cc.weight_kg)) > 0.01) { localC.weightKg = Number(cc.weight_kg); hasChanges = true; }
             if (cc.growth_status && localC.growthStatus !== cc.growth_status) { localC.growthStatus = cc.growth_status; hasChanges = true; }
+            if (cc.parent_line_id && localC.parentLineId !== cc.parent_line_id) { localC.parentLineId = cc.parent_line_id; hasChanges = true; }
           }
         });
       }
@@ -310,7 +314,7 @@ class AppStore {
       if (cloudData.developmentRecords && Array.isArray(cloudData.developmentRecords) && cloudData.developmentRecords.length > 0) {
         cloudData.developmentRecords.forEach(cdr => {
           const child = this.getChildById(cdr.child_id);
-          const childName = child ? `${child.nickname} (${child.firstName} ${child.lastName})` : 'เด็กในระบบ';
+          const childName = cdr.child_name || (child ? `${child.nickname} (${child.firstName} ${child.lastName})` : 'เด็กในระบบ');
           const localIdx = this.data.developmentRecords.findIndex(d => d.childId === cdr.child_id && d.term === (cdr.term || '1/2569'));
           const mappedRec = {
             id: cdr.id,
@@ -327,12 +331,49 @@ class AppStore {
           };
           if (localIdx >= 0) {
             const localRec = this.data.developmentRecords[localIdx];
-            if (localRec.physicalScore !== cdr.physical_score || localRec.emotionalScore !== cdr.emotional_score) {
+            if (localRec.physicalScore !== cdr.physical_score || localRec.emotionalScore !== cdr.emotional_score || localRec.notes !== cdr.notes) {
               this.data.developmentRecords[localIdx] = { ...localRec, ...mappedRec };
               hasChanges = true;
             }
           } else {
             this.data.developmentRecords.push(mappedRec);
+            hasChanges = true;
+          }
+        });
+      }
+
+      // 5. Sync Announcements from cloud
+      if (cloudData.announcements && Array.isArray(cloudData.announcements) && cloudData.announcements.length > 0) {
+        cloudData.announcements.forEach(cann => {
+          const localIdx = this.data.announcements.findIndex(a => a.id === cann.id || a.title === cann.title);
+          if (localIdx < 0) {
+            this.data.announcements.unshift({
+              id: cann.id,
+              title: cann.title,
+              content: cann.content,
+              targetClass: cann.target_class || 'ALL',
+              author: cann.author || 'กองการศึกษา เทศบาลบางใหญ่',
+              createdAt: cann.created_at ? new Date(cann.created_at).toLocaleDateString('th-TH') : this.getTodayBEString(),
+              pinned: cann.pinned || false
+            });
+            hasChanges = true;
+          }
+        });
+      }
+
+      // 6. Sync Activities from cloud
+      if (cloudData.activities && Array.isArray(cloudData.activities) && cloudData.activities.length > 0) {
+        cloudData.activities.forEach(cact => {
+          const localIdx = this.data.activities.findIndex(a => a.id === cact.id || a.title === cact.title);
+          if (localIdx < 0) {
+            this.data.activities.unshift({
+              id: cact.id,
+              title: cact.title,
+              description: cact.description,
+              classId: cact.class_id || 'class-bm',
+              date: cact.date || this.getTodayBEString(),
+              image: cact.image || './assets/images/banner.png'
+            });
             hasChanges = true;
           }
         });
@@ -345,7 +386,7 @@ class AppStore {
         }
       }
     } catch (e) {
-      // Background sync notification
+      console.warn('Background sync notice:', e);
     }
   }
 
@@ -364,10 +405,14 @@ class AppStore {
   getCenterInfo() { return this.data.centerInfo; }
   getClassrooms() { return this.data.classrooms; }
   getChildren(classId = null) {
+    if (!this.data.children) return [];
     if (!classId || classId === 'ALL') return this.data.children;
     return this.data.children.filter(c => c.classId === classId);
   }
-  getChildById(id) { return this.data.children.find(c => c.id === id); }
+  getChildById(id) {
+    if (!this.data.children) return null;
+    return this.data.children.find(c => c.id === id) || null;
+  }
 
   updateChild(id, updates) {
     const child = this.getChildById(id);
@@ -383,6 +428,9 @@ class AppStore {
   }
 
   getChildrenForParent(parentUser) {
+    if (!this.data.children || !this.data.children.length) {
+      return INITIAL_SEED_DATA.children;
+    }
     if (!parentUser) return [this.data.children[0]];
     if (parentUser.childId) {
       const child = this.getChildById(parentUser.childId);
@@ -397,25 +445,30 @@ class AppStore {
   }
 
   getAttendance(date) {
-    const targetDate = date || this.getTodayBEString();
-    return this.data.attendance.filter(a => a.date === targetDate);
+    if (!this.data.attendance) return [];
+    const targetDate = date ? this.formatToBEDate(date) : this.getTodayBEString();
+    return this.data.attendance.filter(a => {
+      const aDate = this.formatToBEDate(a.date);
+      return aDate === targetDate || a.date === targetDate;
+    });
   }
 
   updateAttendance(childId, status, checkedBy = 'ครูผู้ดูแล', suppressNotification = false) {
     const today = this.getTodayBEString();
 
     if (status === 'RESET' || status === 'UNCHECKED') {
-      this.data.attendance = this.data.attendance.filter(a => !(a.childId === childId && a.date === today));
+      this.data.attendance = this.data.attendance.filter(a => !(a.childId === childId && (a.date === today || this.formatToBEDate(a.date) === today)));
       this.saveData(this.data);
       return;
     }
 
-    let record = this.data.attendance.find(a => a.childId === childId && a.date === today);
+    let record = this.data.attendance.find(a => a.childId === childId && (a.date === today || this.formatToBEDate(a.date) === today));
     const now = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
     if (record) {
       record.status = status;
       record.checkTime = now;
       record.checkedBy = checkedBy;
+      record.date = today;
     } else {
       record = {
         id: 'att-' + Date.now(),
@@ -477,7 +530,7 @@ class AppStore {
     };
     this.data.leaveRequests.unshift(newReq);
 
-    // Send LINE Notification specifically for Leave Request submission (Not check-in notification!)
+    // Send LINE Notification specifically for Leave Request submission
     const child = this.getChildById(req.childId);
     const targetParentLineId = (child && child.parentLineId) || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || 'U97dc0505bb590d70c66d401224a422db';
 
@@ -534,7 +587,7 @@ class AppStore {
     return req;
   }
 
-  getAnnouncements() { return this.data.announcements; }
+  getAnnouncements() { return this.data.announcements || []; }
 
   addAnnouncement(ann) {
     const newAnn = {
@@ -543,6 +596,7 @@ class AppStore {
       pinned: false,
       ...ann
     };
+    if (!this.data.announcements) this.data.announcements = [];
     this.data.announcements.unshift(newAnn);
 
     this.sendLineNotification(
@@ -550,23 +604,36 @@ class AppStore {
       `${ann.title}`
     );
 
+    // Async Supabase DB Sync
+    if (window.supabaseService && typeof window.supabaseService.syncAnnouncementToDB === 'function') {
+      window.supabaseService.syncAnnouncementToDB(newAnn);
+    }
+
     this.saveData(this.data);
     return newAnn;
   }
 
-  getMealPlan() { return this.data.mealPlan; }
-  getActivities() { return this.data.activities; }
+  getMealPlan() { return this.data.mealPlan || []; }
+  getActivities() { return this.data.activities || []; }
 
   addActivity(act) {
     const newAct = { id: 'act-' + Date.now(), date: this.getTodayBEString(), ...act };
+    if (!this.data.activities) this.data.activities = [];
     this.data.activities.unshift(newAct);
+
+    // Async Supabase DB Sync
+    if (window.supabaseService && typeof window.supabaseService.syncActivityToDB === 'function') {
+      window.supabaseService.syncActivityToDB(newAct);
+    }
+
     this.saveData(this.data);
     return newAct;
   }
 
-  getDevelopmentRecords() { return this.data.developmentRecords; }
+  getDevelopmentRecords() { return this.data.developmentRecords || []; }
 
   saveDevelopmentRecord(rec) {
+    if (!this.data.developmentRecords) this.data.developmentRecords = [];
     const existing = this.data.developmentRecords.find(d => d.childId === rec.childId && d.term === (rec.term || '1/2569'));
     let savedRec;
     if (existing) {
@@ -578,7 +645,7 @@ class AppStore {
     }
 
     // Async Supabase DB Sync
-    if (window.supabaseService) {
+    if (window.supabaseService && typeof window.supabaseService.syncDevelopmentRecordToDB === 'function') {
       window.supabaseService.syncDevelopmentRecordToDB(savedRec);
     }
 
@@ -618,12 +685,13 @@ class AppStore {
     }
   }
 
-  getAuditLogs() { return this.data.auditLogs; }
+  getAuditLogs() { return this.data.auditLogs || []; }
 
   addAuditLog(user, action, details) {
     const now = new Date();
     const timestamp = now.toISOString().replace('T', ' ').substring(0, 19);
     const newLog = { id: 'log-' + Date.now(), timestamp, user, action, details };
+    if (!this.data.auditLogs) this.data.auditLogs = [];
     this.data.auditLogs.unshift(newLog);
 
     // Async Supabase DB Sync
