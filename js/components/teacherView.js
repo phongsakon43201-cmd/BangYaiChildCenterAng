@@ -254,43 +254,95 @@ const TeacherView = {
 
     if (tab === 'GROWTH_RECORD') {
       return `
+        <div class="glass-card" style="margin-bottom: 1.25rem; background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%); border-left: 5px solid #10B981; padding: 1.25rem;">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                <span style="font-size: 1.35rem;">⚖️</span>
+                <h3 style="font-weight: 800; font-size: 1.15rem; margin: 0; color: #065F46;">ระบบคำนวณดัชนีมวลกาย (BMI) และประเมินการเจริญเติบโตอัตโนมัติ</h3>
+              </div>
+              <p style="font-size: 0.88rem; color: #047857; margin: 0 0 0.5rem 0;">
+                สูตรคำนวณสากล: <strong>น้ำหนัก (กก.) / [ส่วนสูง (ม.)]²</strong> (ระบบจะคำนวณและจำแนกเกณฑ์ให้อัตโนมัติทันทีที่กรอก)
+              </p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <span class="badge badge-success" style="font-weight: 700;">🟢 สมส่วน (ปกติ)</span>
+              <span class="badge badge-warning" style="background: #FEF3C7; color: #92400E; font-weight: 700;">🟡 ท้วม/น้ำหนักเกิน</span>
+              <span class="badge badge-danger" style="font-weight: 700;">🔴 อ้วน</span>
+              <span class="badge badge-info" style="font-weight: 700;">🔵 ค่อนข้างผอม</span>
+            </div>
+          </div>
+        </div>
+
         <div class="glass-card">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
             <div>
-              <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">บันทึกส่วนสูง น้ำหนัก และประวัติวัคซีนเด็กปฐมวัย</h3>
-              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 2px 0 0 0;">คำนวณค่าดัชนีมวลกาย (BMI) และสถานะการเติบโตตามเกณฑ์กรมอนามัย</p>
+              <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">บันทึกส่วนสูง น้ำหนัก และประเมินสุขภาพรายบุคคล (${children.length} คน)</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin: 2px 0 0 0;">แก้ไขตัวเลขเพื่อดูการคำนวณ BMI แบบ Real-Time</p>
             </div>
-            <span class="badge badge-success">ตามเกณฑ์กรมอนามัย</span>
+            <span class="badge badge-success">คำนวณอัตโนมัติ Real-Time</span>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 1rem;">
-            ${children.map(child => `
-              <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem; background: var(--bg-surface);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-                  <strong style="font-size: 1rem; color: var(--text-main);">${child.nickname} (${child.firstName} ${child.lastName})</strong>
-                  <button type="button" class="btn btn-primary btn-sm" onclick="window.TeacherView.saveGrowthData('${child.id}', '${containerId}')">💾 บันทึกการเติบโต</button>
-                </div>
+            ${children.map(child => {
+              const h = child.heightCm || 92.0;
+              const w = child.weightKg || 13.5;
+              const hM = h / 100;
+              const curBmi = (w / (hM * hM)).toFixed(1);
+              const curStatus = child.growthStatus || 'สมส่วนตามเกณฑ์';
+              const badgeBg = curStatus === 'สมส่วนตามเกณฑ์' ? '#10B981' : curStatus === 'ท้วม/เริ่มอ้วน' ? '#F59E0B' : curStatus === 'อ้วน' ? '#EF4444' : '#3B82F6';
 
-                <div class="grid-3">
-                  <div>
-                    <label class="form-label" style="font-size: 0.8rem;">ส่วนสูง (ซม.)</label>
-                    <input type="number" step="0.1" id="growth-h-${child.id}" class="form-control btn-sm" value="${child.heightCm || 92.0}">
+              return `
+                <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; background: var(--bg-surface); box-shadow: var(--shadow-sm);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                      <div class="student-avatar" style="width: 38px; height: 38px; font-size: 1rem; background-color: ${child.avatarColor || '#4F46E5'}; color: #FFF;">
+                        ${(child.nickname ? child.nickname.replace(/^น้อง/, '').charAt(0) : child.firstName.charAt(0)) || '👶'}
+                      </div>
+                      <div>
+                        <strong style="font-size: 1.05rem; color: var(--text-main);">${child.nickname} (${child.firstName} ${child.lastName})</strong>
+                        <span id="growth-bmi-badge-${child.id}" class="badge" style="background: ${badgeBg}; color: #FFF; font-weight: 700; margin-left: 0.5rem; font-size: 0.8rem; padding: 3px 9px;">
+                          BMI: ${curBmi} (${curStatus})
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary btn-sm" onclick="window.TeacherView.saveGrowthData('${child.id}', '${containerId}')" style="font-weight: 700; padding: 0.4rem 1rem;">
+                      💾 บันทึกการเติบโต
+                    </button>
                   </div>
-                  <div>
-                    <label class="form-label" style="font-size: 0.8rem;">น้ำหนัก (กก.)</label>
-                    <input type="number" step="0.1" id="growth-w-${child.id}" class="form-control btn-sm" value="${child.weightKg || 13.5}">
+
+                  <div class="grid-3" style="gap: 1rem; align-items: end;">
+                    <div>
+                      <label class="form-label" style="font-size: 0.82rem; font-weight: 600;">ส่วนสูง (เซนติเมตร)</label>
+                      <input type="number" step="0.1" min="30" max="220" id="growth-h-${child.id}" class="form-control btn-sm" value="${h}" oninput="window.TeacherView.autoCalcBMI('${child.id}')" placeholder="เช่น 92.0" style="font-weight: 700; font-size: 0.95rem;">
+                    </div>
+                    <div>
+                      <label class="form-label" style="font-size: 0.82rem; font-weight: 600;">น้ำหนัก (กิโลกรัม)</label>
+                      <input type="number" step="0.1" min="2" max="150" id="growth-w-${child.id}" class="form-control btn-sm" value="${w}" oninput="window.TeacherView.autoCalcBMI('${child.id}')" placeholder="เช่น 13.5" style="font-weight: 700; font-size: 0.95rem;">
+                    </div>
+                    <div>
+                      <label class="form-label" style="font-size: 0.82rem; font-weight: 600;">ผลประเมินการเติบโต (Auto)</label>
+                      <select id="growth-status-${child.id}" class="form-control btn-sm" style="font-weight: 600; min-height: 38px;">
+                        <option value="สมส่วนตามเกณฑ์" ${curStatus === 'สมส่วนตามเกณฑ์' ? 'selected' : ''}>🟢 สมส่วนตามเกณฑ์ (น้ำหนักปกติ)</option>
+                        <option value="ท้วม/เริ่มอ้วน" ${curStatus === 'ท้วม/เริ่มอ้วน' ? 'selected' : ''}>🟡 ท้วม / เริ่มอ้วน (น้ำหนักเกิน)</option>
+                        <option value="อ้วน" ${curStatus === 'อ้วน' ? 'selected' : ''}>🔴 อ้วน / อ้วนมาก</option>
+                        <option value="ค่อนข้างผอม" ${curStatus === 'ค่อนข้างผอม' ? 'selected' : ''}>🔵 ค่อนข้างผอม (ผอมเกินไป)</option>
+                      </select>
+                    </div>
                   </div>
-                  <div>
-                    <label class="form-label" style="font-size: 0.8rem;">การประเมินการเติบโต</label>
-                    <select id="growth-status-${child.id}" class="form-control btn-sm">
-                      <option value="สมส่วนตามเกณฑ์" ${(child.growthStatus || '') === 'สมส่วนตามเกณฑ์' ? 'selected' : ''}>สมส่วนตามเกณฑ์</option>
-                      <option value="ท้วม/เริ่มอ้วน" ${(child.growthStatus || '') === 'ท้วม/เริ่มอ้วน' ? 'selected' : ''}>ท้วม/เริ่มอ้วน</option>
-                      <option value="ค่อนข้างผอม" ${(child.growthStatus || '') === 'ค่อนข้างผอม' ? 'selected' : ''}>ค่อนข้างผอม</option>
-                    </select>
+
+                  <div style="margin-top: 0.65rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-muted); padding-top: 0.4rem; border-top: 1px dashed var(--border-color); flex-wrap: wrap; gap: 0.35rem;">
+                    <div id="growth-bmi-calc-${child.id}">
+                      สูตร: ${w} / (${hM.toFixed(2)})² = <strong>${(w / (hM * hM)).toFixed(2)}</strong>
+                    </div>
+                    <div style="color: var(--text-muted);">
+                      อายุ: ${child.ageString || '2 ขวบ 6 เดือน'} | วัคซีนครบ: ${(child.vaccines || []).length} เข็ม
+                    </div>
                   </div>
                 </div>
-              </div>
-            `).join('')}
+              `;
+            }).join('')}
           </div>
         </div>
       `;
@@ -449,19 +501,104 @@ const TeacherView = {
     this.render(containerId);
   },
 
+  // Real-Time Auto BMI Calculation & Growth Classification
+  autoCalcBMI(childId) {
+    const hElem = document.getElementById(`growth-h-${childId}`);
+    const wElem = document.getElementById(`growth-w-${childId}`);
+    const statusElem = document.getElementById(`growth-status-${childId}`);
+    const badgeElem = document.getElementById(`growth-bmi-badge-${childId}`);
+    const calcElem = document.getElementById(`growth-bmi-calc-${childId}`);
+
+    if (!hElem || !wElem) return { bmi: 0, status: 'สมส่วนตามเกณฑ์' };
+
+    const heightCm = parseFloat(hElem.value) || 0;
+    const weightKg = parseFloat(wElem.value) || 0;
+
+    if (heightCm <= 0 || weightKg <= 0) {
+      if (badgeElem) {
+        badgeElem.style.background = '#9CA3AF';
+        badgeElem.innerHTML = 'โปรดระบุส่วนสูง & น้ำหนัก';
+      }
+      if (calcElem) calcElem.innerHTML = 'สูตร: น้ำหนัก (กก.) / [ส่วนสูง (ม.)]²';
+      return { bmi: 0, status: 'สมส่วนตามเกณฑ์' };
+    }
+
+    const heightM = heightCm / 100;
+    const rawBmi = weightKg / (heightM * heightM);
+    const bmi = parseFloat(rawBmi.toFixed(1));
+    const bmiDetailed = rawBmi.toFixed(2);
+
+    // Standard Classification:
+    // Toddlers & Early Childhood (Department of Health Thailand & WHO criteria)
+    let status = 'สมส่วนตามเกณฑ์';
+    let badgeBg = '#10B981';
+
+    if (heightCm < 130) {
+      // Early childhood (2-5 years old toddler standard)
+      if (rawBmi < 13.8) {
+        status = 'ค่อนข้างผอม';
+        badgeBg = '#3B82F6';
+      } else if (rawBmi <= 17.5) {
+        status = 'สมส่วนตามเกณฑ์';
+        badgeBg = '#10B981';
+      } else if (rawBmi <= 19.0) {
+        status = 'ท้วม/เริ่มอ้วน';
+        badgeBg = '#F59E0B';
+      } else {
+        status = 'อ้วน';
+        badgeBg = '#EF4444';
+      }
+    } else {
+      // General / Adult BMI criteria
+      if (rawBmi < 18.5) {
+        status = 'ค่อนข้างผอม';
+        badgeBg = '#3B82F6';
+      } else if (rawBmi <= 22.9) {
+        status = 'สมส่วนตามเกณฑ์';
+        badgeBg = '#10B981';
+      } else if (rawBmi <= 24.9) {
+        status = 'ท้วม/เริ่มอ้วน';
+        badgeBg = '#F59E0B';
+      } else {
+        status = 'อ้วน';
+        badgeBg = '#EF4444';
+      }
+    }
+
+    // Auto-update select element
+    if (statusElem) {
+      statusElem.value = status;
+    }
+
+    // Auto-update live badge
+    if (badgeElem) {
+      badgeElem.style.background = badgeBg;
+      badgeElem.innerHTML = `BMI: ${bmi} (${status})`;
+    }
+
+    // Auto-update live formula string
+    if (calcElem) {
+      calcElem.innerHTML = `สูตร: ${weightKg} / (${heightM.toFixed(2)})² = <strong>${bmiDetailed}</strong> (BMI: ${bmi})`;
+    }
+
+    return { bmi, status };
+  },
+
   saveGrowthData(childId, containerId) {
     const teacherName = (window.authController && window.authController.getCurrentUser()) ? window.authController.getCurrentUser().name : 'ครูประจำชั้น';
     const child = window.appStore.getChildById(childId);
     const childNickname = child ? child.nickname : 'เด็ก';
 
+    // Calculate real-time BMI & status
+    const calc = this.autoCalcBMI(childId);
     const hElem = document.getElementById(`growth-h-${childId}`);
     const wElem = document.getElementById(`growth-w-${childId}`);
     const statusElem = document.getElementById(`growth-status-${childId}`);
 
     const height = hElem ? (parseFloat(hElem.value) || 92.0) : 92.0;
     const weight = wElem ? (parseFloat(wElem.value) || 13.5) : 13.5;
-    const bmi = parseFloat((weight / ((height / 100) ** 2)).toFixed(1));
-    const growthStatus = statusElem ? statusElem.value : 'สมส่วนตามเกณฑ์';
+    const bmi = calc.bmi || parseFloat((weight / ((height / 100) ** 2)).toFixed(1));
+    const growthStatus = (statusElem && statusElem.value) || calc.status || 'สมส่วนตามเกณฑ์';
 
     window.appStore.updateChild(childId, {
       heightCm: height,
@@ -473,11 +610,11 @@ const TeacherView = {
     window.appStore.addAuditLog(
       teacherName,
       'SAVE_GROWTH_DATA',
-      `บันทึกข้อมูลการเติบโต (ส่วนสูง ${height} ซม. / น้ำหนัก ${weight} กก. / BMI ${bmi}) ของ ${childNickname}`
+      `บันทึกข้อมูลการเติบโต (ส่วนสูง ${height} ซม. / น้ำหนัก ${weight} กก. / BMI ${bmi} - ${growthStatus}) ของ ${childNickname}`
     );
 
     if (window.ModalsComponent) {
-      window.ModalsComponent.showToast(`บันทึกข้อมูลส่วนสูงและน้ำหนักของ ${childNickname} เรียบร้อยแล้ว! (BMI: ${bmi})`, 'success');
+      window.ModalsComponent.showToast(`บันทึกข้อมูล ${childNickname} เรียบร้อยแล้ว! (ส่วนสูง ${height} ซม. / น้ำหนัก ${weight} กก. / BMI ${bmi} : ${growthStatus})`, 'success');
     }
     this.render(containerId);
   },

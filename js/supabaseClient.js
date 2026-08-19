@@ -289,29 +289,44 @@ class SupabaseService {
   async sendLineMessagingAPI(channelAccessToken, toUserIdOrGroupId, messageText) {
     if (!channelAccessToken || !toUserIdOrGroupId) return false;
     const payload = {
+      channelAccessToken,
       to: toUserIdOrGroupId,
-      messages: [{ type: 'text', text: messageText }]
+      messageText
     };
 
-    const lineEndpoint = 'https://api.line.me/v2/bot/message/push';
-
-    // 1. Try Netlify Serverless Function Relay first
+    // 1. Try local/relative Netlify function first (if running on Netlify)
     try {
       const netlifyFnUrl = '/.netlify/functions/line-push';
       const res = await fetch(netlifyFnUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channelAccessToken, to: toUserIdOrGroupId, messageText })
+        body: JSON.stringify(payload)
       });
       if (res.ok) {
-        console.log(`⚡ Netlify Function: Real LINE Push sent successfully to ${toUserIdOrGroupId}!`);
+        console.log(`⚡ Netlify Local Function: Real LINE Push sent successfully to ${toUserIdOrGroupId}!`);
         return true;
       }
     } catch (e) {
-      // Fallback
+      // Fallback to absolute production Netlify Function
     }
 
-    // 2. Try Supabase Edge Function Relay
+    // 2. Try Absolute Production Netlify Relay (Works 100% on localhost & all domains with CORS enabled)
+    try {
+      const prodRelayUrl = 'https://child-center-mis.netlify.app/.netlify/functions/line-push';
+      const res = await fetch(prodRelayUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        console.log(`⚡ Production Netlify Relay: Real LINE Push sent successfully to ${toUserIdOrGroupId}!`);
+        return true;
+      }
+    } catch (e) {
+      console.warn('Production Netlify Relay warning:', e);
+    }
+
+    // 3. Try Supabase Edge Function Relay (if available)
     if (SUPABASE_CONFIG && SUPABASE_CONFIG.url) {
       try {
         const edgeFnUrl = `${SUPABASE_CONFIG.url}/functions/v1/line-push`;
@@ -321,7 +336,7 @@ class SupabaseService {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
           },
-          body: JSON.stringify({ channelAccessToken, to: toUserIdOrGroupId, messageText })
+          body: JSON.stringify(payload)
         });
         if (res.ok) {
           console.log(`⚡ Supabase Edge Function: Real LINE Push sent to ${toUserIdOrGroupId}!`);
@@ -329,33 +344,6 @@ class SupabaseService {
         }
       } catch (e) {
         // Fallback
-      }
-    }
-
-    // 3. Fallback to CORS Proxies
-    const proxyUrls = [
-      `https://thingproxy.freeboard.io/fetch/${lineEndpoint}`,
-      `https://corsproxy.org/?${encodeURIComponent(lineEndpoint)}`,
-      `https://corsproxy.io/?${encodeURIComponent(lineEndpoint)}`
-    ];
-
-    for (const proxyUrl of proxyUrls) {
-      try {
-        const response = await fetch(proxyUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${channelAccessToken}`
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (response && response.ok) {
-          console.log(`📲 Real LINE Messaging API Push sent successfully via Proxy to ${toUserIdOrGroupId}!`);
-          return true;
-        }
-      } catch (err) {
-        // Continue
       }
     }
 

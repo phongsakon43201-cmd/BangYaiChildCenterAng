@@ -380,42 +380,71 @@ const ModalsComponent = {
     content.innerHTML = `
       <div>
         <div class="modal-header" style="background: linear-gradient(135deg, #06C755, #05B34C); color: white; margin: -1.75rem -1.75rem 1.25rem -1.75rem; padding: 1.25rem 1.75rem; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
-          <h3 class="modal-title" style="color: white; margin: 0; font-size: 1.15rem;">💬 เชื่อมต่อ LINE รับแจ้งเตือนส่วนบุคคล</h3>
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <span style="font-size: 1.5rem;">💬</span>
+            <div>
+              <h3 class="modal-title" style="color: white; margin: 0; font-size: 1.15rem;">เชื่อมต่อ LINE แจ้งเตือนส่วนบุคคล (Real-Time)</h3>
+              <p style="font-size: 0.75rem; color: rgba(255,255,255,0.85); margin: 2px 0 0 0;">BangYai Child Center Official LINE Bot (@740ikamd)</p>
+            </div>
+          </div>
           <button type="button" class="btn btn-secondary btn-sm" style="color: white; background: transparent; border-color: rgba(255,255,255,0.4);" onclick="window.ModalsComponent.closeModal()">✕</button>
         </div>
-        <div style="padding: 0.5rem 0;">
+
+        <div style="padding: 0.25rem 0;">
           <div style="text-align: center; margin-bottom: 1.25rem;">
-            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📲</div>
-            <h4 style="font-weight: 700; margin-bottom: 0.25rem; font-size: 1.1rem; color: var(--text-main);">รับการแจ้งเตือนของ ${child.nickname} (${child.firstName} ${child.lastName || ''})</h4>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
-              รับข้อความเมื่อครูเช็กชื่อ (มา/สาย/ลา) และผลอนุมัติใบลาตรงเข้า LINE ส่วนตัวของคุณทันที
+            <div style="display: inline-flex; align-items: center; gap: 0.75rem; background: var(--bg-app); border: 1px solid var(--border-color); padding: 0.6rem 1.25rem; border-radius: var(--radius-full); margin-bottom: 0.65rem;">
+              <img src="https://profile.line-scdn.net/0hLg6dcuRPE0gLHQ9TovVsHzdYHSV8MxUAc35UKntIS3AuLAQaNHwOJyofHXlyLgEeYnkOey5PSn5x" alt="LINE Bot" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" onerror="this.src='./assets/images/logo.png'">
+              <div style="text-align: left;">
+                <strong style="font-size: 0.88rem; color: var(--text-main); display: block;">BangYai Child Center</strong>
+                <span style="font-size: 0.75rem; color: #059669; font-weight: 700;">ID: @740ikamd</span>
+              </div>
+            </div>
+
+            <h4 style="font-weight: 700; margin-bottom: 0.25rem; font-size: 1.1rem; color: var(--text-main);">
+              รับการแจ้งเตือนของ ${child.nickname} (${child.firstName} ${child.lastName || ''})
+            </h4>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; max-width: 500px; margin: 0 auto;">
+              แจ้งเตือนอัตโนมัติเมื่อครูเช็กชื่อ (มา/สาย/ลา), อนุมัติใบลา, หรือส่งข่าวสารตรงเข้า LINE มือถือของคุณทันที 24 ชม.
             </p>
           </div>
 
-          <div style="background: var(--bg-app); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; text-align: center; border: 1px solid var(--border-color);">
-            <span class="badge badge-line" style="margin-bottom: 0.5rem;">ขั้นตอนที่ 1</span>
-            <p style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">แอดเพื่อนกับ LINE Official Account ของศูนย์ฯ</p>
-            <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
-              <span style="font-size: 0.85rem; background: var(--bg-surface); padding: 0.4rem 0.85rem; border-radius: 6px; border: 1px dashed var(--line-green); font-weight: 700; color: var(--line-green);">
-                @ศูนย์พัฒนาเด็กเล็กเทศบาลเมืองบางใหญ่
-              </span>
+          <!-- Step 1: Add Friend -->
+          <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <span class="badge" style="background: #06C755; color: white; font-weight: 700; font-size: 0.75rem; margin-bottom: 0.35rem;">ขั้นตอนที่ 1</span>
+              <strong style="display: block; font-size: 0.92rem; color: #166534;">เพิ่มเพื่อนกับ LINE Official Account</strong>
+              <p style="font-size: 0.8rem; color: #15803D; margin: 2px 0 0 0;">ค้นหาไอดี <strong>@740ikamd</strong> หรือกดปุ่มด้านขวาเพื่อเพิ่มเพื่อน</p>
             </div>
+            <a href="https://line.me/R/ti/p/@740ikamd" target="_blank" rel="noopener noreferrer" class="btn" style="background: #06C755; color: white; font-weight: 700; padding: 0.45rem 1rem; font-size: 0.85rem; text-decoration: none; border-radius: var(--radius-md); box-shadow: 0 2px 8px rgba(6,199,85,0.3);">
+              ➕ เพิ่มเพื่อน LINE Bot
+            </a>
           </div>
 
+          <!-- Step 2: Input User ID & Test Push -->
           <form onsubmit="window.ModalsComponent.handleConnectLineSubmit(event, '${child.id}')">
-            <div class="form-group" style="margin-bottom: 1.25rem;">
-              <label class="form-label" style="font-weight: 700;">ขั้นตอนที่ 2: ระบุ LINE User ID ของคุณ</label>
-              <input type="text" id="modal-connect-line-id" class="form-control" value="${currentLineId}" placeholder="เช่น U97dc0505bb590d70c66d401224a422db" required style="font-family: monospace; font-weight: 600;">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                <label class="form-label" style="font-weight: 700; margin: 0;">ขั้นตอนที่ 2: ระบุ LINE User ID ของคุณ</label>
+                <span class="badge badge-info" style="font-size: 0.7rem;">(ขึ้นต้นด้วย U เช่น U97dc05...)</span>
+              </div>
+              <input type="text" id="modal-connect-line-id" class="form-control" value="${currentLineId}" placeholder="เช่น U97dc0505bb590d70c66d401224a422db" required style="font-family: monospace; font-weight: 600; font-size: 0.92rem; padding: 0.6rem 0.85rem;">
               <small style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.35rem;">
-                * ดูรหัส User ID ได้จากเมนู Basic settings ใน LINE Developers Console
+                * ดูรหัส User ID ได้จากเมนู Basic settings หรือบัญชี LINE Developers ของผู้ใช้งาน
               </small>
             </div>
 
-            <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
-              <button type="button" class="btn btn-secondary" onclick="window.ModalsComponent.closeModal()">ยกเลิก</button>
-              <button type="submit" class="btn btn-success" style="background: #06C755; border-color: #06C755; color: white; font-weight: 700;">
-                💾 บันทึกการเชื่อมต่อ LINE
+            <!-- Action Button Bar: Test Button + Save Button -->
+            <div style="display: flex; gap: 0.65rem; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 1.5rem; border-top: 1px dashed var(--border-color); padding-top: 1rem;">
+              <button type="button" id="btn-test-line-push" class="btn btn-secondary" onclick="window.ModalsComponent.testLinePush('${child.id}')" style="font-weight: 700; color: #065F46; border-color: #06C755; background: #ECFDF5;">
+                🧪 ทดสอบส่งข้อความเข้า LINE
               </button>
+
+              <div style="display: flex; gap: 0.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="window.ModalsComponent.closeModal()">ยกเลิก</button>
+                <button type="submit" class="btn btn-success" style="background: #06C755; border-color: #06C755; color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(6,199,85,0.3);">
+                  💾 บันทึกการเชื่อมต่อ LINE
+                </button>
+              </div>
             </div>
           </form>
         </div>
@@ -423,6 +452,35 @@ const ModalsComponent = {
     `;
 
     backdrop.classList.add('active');
+  },
+
+  async testLinePush(childId) {
+    const lineIdInput = document.getElementById('modal-connect-line-id');
+    const lineId = (lineIdInput && lineIdInput.value.trim()) || '';
+    if (!lineId) {
+      this.showToast('โปรดระบุ LINE User ID ของคุณก่อนกดทดสอบครับ', 'warning');
+      return;
+    }
+
+    const child = window.appStore.getChildById(childId) || { nickname: 'บุตรหลาน', firstName: 'เด็ก' };
+    const btn = document.getElementById('btn-test-line-push');
+    if (btn) btn.innerText = '⏳ กำลังส่งข้อความเข้า LINE...';
+
+    const channelToken = localStorage.getItem('BANGYAI_LINE_CHANNEL_TOKEN') || 'L7/4yLNWgK1roywgIIx98q84tRljHPAv7SjKG6ExDkATxkCGNwqqI3Nm4oiaeVMBEtAgflw8LJzt4ghPKfFLXUWRsRlHAraAHUaXDbwk/W0FsibrVYyVaYDFI1RBPh0HGXGwxYqqYVLRP8Snr6bSSwdB04t89/1O/w1cDnyilFU=';
+    const now = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
+    const msg = `🔔 [ทดสอบการเชื่อมต่อ LINE สำเร็จ!]\nศูนย์พัฒนาเด็กเล็ก เทศบาลเมืองบางใหญ่\nยินดีต้อนรับผู้ปกครองของ ${child.nickname} (${child.firstName})\nระบบพร้อมส่งการแจ้งเตือนเช็กชื่อและผลอนุมัติใบลาตรงถึงท่านแล้ว (${now})`;
+
+    const success = await window.supabaseService.sendLineMessagingAPI(channelToken, lineId, msg);
+
+    if (btn) btn.innerText = '🧪 ทดสอบส่งข้อความเข้า LINE';
+
+    if (success) {
+      this.showToast(`✅ ส่งข้อความทดสอบเข้า LINE (${lineId}) สำเร็จแล้ว! โปรดเปิดแอป LINE ตรวจสอบ`, 'success');
+      window.appStore.updateChild(childId, { parentLineId: lineId });
+      localStorage.setItem('BANGYAI_LINE_PERSONAL_USER_ID', lineId);
+    } else {
+      this.showToast(`⚠️ ไม่สามารถส่งข้อความได้ โปรดตรวจสอบว่าท่านได้กด "แอดเพื่อน" กับบอท @740ikamd แล้วหรือยัง`, 'error');
+    }
   },
 
   handleConnectLineSubmit(e, childId) {

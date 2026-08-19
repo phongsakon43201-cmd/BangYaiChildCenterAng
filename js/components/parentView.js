@@ -186,24 +186,32 @@ const ParentView = {
         </div>
 
         <!-- LINE Connect Banner Card for Parent -->
-        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(236, 253, 245, 0.95), rgba(209, 250, 229, 0.95)); border-color: rgba(6, 199, 85, 0.3);">
+        <div class="glass-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(236, 253, 245, 0.95), rgba(209, 250, 229, 0.95)); border-color: rgba(6, 199, 85, 0.4); box-shadow: var(--shadow-md);">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
             <div style="display: flex; align-items: center; gap: 1rem;">
-              <div style="width: 48px; height: 48px; border-radius: 12px; background: #06C755; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; box-shadow: 0 4px 12px rgba(6, 199, 85, 0.3);">
+              <div style="width: 52px; height: 52px; border-radius: 14px; background: #06C755; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; color: white; box-shadow: 0 4px 14px rgba(6, 199, 85, 0.35);">
                 💬
               </div>
               <div>
-                <span class="badge badge-line" style="margin-bottom: 0.25rem;">LINE Messaging API</span>
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0; color: #065F46;">เชื่อมต่อ LINE รับแจ้งเตือนส่วนบุคคลของ ${activeChild.nickname}</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">
-                  รับแจ้งเตือนเมื่อ ${activeChild.nickname} เดินทางถึงศูนย์ฯ (มา/สาย/ลา) และผลอนุมัติใบลาตรงเข้า LINE ส่วนตัวของคุณทันที
-                  ${activeChild.parentLineId ? `<strong style="color: #059669;"> (เชื่อมต่อแล้ว: ${activeChild.parentLineId})</strong>` : ''}
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.25rem;">
+                  <span class="badge badge-line" style="font-weight: 700;">LINE Messaging API</span>
+                  <span class="badge" style="background: #065F46; color: #FFF; font-weight: 700; font-size: 0.72rem;">บอททางการ: @740ikamd</span>
+                </div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0; color: #065F46;">เชื่อมต่อ LINE รับแจ้งเตือนส่วนบุคคลของ ${activeChild.nickname}</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 3px;">
+                  รับแจ้งเตือนทันทีเมื่อครูเช็กชื่อ (มา/สาย/ลา) และผลอนุมัติใบลาตรงเข้า LINE ส่วนตัว
+                  ${activeChild.parentLineId ? `<span class="badge badge-success" style="font-size: 0.75rem; margin-left: 0.25rem;">✓ เชื่อมต่อแล้ว: ${activeChild.parentLineId}</span>` : '<span class="badge badge-warning" style="background: #FEF3C7; color: #92400E; font-size: 0.75rem; margin-left: 0.25rem;">⏳ ยังไม่ระบุ LINE User ID</span>'}
                 </p>
               </div>
             </div>
-            <button type="button" class="btn btn-success" style="background: #06C755; border-color: #06C755; color: white; font-weight: 700;" onclick="window.ModalsComponent.openConnectLineModal('${activeChild.id}')">
-              📱 เชื่อมต่อ LINE ส่วนตัว
-            </button>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <a href="https://line.me/R/ti/p/@740ikamd" target="_blank" rel="noopener noreferrer" class="btn" style="background: #FFFFFF; color: #06C755; border: 1px solid #06C755; font-weight: 700; text-decoration: none; padding: 0.5rem 0.85rem; font-size: 0.85rem; border-radius: var(--radius-md);">
+                ➕ แอดเพื่อน @740ikamd
+              </a>
+              <button type="button" class="btn btn-success" style="background: #06C755; border-color: #06C755; color: white; font-weight: 700; padding: 0.5rem 1rem; box-shadow: 0 4px 12px rgba(6,199,85,0.3);" onclick="window.ModalsComponent.openConnectLineModal('${activeChild.id}')">
+                📱 ตั้งค่า & ทดสอบส่ง LINE
+              </button>
+            </div>
           </div>
         </div>
 
@@ -211,9 +219,9 @@ const ParentView = {
         <div class="glass-card" style="margin-bottom: 1.5rem; background: var(--line-bg); border-color: rgba(6, 199, 85, 0.3);">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
             <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <span class="badge badge-line" style="font-size: 0.85rem; font-weight: 700;">💬 LINE Official Account Notification (จำลองการส่งเข้ามือถือ)</span>
+              <span class="badge badge-line" style="font-size: 0.85rem; font-weight: 700;">💬 LINE Official Account Notification (ประวัติการแจ้งเตือน)</span>
             </div>
-            <span style="font-size: 0.75rem; color: var(--text-muted);">แจ้งเตือนแบบ Real-Time</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">ส่งผ่าน LINE Bot @740ikamd</span>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 0.5rem;">

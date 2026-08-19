@@ -112,11 +112,11 @@ const ChartUtils = {
   },
 
   // Render Attendance Comparison Trend Bar Chart
-  renderAttendanceTrend(containerId) {
+  renderAttendanceTrend(containerId, customTrendData = null) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    const days = [
+    const days = customTrendData || [
       { day: 'จ.', rate: 96 },
       { day: 'อ.', rate: 94 },
       { day: 'พ.', rate: 98 },
@@ -124,14 +124,14 @@ const ChartUtils = {
       { day: 'ศ.', rate: 95 }
     ];
 
-    let html = '<div style="display: flex; align-items: flex-end; justify-content: space-between; height: 160px; padding-top: 1.5rem; gap: 0.75rem;">';
+    let html = '<div style="display: flex; align-items: flex-end; justify-content: space-between; height: 160px; padding-top: 1.5rem; gap: 0.5rem; overflow-x: auto;">';
     days.forEach(d => {
-      const heightPx = (d.rate / 100) * 120;
+      const heightPx = Math.max(8, (d.rate / 100) * 120);
       html += `
-        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.35rem; height: 100%; justify-content: flex-end;">
+        <div style="flex: 1; min-width: 32px; display: flex; flex-direction: column; align-items: center; gap: 0.35rem; height: 100%; justify-content: flex-end;">
           <span style="font-size: 0.75rem; font-weight: 700; color: var(--primary-600);">${d.rate}%</span>
-          <div style="width: 100%; max-width: 36px; height: ${heightPx}px; background: linear-gradient(180deg, var(--primary-500), var(--primary-700)); border-radius: 6px 6px 0 0; transition: height 0.6s ease;"></div>
-          <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">${d.day}</span>
+          <div style="width: 100%; max-width: 36px; height: ${heightPx}px; background: linear-gradient(180deg, var(--primary-500), var(--primary-700)); border-radius: 6px 6px 0 0; transition: height 0.6s ease;" title="${d.day}: ${d.rate}%"></div>
+          <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); white-space: nowrap;">${d.day}</span>
         </div>
       `;
     });
