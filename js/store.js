@@ -177,7 +177,9 @@ class AppStore {
           existingChild.lastName = seedChild.lastName;
           existingChild.nickname = seedChild.nickname;
           existingChild.parentName = seedChild.parentName;
-          if (seedChild.parentLineId) existingChild.parentLineId = seedChild.parentLineId;
+          if (seedChild.parentLineId && !existingChild.parentLineId) {
+            existingChild.parentLineId = seedChild.parentLineId;
+          }
         } else {
           data.children.push(seedChild);
         }
@@ -503,11 +505,13 @@ class AppStore {
           statusTitle = '❌ บันทึกสถานะการเข้าเรียน (ขาดเรียน)';
         }
 
-        const targetParentLineId = child.parentLineId || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || localStorage.getItem('BANGYAI_LINE_TARGET_ID') || 'U97dc0505bb590d70c66d401224a422db';
+        // Send personal notification only if this child specifically has a parent LINE ID configured
+        const targetParentLineId = (child.parentLineId && child.parentLineId.trim().startsWith('U')) ? child.parentLineId.trim() : null;
         this.sendLineNotification(
           statusTitle,
           `${child.nickname} (${child.firstName}) ได้บันทึกสถานะ "${statusText}" แล้ว เวลา ${now} (ผู้บันทึก: ${checkedBy})`,
-          targetParentLineId
+          targetParentLineId,
+          true
         );
       }
     }
@@ -532,12 +536,13 @@ class AppStore {
 
     // Send LINE Notification specifically for Leave Request submission
     const child = this.getChildById(req.childId);
-    const targetParentLineId = (child && child.parentLineId) || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || 'U97dc0505bb590d70c66d401224a422db';
+    const targetParentLineId = (child && child.parentLineId && child.parentLineId.trim().startsWith('U')) ? child.parentLineId.trim() : null;
 
     this.sendLineNotification(
       `📄 ยื่นคำขอแจ้งลา (${newReq.leaveType}) เรียบร้อย`,
       `คำขอแจ้งลาของ ${newReq.childName} (วันที่ ${newReq.startDate} ถึง ${newReq.endDate})\nเหตุผล: ${newReq.reason}\nสถานะ: ส่งถึงครูประจำชั้นแล้ว (รอครูอนุมัติ)`,
-      targetParentLineId
+      targetParentLineId,
+      true
     );
 
     // Async Supabase DB Sync
@@ -558,7 +563,7 @@ class AppStore {
       req.remark = remark;
 
       const child = this.getChildById(req.childId);
-      const targetParentLineId = (child && child.parentLineId) || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || 'U97dc0505bb590d70c66d401224a422db';
+      const targetParentLineId = (child && child.parentLineId && child.parentLineId.trim().startsWith('U')) ? child.parentLineId.trim() : null;
 
       if (status === 'APPROVED') {
         // Teacher approved: update attendance to LEAVE for today
@@ -567,13 +572,15 @@ class AppStore {
         this.sendLineNotification(
           `📩 ผลการอนุมัติคำขอแจ้งลา (อนุมัติแล้ว)`,
           `คำขอแจ้งลา (${req.leaveType}) ของ ${req.childName} วันที่ ${req.startDate} ถึง ${req.endDate} ได้รับการ "อนุมัติเรียบร้อยแล้ว" โดย ${approvedBy}${remark ? `\nหมายเหตุ: ${remark}` : ''}`,
-          targetParentLineId
+          targetParentLineId,
+          true
         );
       } else {
         this.sendLineNotification(
           `📩 ผลการอนุมัติคำขอแจ้งลา (ไม่อนุมัติ)`,
           `คำขอแจ้งลา (${req.leaveType}) ของ ${req.childName} "ไม่อนุมัติ" โดย ${approvedBy}${remark ? `\nหมายเหตุ: ${remark}` : ''}`,
-          targetParentLineId
+          targetParentLineId,
+          true
         );
       }
 
@@ -599,9 +606,12 @@ class AppStore {
     if (!this.data.announcements) this.data.announcements = [];
     this.data.announcements.unshift(newAnn);
 
+    // Announcements broadcast to LINE Group only (no individual parent target)
     this.sendLineNotification(
       `📢 ประกาศข่าวสารใหม่จากศูนย์ฯ`,
-      `${ann.title}`
+      `${ann.title}`,
+      null,
+      true
     );
 
     // Async Supabase DB Sync
@@ -657,7 +667,7 @@ class AppStore {
     return this.data.lineNotifications || [];
   }
 
-  sendLineNotification(title, message, targetIdOverride = null) {
+  sendLineNotification(title, message, targetIdOverride = null, sendToGroup = true) {
     if (!this.data.lineNotifications) this.data.lineNotifications = [];
     const now = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
     const notifItem = {
@@ -668,17 +678,17 @@ class AppStore {
     };
     this.data.lineNotifications.unshift(notifItem);
 
-    // Dual LINE Messaging API Integration (Both LINE Group AND Personal Parent User ID)
+    // Dual LINE Messaging API Integration (LINE Group AND/OR Specific Personal Parent User ID)
     const channelToken = localStorage.getItem('BANGYAI_LINE_CHANNEL_TOKEN') || 'L7/4yLNWgK1roywgIIx98q84tRljHPAv7SjKG6ExDkATxkCGNwqqI3Nm4oiaeVMBEtAgflw8LJzt4ghPKfFLXUWRsRlHAraAHUaXDbwk/W0FsibrVYyVaYDFI1RBPh0HGXGwxYqqYVLRP8Snr6bSSwdB04t89/1O/w1cDnyilFU=';
     const lineGroupId = localStorage.getItem('BANGYAI_LINE_GROUP_ID') || 'Cf41f004eb886e7c190b9d4d2e823055d';
-    const personalUserId = targetIdOverride || localStorage.getItem('BANGYAI_LINE_PERSONAL_USER_ID') || 'U97dc0505bb590d70c66d401224a422db';
+    const personalUserId = (targetIdOverride && typeof targetIdOverride === 'string' && targetIdOverride.trim().startsWith('U')) ? targetIdOverride.trim() : null;
 
     if (channelToken && window.supabaseService) {
-      // 1. Send to LINE Group
-      if (lineGroupId) {
+      // 1. Send to LINE Group (if enabled and group ID configured)
+      if (sendToGroup && lineGroupId) {
         window.supabaseService.sendLineMessagingAPI(channelToken, lineGroupId, `${title}\n${message}`);
       }
-      // 2. Send to Personal Parent LINE
+      // 2. Send to Personal Parent LINE ONLY if a valid target LINE User ID is specifically provided
       if (personalUserId && personalUserId !== lineGroupId) {
         window.supabaseService.sendLineMessagingAPI(channelToken, personalUserId, `${title}\n[แจ้งเตือนส่วนตัวผู้ปกครอง]\n${message}`);
       }

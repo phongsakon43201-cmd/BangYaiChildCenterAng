@@ -205,11 +205,15 @@ const ParentView = {
               </div>
             </div>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <a href="https://line.me/R/ti/p/@740ikamd" target="_blank" rel="noopener noreferrer" class="btn" style="background: #FFFFFF; color: #06C755; border: 1px solid #06C755; font-weight: 700; text-decoration: none; padding: 0.5rem 0.85rem; font-size: 0.85rem; border-radius: var(--radius-md);">
-                ➕ แอดเพื่อน @740ikamd
+              <a href="https://line.me/R/ti/p/@740ikamd" target="_blank" rel="noopener noreferrer" class="btn" style="background: #FFFFFF; color: #06C755; border: 1.5px solid #06C755; font-weight: 700; text-decoration: none; padding: 0.5rem 0.85rem; font-size: 0.85rem; border-radius: var(--radius-md);">
+                ➕ 1. แอดเพื่อน
               </a>
-              <button type="button" class="btn btn-success" style="background: #06C755; border-color: #06C755; color: white; font-weight: 700; padding: 0.5rem 1rem; box-shadow: 0 4px 12px rgba(6,199,85,0.3);" onclick="window.ModalsComponent.openConnectLineModal('${activeChild.id}')">
-                📱 ตั้งค่า & ทดสอบส่ง LINE
+              <button type="button" class="btn btn-success" style="background: #06C755; border-color: #06C755; color: white; font-weight: 800; padding: 0.5rem 1rem; box-shadow: 0 4px 12px rgba(6,199,85,0.35); display: inline-flex; align-items: center; gap: 0.35rem;" onclick="window.ModalsComponent.quickAutoConnectLine('${activeChild.id}')">
+                <span>🟢</span>
+                <span>2. เชื่อมต่อทันที (1-Click)</span>
+              </button>
+              <button type="button" class="btn btn-secondary" style="font-weight: 600; padding: 0.5rem 0.85rem; font-size: 0.85rem;" onclick="window.ModalsComponent.openConnectLineModal('${activeChild.id}')" title="ตั้งค่าขั้นสูง">
+                ⚙️ ตั้งค่า
               </button>
             </div>
           </div>

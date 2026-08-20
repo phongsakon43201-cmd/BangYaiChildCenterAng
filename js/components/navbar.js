@@ -69,6 +69,12 @@ const NavbarComponent = {
               <span class="badge badge-secondary" style="padding: 0.4rem 0.85rem;">ยังไม่ได้ลงชื่อเข้าใช้</span>
             `}
 
+            <!-- Add to Home Screen / PWA Install Button -->
+            <button type="button" class="btn btn-primary btn-sm" onclick="window.triggerPWAInstall()" title="เพิ่มไอคอนลงหน้าจอมือถือ (ติดตั้งแอป)" style="background: linear-gradient(135deg, #10B981, #059669); border-color: #059669; color: white; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.85rem; box-shadow: 0 2px 8px rgba(16,185,129,0.3);">
+              <span>📲</span>
+              <span>ติดตั้งแอปบนมือถือ</span>
+            </button>
+
             <!-- Dark Mode Toggle -->
             <button type="button" class="btn btn-secondary btn-sm" onclick="document.body.classList.toggle('dark-mode')" title="สลับโหมดมืด/สว่าง">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>

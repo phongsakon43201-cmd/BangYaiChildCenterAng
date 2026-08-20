@@ -23,13 +23,14 @@ exports.handler = async function(event, context) {
 
   try {
     const body = JSON.parse(event.body || '{}');
-    const { channelAccessToken, to, messageText } = body;
+    const token = body.channelAccessToken || process.env.LINE_CHANNEL_ACCESS_TOKEN;
+    const { to, messageText } = body;
 
-    if (!channelAccessToken || !to || !messageText) {
+    if (!token || !to || !messageText) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'Missing channelAccessToken, to, or messageText' })
+        body: JSON.stringify({ error: 'Missing channelAccessToken (or env LINE_CHANNEL_ACCESS_TOKEN), to, or messageText' })
       };
     }
 
@@ -44,7 +45,7 @@ exports.handler = async function(event, context) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${channelAccessToken}`,
+        'Authorization': `Bearer ${token}`,
         'Content-Length': Buffer.byteLength(payload)
       }
     };

@@ -17,11 +17,13 @@ serve(async (req) => {
   }
 
   try {
-    const { channelAccessToken, to, messageText } = await req.json()
+    const body = await req.json()
+    const token = body.channelAccessToken || Deno.env.get('LINE_CHANNEL_ACCESS_TOKEN')
+    const { to, messageText } = body
 
-    if (!channelAccessToken || !to || !messageText) {
+    if (!token || !to || !messageText) {
       return new Response(
-        JSON.stringify({ error: 'Missing required parameters (channelAccessToken, to, messageText)' }),
+        JSON.stringify({ error: 'Missing required parameters (channelAccessToken or env LINE_CHANNEL_ACCESS_TOKEN, to, messageText)' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -30,7 +32,7 @@ serve(async (req) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${channelAccessToken}`
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({
         to: to,

@@ -28,11 +28,15 @@ const ParentLandingComponent = {
           </p>
 
           <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-            <a href="#parent-login-box" class="btn" style="background: #FFF; color: #1D4ED8; font-weight: 700; padding: 0.85rem 2rem; border-radius: var(--radius-md); font-size: 1rem; box-shadow: 0 4px 14px rgba(0,0,0,0.15); text-decoration: none;">
+            <a href="#parent-login-box" class="btn" style="background: #FFF; color: #1D4ED8; font-weight: 700; padding: 0.85rem 1.75rem; border-radius: var(--radius-md); font-size: 1rem; box-shadow: 0 4px 14px rgba(0,0,0,0.15); text-decoration: none;">
               🔑 เข้าสู่ระบบผู้ปกครอง
             </a>
-            <button type="button" onclick="window.ParentLandingComponent.scrollToFeatures()" class="btn" style="background: rgba(255, 255, 255, 0.15); color: #FFF; border: 1px solid rgba(255,255,255,0.4); font-weight: 600; padding: 0.85rem 1.75rem; border-radius: var(--radius-md); font-size: 1rem;">
-              📖 ดูฟังก์ชันและคู่มือใช้งาน
+            <button type="button" onclick="window.triggerPWAInstall()" class="btn" style="background: #10B981; color: #FFF; border: none; font-weight: 700; padding: 0.85rem 1.75rem; border-radius: var(--radius-md); font-size: 1rem; box-shadow: 0 4px 14px rgba(16,185,129,0.4); display: inline-flex; align-items: center; gap: 0.5rem;">
+              <span>📲</span>
+              <span>เพิ่มแอปบนหน้าจอมือถือ</span>
+            </button>
+            <button type="button" onclick="window.ParentLandingComponent.scrollToFeatures()" class="btn" style="background: rgba(255, 255, 255, 0.15); color: #FFF; border: 1px solid rgba(255,255,255,0.4); font-weight: 600; padding: 0.85rem 1.5rem; border-radius: var(--radius-md); font-size: 1rem;">
+              📖 ดูคู่มือใช้งาน
             </button>
           </div>
         </div>

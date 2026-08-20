@@ -287,12 +287,21 @@ class SupabaseService {
 
   // LINE Messaging API Helper
   async sendLineMessagingAPI(channelAccessToken, toUserIdOrGroupId, messageText) {
-    if (!channelAccessToken || !toUserIdOrGroupId) return false;
+    if (!toUserIdOrGroupId || typeof toUserIdOrGroupId !== 'string') return false;
+    const cleanToId = toUserIdOrGroupId.trim();
+    // Validate LINE User ID (U...), Group ID (C...), or Room ID (R...)
+    if (!/^[UCR][0-9a-fA-F]{10,}$/.test(cleanToId)) {
+      console.warn(`[LINE Push] Invalid Target ID format: "${cleanToId}". LINE IDs must start with U (User), C (Group), or R (Room).`);
+      return false;
+    }
+
     const payload = {
-      channelAccessToken,
-      to: toUserIdOrGroupId,
-      messageText
+      channelAccessToken: channelAccessToken || undefined,
+      to: cleanToId,
+      messageText: (messageText || '').trim()
     };
+
+    if (!payload.messageText) return false;
 
     // 1. Try local/relative Netlify function first (if running on Netlify)
     try {
@@ -303,7 +312,7 @@ class SupabaseService {
         body: JSON.stringify(payload)
       });
       if (res.ok) {
-        console.log(`⚡ Netlify Local Function: Real LINE Push sent successfully to ${toUserIdOrGroupId}!`);
+        console.log(`⚡ Netlify Local Function: Real LINE Push sent successfully to ${cleanToId}!`);
         return true;
       }
     } catch (e) {
@@ -319,8 +328,11 @@ class SupabaseService {
         body: JSON.stringify(payload)
       });
       if (res.ok) {
-        console.log(`⚡ Production Netlify Relay: Real LINE Push sent successfully to ${toUserIdOrGroupId}!`);
+        console.log(`⚡ Production Netlify Relay: Real LINE Push sent successfully to ${cleanToId}!`);
         return true;
+      } else {
+        const errText = await res.text();
+        console.warn(`[LINE Push Relay] Response status ${res.status}:`, errText);
       }
     } catch (e) {
       console.warn('Production Netlify Relay warning:', e);
@@ -339,7 +351,7 @@ class SupabaseService {
           body: JSON.stringify(payload)
         });
         if (res.ok) {
-          console.log(`⚡ Supabase Edge Function: Real LINE Push sent to ${toUserIdOrGroupId}!`);
+          console.log(`⚡ Supabase Edge Function: Real LINE Push sent to ${cleanToId}!`);
           return true;
         }
       } catch (e) {
@@ -347,7 +359,7 @@ class SupabaseService {
       }
     }
 
-    console.log('📲 Notification logged to local App Store state.');
+    console.log(`📲 Notification logged to local App Store state (Target: ${cleanToId}).`);
     return false;
   }
 
